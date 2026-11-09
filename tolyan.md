@@ -1,1 +1,1 @@
-krutoi
+krutoi, ne, on eblan tupoy
