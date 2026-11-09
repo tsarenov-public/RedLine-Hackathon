@@ -1,0 +1,85 @@
+* text=auto
+
+# Unity YAML: текст, LF
+*.unity text eol=lf
+*.prefab text eol=lf
+*.asset text eol=lf
+*.meta text eol=lf
+*.mat text eol=lf
+*.anim text eol=lf
+*.controller text eol=lf
+*.overrideController text eol=lf
+*.playable text eol=lf
+*.mask text eol=lf
+*.physicMaterial text eol=lf
+*.physicsMaterial2D text eol=lf
+*.terrainlayer text eol=lf
+*.mixer text eol=lf
+*.shadervariants text eol=lf
+*.preset text eol=lf
+*.spriteatlas text eol=lf
+*.renderTexture text eol=lf
+*.giparams text eol=lf
+*.guiskin text eol=lf
+*.fontsettings text eol=lf
+*.flare text eol=lf
+*.brush text eol=lf
+*.asmdef text eol=lf
+*.cs text eol=lf
+*.shader text eol=lf
+*.cginc text eol=lf
+*.compute text eol=lf
+*.json text eol=lf
+*.xml text eol=lf
+*.md text eol=lf
+
+# Бинарники не мержим как текст
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.bmp binary
+*.tga binary
+*.psd binary
+*.psb binary
+*.ai binary
+*.tif binary
+*.tiff binary
+*.ico binary
+*.exr binary
+*.hdr binary
+*.fbx binary
+*.FBX binary
+*.obj binary
+*.max binary
+*.blend binary
+*.dae binary
+*.mb binary
+*.ma binary
+*.3ds binary
+*.stl binary
+*.glb binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.exe binary
+*.zip binary
+*.7z binary
+*.gz binary
+*.rar binary
+*.unitypackage binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.flac binary
+*.aif binary
+*.aiff binary
+*.mp4 binary
+*.mov binary
+*.avi binary
+*.webm binary
+*.mkv binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
