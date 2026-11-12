@@ -19,13 +19,13 @@ public class HeavyAssetsLinker
     {
         new HeavyAsset
         {
-            RelativePath = "Assets/ThirdParty/Brooklyn/KB3D_Brooklyn-Native.fbx",
+            RelativePath = "Assets/BuildingsAsset/Brooklyn/KB3D_Brooklyn-Native.fbx",
             DriveUrl = "https://drive.google.com/file/d/17zNl59I5ffsyV2TClJjRf7a0wPERNYD5/view?usp=drive_link"
         },
         // Пример добавления второго FBX:
         // new HeavyAsset
         // {
-        //     RelativePath = "Assets/ThirdParty/Vehicles/Cars_Pack.fbx",
+        //     RelativePath = "Assets/BuildingsAsset/Vehicles/Cars_Pack.fbx",
         //     DriveUrl = "ССЫЛКА_НА_ПАПКУ_ИЛИ_ФАЙЛ_GOOGLE_DRIVE"
         // }
     };
