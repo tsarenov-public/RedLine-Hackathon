@@ -903627,6 +903627,7 @@ GameObject:
   - component: {fileID: 1796153183}
   - component: {fileID: 1796153182}
   - component: {fileID: 1796153181}
+  - component: {fileID: 1796153184}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -903708,6 +903709,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1796153184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796153180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43cbe08a4145fd04da4efbe8288a2bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: RedLine.NFSVehicle::RedLine.NFS.NFSArcadeCamera
+  Target: {fileID: 3439516961724531429}
+  FollowDistance: 6.5
+  FollowHeight: 2.5
+  PositionSmoothTime: 0.16
+  RotationResponse: 9
+  LookOffset: {x: 0, y: 0.7, z: 0}
+  AccelerationLag: 0.035
+  DriftLookAhead: 3.5
+  DriftFollowWeight: 0.25
+  BaseFOV: 60
+  MaxSpeedFOV: 78
+  NitroFOV: 88
+  FOVResponse: 5
+  ShakeStartKmh: 200
+  ShakeAmount: 0.035
+  ShakeFrequency: 27
+  ObstructionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  ObstructionRadius: 0.25
 --- !u!114 &1806348381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -904940,6 +904973,74 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2141933712}
   m_Mesh: {fileID: 190701616}
+--- !u!1001 &3439516961724531428
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3022608968313580756, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+      propertyPath: m_Name
+      value: NFS_TestCar
+      objectReference: {fileID: 0}
+    - target: {fileID: 7531929499352888495, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 90.73213
+      objectReference: {fileID: 0}
+    - target: {fileID: 7531929499352888495, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 209.73271
+      objectReference: {fileID: 0}
+    - target: {fileID: 7531929499352888495, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 517.0663
+      objectReference: {fileID: 0}
+    - target: {fileID: 7531929499352888495, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6936323
+      objectReference: {fileID: 0}
+    - target: {fileID: 7531929499352888495, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7531929499352888495, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7203293
+      objectReference: {fileID: 0}
+    - target: {fileID: 7531929499352888495, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7531929499352888495, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7531929499352888495, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7531929499352888495, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+--- !u!114 &3439516961724531429 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1646178484967691968, guid: 9a003d4865e27644998c7fea8e00479d, type: 3}
+  m_PrefabInstance: {fileID: 3439516961724531428}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 165fef63bb352d24ba0ff0537c3ab94c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: RedLine.NFSVehicle::RedLine.NFS.NFSRaycastCarController
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -904950,3 +905051,4 @@ SceneRoots:
   - {fileID: 93961163}
   - {fileID: 1597961863}
   - {fileID: 22193079}
+  - {fileID: 3439516961724531428}

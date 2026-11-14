@@ -21,6 +21,7 @@ public class ReadmeEditor : Editor {
 	
 	static void SelectReadmeAutomatically()
 	{
+		if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode) return;
 		if (!SessionState.GetBool(kShowedReadmeSessionStateName, false ))
 		{
 			var readme = SelectReadme();

@@ -38,9 +38,9 @@ using EasyRoads3Dv3;
 public class runtimeScript : MonoBehaviour {
 
 
-	public ERRoadNetwork roadNetwork;
+	[System.NonSerialized] public ERRoadNetwork roadNetwork;
 	
-	public ERRoad road;
+	[System.NonSerialized] public ERRoad road;
 	
 	public GameObject go;
 	public int currentElement = 0;
