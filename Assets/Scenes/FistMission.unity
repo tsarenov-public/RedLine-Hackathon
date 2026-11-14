@@ -2053,6 +2053,55 @@ MonoBehaviour:
   markerStartUVY: 0.71136475
   customPoints: []
   handleObject: {fileID: 0}
+--- !u!1 &359724543
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 359724545}
+  - component: {fileID: 359724544}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &359724544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359724543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 04ded7c97e4e34115a1389ec46437fa1, type: 2}
+--- !u!4 &359724545
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359724543}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 279.29938, y: 308.7995, z: 592.2802}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!28 &462648117
 Texture2D:
   m_ObjectHideFlags: 0
@@ -903628,6 +903677,7 @@ GameObject:
   - component: {fileID: 1796153182}
   - component: {fileID: 1796153181}
   - component: {fileID: 1796153184}
+  - component: {fileID: 1796153185}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -903675,8 +903725,8 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
+  far clip plane: 500
+  field of view: 47
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -903724,23 +903774,67 @@ MonoBehaviour:
   Target: {fileID: 3439516961724531429}
   FollowDistance: 6.5
   FollowHeight: 2.5
-  PositionSmoothTime: 0.16
-  RotationResponse: 9
+  PositionSmoothTime: 0.08
+  RotationResponse: 6.4
   LookOffset: {x: 0, y: 0.7, z: 0}
-  AccelerationLag: 0.035
+  AccelerationLag: 0.023
   DriftLookAhead: 3.5
   DriftFollowWeight: 0.25
-  BaseFOV: 60
-  MaxSpeedFOV: 78
-  NitroFOV: 88
-  FOVResponse: 5
+  BaseFOV: 47.9
+  MaxSpeedFOV: 66.3
+  NitroFOV: 78.3
+  FOVResponse: 3.6
   ShakeStartKmh: 200
-  ShakeAmount: 0.035
-  ShakeFrequency: 27
+  ShakeAmount: 0.02
+  ShakeFrequency: 20.4
   ObstructionLayers:
     serializedVersion: 2
-    m_Bits: 4294967291
+    m_Bits: 51
   ObstructionRadius: 0.25
+--- !u!114 &1796153185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796153180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: 0
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 1
+  m_Antialiasing: 3
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0.4
+  m_Version: 2
 --- !u!114 &1806348381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -905052,3 +905146,4 @@ SceneRoots:
   - {fileID: 1597961863}
   - {fileID: 22193079}
   - {fileID: 3439516961724531428}
+  - {fileID: 359724545}
