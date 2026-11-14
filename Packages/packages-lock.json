@@ -1,5 +1,28 @@
 {
   "dependencies": {
+    "com.tnd.common": {
+      "version": "file:com.tnd.common",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.tnd.upscaler.dlss4": {
+      "version": "file:com.tnd.upscaler.dlss4",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.tnd.upscaling": "1.1.0"
+      }
+    },
+    "com.tnd.upscaling": {
+      "version": "file:com.tnd.upscaling",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.tnd.common": "1.0.4",
+        "com.unity.nuget.newtonsoft-json": "3.2.1"
+      }
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.14",
       "depth": 0,
@@ -78,6 +101,24 @@
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
+    },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.2",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.postprocessing": {
+      "version": "file:com.unity.postprocessing",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.modules.imgui": "1.0.0",
+        "com.tnd.upscaling": "1.1.6",
+        "com.tnd.common": "1.0.4"
+      }
     },
     "com.unity.profiling.core": {
       "version": "1.0.3",

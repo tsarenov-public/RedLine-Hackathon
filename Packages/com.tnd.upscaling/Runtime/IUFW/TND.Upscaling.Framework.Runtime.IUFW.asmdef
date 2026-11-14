@@ -1,0 +1,48 @@
+{
+    "name": "TND.Upscaling.Framework.Runtime.IUFW",
+    "rootNamespace": "TND.Upscaling.Framework.IUFW",
+    "references": [
+        "GUID:df380645f10b7bc4b97d4f5eb6303d95",
+        "GUID:15fc0a57446b3144c949da3e2b9737a9",
+        "GUID:457756d89b35d2941b3e7b37b4ece6f1",
+        "GUID:039a05db797535d47bc605c30639a749"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "TND_SRP_CORE",
+        "ENABLE_UPSCALER_FRAMEWORK"
+    ],
+    "versionDefines": [
+        {
+            "name": "Unity",
+            "expression": "6000.7.0b6",
+            "define": "ENABLE_UPSCALER_FRAMEWORK"
+        },
+        {
+            "name": "com.unity.render-pipelines.core",
+            "expression": "1.0.0",
+            "define": "TND_SRP_CORE"
+        },
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "1.0.0",
+            "define": "TND_URP"
+        },
+        {
+            "name": "com.unity.render-pipelines.high-definition",
+            "expression": "1.0.0",
+            "define": "TND_HDRP"
+        },
+        {
+            "name": "com.unity.modules.xr",
+            "expression": "1.0.0",
+            "define": "ENABLE_XR_MODULE"
+        }
+    ],
+    "noEngineReferences": false
+}
