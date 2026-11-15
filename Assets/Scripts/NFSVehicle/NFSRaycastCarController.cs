@@ -55,6 +55,7 @@ namespace RedLine.NFS
         [Tooltip("Drivable layers; the vehicle's own layer is always excluded.")] public LayerMask GroundLayers = Physics.DefaultRaycastLayers;
         [Min(0), Tooltip("Quadratic aerodynamic resistance, N / (m/s)^2.")] public float AeroDrag = .42f;
         [Min(0), Tooltip("Rolling deceleration in m/s², active on the ground.")] public float RollingResistance = .12f;
+        [Range(1, 4), Tooltip("Vehicle-only gravity multiplier. Suspension support is compensated to preserve ride height.")] public float GravityMultiplier = 3;
 
         [Header("Four raycast wheels — FL, FR, RL, RR")]
         [Tooltip("Exactly four wheels, ordered front left, front right, rear left, rear right.")]
@@ -82,6 +83,7 @@ namespace RedLine.NFS
         [Range(.1f, 1), Tooltip("Hold the opposite pedal at rest for this long before changing direction.")] public float DirectionChangeDelay = .22f;
         [Min(1), Tooltip("Maximum reverse speed, km/h.")] public float ReverseMaxSpeedKmh = 40;
         [Min(1), Tooltip("Service brake deceleration, m/s².")] public float BrakeAcceleration = 15;
+        [Range(1, 4), Tooltip("Service brake strength multiplier; does not strengthen the handbrake.")] public float BrakeStrengthMultiplier = 2;
 
         [Header("Steering and tyre grip")]
         [Range(5, 50), Tooltip("Low-speed front steering angle, degrees.")] public float MaxSteerAngle = 32;
@@ -116,6 +118,7 @@ namespace RedLine.NFS
         [Range(0, 1), Tooltip("Restores tangential speed lost in a shallow wall collision, without adding energy.")] public float WallSlideAssist = 1;
 
         public Rigidbody Body { get; private set; }
+        public float EffectiveSpringStiffness => SpringStiffness * GravityMultiplier;
         public float SpeedKmh { get; private set; }
         public float ForwardSpeed { get; private set; }
         public float CurrentRPM { get; private set; }
@@ -165,6 +168,7 @@ namespace RedLine.NFS
             Mass = Mathf.Max(100, Mass); MaxSpeedKmh = Mathf.Max(10, MaxSpeedKmh);
             SuspensionRestLength = Mathf.Max(.05f, SuspensionRestLength); SuspensionTravel = Mathf.Max(.02f, SuspensionTravel);
             SpringStiffness = Mathf.Max(1000, SpringStiffness); DamperStiffness = Mathf.Max(0, DamperStiffness);
+            GravityMultiplier = Mathf.Clamp(GravityMultiplier, 1, 4); BrakeStrengthMultiplier = Mathf.Clamp(BrakeStrengthMultiplier, 1, 4);
             IdleRPM = Mathf.Max(100, IdleRPM); MaxRPM = Mathf.Max(IdleRPM + 1000, MaxRPM);
             ShiftUpRPM = Mathf.Clamp(ShiftUpRPM, IdleRPM + 500, MaxRPM - 100);
             ShiftDownRPM = Mathf.Clamp(ShiftDownRPM, IdleRPM + 100, ShiftUpRPM - 500);
@@ -233,6 +237,8 @@ namespace RedLine.NFS
         private void FixedUpdate()
         {
             float dt = Time.fixedDeltaTime;
+            // Unity supplies the first 1g. Add only the extra acceleration to this body.
+            if (Body.useGravity) Body.AddForce(Physics.gravity * (GravityMultiplier - 1), ForceMode.Acceleration);
             ApplyWallSlide(); preStepVelocity = Body.linearVelocity;
             SpeedKmh = Body.linearVelocity.magnitude * 3.6f;
             ForwardSpeed = Vector3.Dot(Body.linearVelocity, transform.forward);
@@ -313,7 +319,9 @@ namespace RedLine.NFS
                 Vector3 relative = Body.GetPointVelocity(origin);
                 if (hit.rigidbody) relative -= hit.rigidbody.GetPointVelocity(hit.point);
                 float verticalVelocity = Vector3.Dot(relative, up);
-                float springForce = Mathf.Clamp(SpringStiffness * compression - DamperStiffness * verticalVelocity, 0, SpringStiffness * SuspensionTravel * 3);
+                // Preserve static sag and damping ratio under the stronger vehicle gravity.
+                float damping = DamperStiffness * Mathf.Sqrt(GravityMultiplier);
+                float springForce = Mathf.Clamp(EffectiveSpringStiffness * compression - damping * verticalVelocity, 0, EffectiveSpringStiffness * SuspensionTravel * 3);
                 Body.AddForceAtPosition(up * springForce, origin);
                 if (hit.rigidbody && !hit.rigidbody.isKinematic) hit.rigidbody.AddForceAtPosition(-up * springForce, hit.point);
                 wheel.contact = new WheelContact { Grounded = true, Point = hit.point, Normal = hit.normal, Collider = hit.collider,
@@ -327,7 +335,7 @@ namespace RedLine.NFS
         private void ApplyAntiRoll(int left, int right)
         {
             if (!Wheels[left].contact.Grounded || !Wheels[right].contact.Grounded) return;
-            float force = (Wheels[left].contact.Compression - Wheels[right].contact.Compression) * SpringStiffness * AntiRoll;
+            float force = (Wheels[left].contact.Compression - Wheels[right].contact.Compression) * EffectiveSpringStiffness * AntiRoll;
             Body.AddForceAtPosition(transform.up * force, Mount(Wheels[left]));
             Body.AddForceAtPosition(-transform.up * force, Mount(Wheels[right]));
         }
@@ -347,8 +355,10 @@ namespace RedLine.NFS
                 float normalLimit = Mathf.Max(0, contact.NormalLoad) * TyreFriction;
                 float lateralLimit = normalLimit * (wheel.Steers ? 1 : Mathf.Lerp(1, Mathf.Clamp01(DriftRearGrip / Mathf.Max(.1f, RearGrip)), rearDriftBlend));
                 lateral = Mathf.Clamp(lateral, -lateralLimit, lateralLimit);
-                float longitudinal = wheel.Driven && driven > 0 ? driveForce / driven : 0;
-                float wheelBrake = Mathf.Max(brake, !wheel.Steers && HandbrakeInput ? 1 : 0);
+                // Extra gravity supplies braking grip, but must not turn into a free engine-traction boost.
+                float driveLimit = normalLimit / GravityMultiplier;
+                float longitudinal = wheel.Driven && driven > 0 ? Mathf.Clamp(driveForce / driven, -driveLimit, driveLimit) : 0;
+                float wheelBrake = Mathf.Max(brake * BrakeStrengthMultiplier, !wheel.Steers && HandbrakeInput ? 1 : 0);
                 if (wheelBrake > 0)
                 {
                     float v = Vector3.Dot(velocity, forward);
