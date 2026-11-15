@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace RedLine.NFS
 {
-    [DisallowMultipleComponent, RequireComponent(typeof(Rigidbody), typeof(BoxCollider))]
+    [DisallowMultipleComponent, RequireComponent(typeof(Rigidbody))]
     public sealed class NFSRaycastCarController : MonoBehaviour
     {
         [Serializable]
@@ -14,6 +14,7 @@ namespace RedLine.NFS
             public Transform SuspensionPoint;
             [Tooltip("Wheel spin/steer pivot. Keep the model's import correction on a child of this pivot.")]
             public Transform Visual;
+            [Tooltip("Optional native wheel, used only in WheelCollider mode.")] public WheelCollider PhysicsCollider;
             [Tooltip("Chassis-local mount used when no SuspensionPoint is assigned.")]
             public Vector3 LocalAnchor;
             [Tooltip("Front steering wheel.")] public bool Steers;
@@ -22,6 +23,7 @@ namespace RedLine.NFS
             [NonSerialized] internal Quaternion visualBindRotation;
             [NonSerialized] internal float spin;
             [NonSerialized] internal WheelContact contact;
+            [NonSerialized] internal WheelFrictionCurve sidewaysFriction;
         }
 
         public struct WheelContact
@@ -60,6 +62,9 @@ namespace RedLine.NFS
         [Header("Four raycast wheels — FL, FR, RL, RR")]
         [Tooltip("Exactly four wheels, ordered front left, front right, rear left, rear right.")]
         public Wheel[] Wheels = DefaultWheels();
+        [Tooltip("Use four native WheelColliders instead of raycast spring/tyre forces. All four references are required.")]
+        public bool UseWheelColliders;
+        [Tooltip("Optional centre-of-mass marker, in chassis space.")] public Transform CenterOfMassTransform;
         [Min(.05f), Tooltip("Unloaded spring length in metres.")] public float SuspensionRestLength = .36f;
         [Min(.02f), Tooltip("Maximum compression and extra droop travel in metres.")] public float SuspensionTravel = .22f;
         [Min(1000), Tooltip("Hooke spring stiffness per wheel, N/m.")] public float SpringStiffness = 38000;
@@ -187,24 +192,51 @@ namespace RedLine.NFS
         private void Awake()
         {
             OnValidate(); Body = GetComponent<Rigidbody>();
-            Body.mass = Mass; Body.centerOfMass = CenterOfMass;
+            Body.mass = Mass;
+            Body.centerOfMass = CenterOfMassTransform ? transform.InverseTransformPoint(CenterOfMassTransform.position) : CenterOfMass;
             Body.interpolation = RigidbodyInterpolation.Interpolate;
             Body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             Body.linearDamping = 0; Body.angularDamping = .12f; Body.maxAngularVelocity = 5;
             Body.maxDepenetrationVelocity = 5;
             Body.solverIterations = 12; Body.solverVelocityIterations = 4;
-            bodyMaterial = new PhysicsMaterial("NFS chassis — zero friction") { dynamicFriction = 0, staticFriction = 0,
-                bounciness = 0, frictionCombine = PhysicsMaterialCombine.Minimum, bounceCombine = PhysicsMaterialCombine.Minimum };
             foreach (var collider in GetComponentsInChildren<Collider>())
             {
-                collider.gameObject.layer = VehicleLayer; collider.sharedMaterial = bodyMaterial; collider.contactOffset = .025f;
+                collider.gameObject.layer = VehicleLayer;
+                if (collider is WheelCollider) continue;
+                // Keep the persistent material assigned by the prefab tool, including its bounce.
+                if (!collider.sharedMaterial)
+                {
+                    if (!bodyMaterial) bodyMaterial = new PhysicsMaterial("NFS chassis — zero friction") { dynamicFriction = 0, staticFriction = 0,
+                        bounciness = 0, frictionCombine = PhysicsMaterialCombine.Minimum, bounceCombine = PhysicsMaterialCombine.Minimum };
+                    collider.sharedMaterial = bodyMaterial;
+                }
+                collider.contactOffset = .025f;
             }
-            foreach (var wheel in Wheels) if (wheel.Visual) wheel.visualBindRotation = wheel.Visual.localRotation;
+            bool complete = true;
+            foreach (var wheel in Wheels) complete &= wheel.PhysicsCollider != null;
+            if (UseWheelColliders && !complete)
+            {
+                Debug.LogError("WheelCollider mode requires four assigned wheels. Vehicle disabled to avoid duplicate suspension forces.", this);
+                enabled = false; return;
+            }
+            foreach (var wheel in Wheels)
+            {
+                if (wheel.Visual) wheel.visualBindRotation = wheel.Visual.localRotation;
+                if (!wheel.PhysicsCollider) continue;
+                wheel.PhysicsCollider.enabled = UseWheelColliders;
+                wheel.sidewaysFriction = wheel.PhysicsCollider.sidewaysFriction;
+                wheel.PhysicsCollider.ConfigureVehicleSubsteps(10, 5, 8);
+            }
             NitroAmount = NitroCapacity; CurrentRPM = IdleRPM;
         }
 
         private void OnEnable() { EnsureBindings(); Throttle.Enable(); BrakeReverse.Enable(); Steer.Enable(); Handbrake.Enable(); Nitro.Enable(); }
-        private void OnDisable() { Throttle?.Disable(); BrakeReverse?.Disable(); Steer?.Disable(); Handbrake?.Disable(); Nitro?.Disable(); IsNitroActive = false; }
+        private void OnDisable()
+        {
+            Throttle?.Disable(); BrakeReverse?.Disable(); Steer?.Disable(); Handbrake?.Disable(); Nitro?.Disable(); IsNitroActive = false;
+            if (UseWheelColliders && Wheels != null) foreach (var wheel in Wheels)
+                if (wheel?.PhysicsCollider) { wheel.PhysicsCollider.motorTorque = 0; wheel.PhysicsCollider.brakeTorque = 0; }
+        }
         private void OnDestroy()
         {
             Throttle?.Dispose(); BrakeReverse?.Dispose(); Steer?.Dispose(); Handbrake?.Dispose(); Nitro?.Dispose();
@@ -256,7 +288,7 @@ namespace RedLine.NFS
             float highSpeedSteering = Mathf.Lerp(1, HighSpeedSteeringScale,
                 Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.65f, 1, speedFraction)));
             wheelSteerAngle = SteerInput * MaxSteerAngle * Mathf.Clamp(SteeringBySpeed.Evaluate(speedFraction), .05f, 1) * highSpeedSteering;
-            CastSuspension();
+            if (UseWheelColliders) ReadWheelColliderContacts(); else CastSuspension();
             var planarVelocity = Vector3.ProjectOnPlane(Body.linearVelocity, groundNormal);
             SlipAngle = planarVelocity.sqrMagnitude > 1 ? Vector3.SignedAngle(CurrentGear < 0 ? -transform.forward : transform.forward, planarVelocity, groundNormal) : 0;
             IsDrifting = CurrentGear > 0 && GroundedWheelCount >= 2 && SpeedKmh > 30 && Mathf.Abs(SlipAngle) > DriftThreshold;
@@ -274,7 +306,7 @@ namespace RedLine.NFS
             if (oppositePedal || IsShifting) force *= IsShifting && !oppositePedal ? .15f : 0;
             float limit = (CurrentGear < 0 ? ReverseMaxSpeedKmh : MaxSpeedKmh + (IsNitroActive ? NitroMaxSpeedBonus : 0)) / 3.6f;
             force *= 1 - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(limit * .97f, limit + 1, Mathf.Abs(ForwardSpeed)));
-            ApplyTyres(force, brake, dt);
+            if (UseWheelColliders) ApplyWheelColliderTyres(force, brake); else ApplyTyres(force, brake, dt);
             if (IsNitroActive) Body.AddForce(transform.forward * Mathf.Abs(force) * (NitroForceMultiplier - 1));
             if (GroundedWheelCount > 0)
             {
@@ -296,6 +328,40 @@ namespace RedLine.NFS
             Body.AddForce(-Body.linearVelocity * (Body.linearVelocity.magnitude * AeroDrag));
             if (Mathf.Abs(ForwardSpeed) > limit)
                 Body.AddForce(-transform.forward * Mathf.Sign(ForwardSpeed) * ((Mathf.Abs(ForwardSpeed) - limit) * Mass * 8));
+        }
+
+        private void ReadWheelColliderContacts()
+        {
+            GroundedWheelCount = 0; Vector3 normals = Vector3.zero;
+            foreach (var wheel in Wheels)
+            {
+                var collider = wheel.PhysicsCollider;
+                wheel.contact = new WheelContact { Normal = transform.up, SpringLength = SuspensionRestLength + SuspensionTravel };
+                if (!collider.GetGroundHit(out var hit) || !hit.collider || hit.collider.attachedRigidbody == Body) continue;
+                collider.GetWorldPose(out var position, out _);
+                float length = Vector3.Dot(Mount(wheel) - position, transform.up);
+                wheel.contact = new WheelContact { Grounded = true, Point = hit.point, Normal = hit.normal, Collider = hit.collider,
+                    SpringLength = length, Compression = Mathf.Max(0, SuspensionRestLength - length), NormalLoad = hit.force };
+                GroundedWheelCount++; normals += hit.normal;
+            }
+            groundNormal = GroundedWheelCount > 0 ? normals.normalized : transform.up;
+            ApplyAntiRoll(0, 1); ApplyAntiRoll(2, 3);
+        }
+
+        private void ApplyWheelColliderTyres(float driveForce, float brake)
+        {
+            int driven = 0; foreach (var wheel in Wheels) if (wheel.Driven) driven++;
+            foreach (var wheel in Wheels)
+            {
+                var collider = wheel.PhysicsCollider;
+                collider.steerAngle = wheel.Steers ? wheelSteerAngle : 0;
+                collider.motorTorque = wheel.Driven ? driveForce * wheel.Radius / Mathf.Max(1, driven) : 0;
+                float braking = Mathf.Max(brake * BrakeStrengthMultiplier, !wheel.Steers && HandbrakeInput ? 1 : 0);
+                collider.brakeTorque = Mass * BrakeAcceleration * braking * wheel.Radius * .25f;
+                var lateral = wheel.sidewaysFriction;
+                if (!wheel.Steers) lateral.stiffness *= Mathf.Lerp(1, Mathf.Clamp01(DriftRearGrip / RearGrip), rearDriftBlend);
+                collider.sidewaysFriction = lateral;
+            }
         }
 
         private void CastSuspension()
@@ -445,6 +511,12 @@ namespace RedLine.NFS
             foreach (var wheel in Wheels)
             {
                 if (!wheel.Visual) continue;
+                if (UseWheelColliders)
+                {
+                    wheel.PhysicsCollider.GetWorldPose(out var position, out var rotation);
+                    wheel.Visual.SetPositionAndRotation(position, rotation * wheel.visualBindRotation);
+                    continue;
+                }
                 wheel.spin = Mathf.Repeat(wheel.spin + ForwardSpeed / wheel.Radius * Mathf.Rad2Deg * Time.deltaTime +
                     (wheel.Driven && IsBurningOut ? ThrottleInput * 600 * Time.deltaTime : 0), 360);
                 wheel.Visual.position = Mount(wheel) - transform.up * wheel.contact.SpringLength;
