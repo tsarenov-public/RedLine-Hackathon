@@ -89,6 +89,7 @@ namespace RedLine.NFS
         [Range(5, 50), Tooltip("Low-speed front steering angle, degrees.")] public float MaxSteerAngle = 32;
         [Tooltip("Steering angle multiplier over SpeedKmh / MaxSpeedKmh.")]
         public AnimationCurve SteeringBySpeed = new AnimationCurve(new Keyframe(0, 1), new Keyframe(.3f, .48f), new Keyframe(.7f, .2f), new Keyframe(1, .13f));
+        [Range(.5f, 1), Tooltip("Additional steering angle scale at top speed; fades in above 65% of MaxSpeedKmh without reducing tyre grip.")] public float HighSpeedSteeringScale = .8f;
         [Range(1, 15), Tooltip("Front lateral velocity damping, 1/s.")] public float FrontGrip = 9;
         [Range(1, 15), Tooltip("Rear lateral velocity damping, 1/s.")] public float RearGrip = 7.5f;
         [Range(.1f, 6), Tooltip("Rear lateral grip with handbrake or lift-off oversteer.")] public float DriftRearGrip = 1.65f;
@@ -169,6 +170,7 @@ namespace RedLine.NFS
             SuspensionRestLength = Mathf.Max(.05f, SuspensionRestLength); SuspensionTravel = Mathf.Max(.02f, SuspensionTravel);
             SpringStiffness = Mathf.Max(1000, SpringStiffness); DamperStiffness = Mathf.Max(0, DamperStiffness);
             GravityMultiplier = Mathf.Clamp(GravityMultiplier, 1, 4); BrakeStrengthMultiplier = Mathf.Clamp(BrakeStrengthMultiplier, 1, 4);
+            HighSpeedSteeringScale = Mathf.Clamp(HighSpeedSteeringScale, .5f, 1);
             IdleRPM = Mathf.Max(100, IdleRPM); MaxRPM = Mathf.Max(IdleRPM + 1000, MaxRPM);
             ShiftUpRPM = Mathf.Clamp(ShiftUpRPM, IdleRPM + 500, MaxRPM - 100);
             ShiftDownRPM = Mathf.Clamp(ShiftDownRPM, IdleRPM + 100, ShiftUpRPM - 500);
@@ -250,7 +252,10 @@ namespace RedLine.NFS
             if (previousThrottle > .6f && ThrottleInput < .2f && Mathf.Abs(SteerInput) > .3f && SpeedKmh > 50) liftOffTimer = .7f;
             previousThrottle = ThrottleInput; liftOffTimer = Mathf.Max(0, liftOffTimer - dt);
             rearDriftBlend = Mathf.MoveTowards(rearDriftBlend, HandbrakeInput || liftOffTimer > 0 ? 1 : 0, dt * 4);
-            wheelSteerAngle = SteerInput * MaxSteerAngle * Mathf.Clamp(SteeringBySpeed.Evaluate(SpeedKmh / MaxSpeedKmh), .05f, 1);
+            float speedFraction = SpeedKmh / MaxSpeedKmh;
+            float highSpeedSteering = Mathf.Lerp(1, HighSpeedSteeringScale,
+                Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.65f, 1, speedFraction)));
+            wheelSteerAngle = SteerInput * MaxSteerAngle * Mathf.Clamp(SteeringBySpeed.Evaluate(speedFraction), .05f, 1) * highSpeedSteering;
             CastSuspension();
             var planarVelocity = Vector3.ProjectOnPlane(Body.linearVelocity, groundNormal);
             SlipAngle = planarVelocity.sqrMagnitude > 1 ? Vector3.SignedAngle(CurrentGear < 0 ? -transform.forward : transform.forward, planarVelocity, groundNormal) : 0;

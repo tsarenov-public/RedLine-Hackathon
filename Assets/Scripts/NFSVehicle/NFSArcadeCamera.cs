@@ -10,6 +10,9 @@ namespace RedLine.NFS
         [Min(1), Tooltip("Distance behind the car, metres.")] public float FollowDistance = 6.5f;
         [Min(.2f), Tooltip("Height above the chassis root, metres.")] public float FollowHeight = 2.5f;
         [Range(.3f, 1.5f), Tooltip("Scales follow distance and height; 0.6 brings the camera 40% closer, including existing scene settings.")] public float FollowDistanceMultiplier = .6f;
+        [Range(.5f, 2), Tooltip("Extra distance scale at rest/low speed, applied to existing follow settings.")] public float LowSpeedDistanceScale = 1.3f;
+        [Range(.5f, 2), Tooltip("Extra distance scale at maximum speed. Translation smoothing does not add speed-dependent trailing distance.")] public float MaxSpeedDistanceScale = 1.15f;
+        [Range(0, 3), Tooltip("Additional camera height at maximum speed, metres. Blends in above 35% of top speed.")] public float MaxSpeedHeightBoost = 1.1f;
         [Range(.02f, 1), Tooltip("Critical-damping follow time, seconds.")] public float PositionSmoothTime = .16f;
         [Range(1, 25), Tooltip("Rotation response, 1/s.")] public float RotationResponse = 9;
         [Tooltip("Local look target offset.")] public Vector3 LookOffset = new Vector3(0, .7f, 0);
@@ -21,6 +24,7 @@ namespace RedLine.NFS
         [Range(40, 90), Tooltip("Field of view at low speed, degrees.")] public float BaseFOV = 60;
         [Range(50, 110), Tooltip("Field of view at maximum speed, degrees.")] public float MaxSpeedFOV = 78;
         [Range(60, 120), Tooltip("Sustained field of view with active NOS, degrees.")] public float NitroFOV = 92;
+        [Range(0, 1), Tooltip("Scales speed/NOS FOV expansion above BaseFOV, retaining the short ignition impulse.")] public float FOVExpansionMultiplier = .65f;
         [Range(1, 20), Tooltip("Normal FOV response, 1/s; NOS responds twice as quickly.")] public float FOVResponse = 5;
         [Header("Nitro ignition impulse")]
         [Range(0, 20), Tooltip("Extra FOV at ignition, fading into the sustained NOS FOV.")] public float NitroImpulseFOV = 10;
@@ -66,7 +70,11 @@ namespace RedLine.NFS
             float drift = Mathf.InverseLerp(5, 45, Mathf.Abs(Target.SlipAngle));
             Vector3 heading = Vector3.Slerp(forward, travel, drift * DriftFollowWeight).normalized;
             float acceleration = !snap ? Mathf.Clamp(Vector3.Dot(velocity - previousVelocity, forward) / dt, -20, 20) : 0;
-            Vector3 desired = position + (-heading * (FollowDistance + acceleration * AccelerationLag) + Vector3.up * FollowHeight) * FollowDistanceMultiplier;
+            float speed = Mathf.Clamp01(Target.SpeedKmh / Mathf.Max(1, Target.MaxSpeedKmh));
+            float distanceScale = Mathf.Lerp(LowSpeedDistanceScale, MaxSpeedDistanceScale, Mathf.SmoothStep(0, 1, speed));
+            float heightBoost = MaxSpeedHeightBoost * Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.35f, 1, speed));
+            Vector3 desired = position - heading * ((FollowDistance * distanceScale + acceleration * AccelerationLag) * FollowDistanceMultiplier)
+                + Vector3.up * (FollowHeight * FollowDistanceMultiplier + heightBoost);
             Vector3 look = position + Target.transform.TransformDirection(LookOffset) + travel * (DriftLookAhead * drift + 1.5f);
             if (snap) { wasNitroActive = false; nitroImpulse = nitroBlend = nitroKick = 0; }
             if (Target.IsNitroActive && !wasNitroActive) nitroImpulse = 1;
@@ -75,7 +83,13 @@ namespace RedLine.NFS
             nitroBlend = Mathf.MoveTowards(nitroBlend, Target.IsNitroActive ? 1 : 0, dt * 8);
             nitroKick = Mathf.Lerp(nitroKick, nitroImpulse, 1 - Mathf.Exp(-NitroImpulseResponse * dt));
             if (snap) { followPosition = desired; followVelocity = Vector3.zero; }
-            else followPosition = Vector3.SmoothDamp(followPosition, desired, ref followVelocity, PositionSmoothTime, Mathf.Infinity, dt);
+            else
+            {
+                // Smooth only the relative framing. Smoothing a moving world-space target
+                // otherwise adds roughly speed * PositionSmoothTime metres of unwanted lag.
+                followPosition += position - previousTargetPosition;
+                followPosition = Vector3.SmoothDamp(followPosition, desired, ref followVelocity, PositionSmoothTime, Mathf.Infinity, dt);
+            }
             followPosition = ResolveObstruction(look, followPosition);
             float intensity = Mathf.InverseLerp(ShakeStartKmh, Target.MaxSpeedKmh + Target.NitroMaxSpeedBonus, Target.SpeedKmh);
             intensity = Mathf.Max(intensity, nitroBlend);
@@ -89,8 +103,9 @@ namespace RedLine.NFS
             followRotation = snap ? rotation : Quaternion.Slerp(followRotation, rotation, 1 - Mathf.Exp(-RotationResponse * dt));
             float rotationShake = intensity + NitroImpulseRotation * nitroImpulse;
             transform.rotation = followRotation * Quaternion.Euler(noise.y * rotationShake, noise.x * rotationShake, -Target.SteerInput * Mathf.Clamp01(Target.SpeedKmh / 200) * 1.5f);
-            float normalFOV = Mathf.Lerp(BaseFOV, MaxSpeedFOV, Mathf.Clamp01(Target.SpeedKmh / Target.MaxSpeedKmh));
-            float fov = (Target.IsNitroActive ? Mathf.Max(normalFOV, NitroFOV) : normalFOV) + NitroImpulseFOV * nitroImpulse;
+            float normalFOV = Mathf.Lerp(BaseFOV, MaxSpeedFOV, speed * FOVExpansionMultiplier);
+            float sustainedNitroFOV = Mathf.Lerp(BaseFOV, NitroFOV, FOVExpansionMultiplier);
+            float fov = (Target.IsNitroActive ? Mathf.Max(normalFOV, sustainedNitroFOV) : normalFOV) + NitroImpulseFOV * nitroImpulse;
             float response = Target.IsNitroActive ? Mathf.Lerp(FOVResponse * 2, NitroImpulseResponse, nitroImpulse) : FOVResponse;
             cameraComponent.fieldOfView = Mathf.Lerp(snap ? BaseFOV : cameraComponent.fieldOfView, Mathf.Clamp(fov, 40, 120), 1 - Mathf.Exp(-response * dt));
             previousVelocity = velocity; previousTargetPosition = position; previousTarget = Target;

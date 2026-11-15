@@ -156,36 +156,112 @@ public sealed class NFSHandlingTests
     }
 
     [UnityTest]
-    public IEnumerator CloserCameraRetriggersNitroImpulseAndAvoidsWall()
+    public IEnumerator TunedCameraRetriggersNitroImpulseAndAvoidsWall()
     {
         var car = CreateCar(); Simulate(car, 150); car.Body.isKinematic = true;
         var cameraObject = Track(new GameObject("Handling test camera", typeof(Camera), typeof(NFSArcadeCamera)));
         var camera = cameraObject.GetComponent<Camera>();
         var chase = cameraObject.GetComponent<NFSArcadeCamera>(); chase.Target = car;
         yield return null;
-        Assert.That(cameraObject.transform.position.z - car.transform.position.z, Is.EqualTo(-3.9f).Within(.02f));
+        Assert.That(cameraObject.transform.position.z - car.transform.position.z, Is.EqualTo(-5.07f).Within(.02f));
         Assert.That(cameraObject.transform.position.y - car.transform.position.y, Is.EqualTo(1.5f).Within(.02f));
         car.SetExternalInput(new NFSRaycastCarController.DriverInput(1, 0, 0, nitro: true));
         car.SendMessage("FixedUpdate");
         yield return new WaitForSeconds(.18f);
         float firstPeak = camera.fieldOfView;
-        Assert.That(firstPeak, Is.GreaterThan(chase.NitroFOV + 2));
+        float sustainedFOV = Mathf.Lerp(chase.BaseFOV, chase.NitroFOV, chase.FOVExpansionMultiplier);
+        Assert.That(firstPeak, Is.GreaterThan(sustainedFOV + 2));
         yield return new WaitForSeconds(.7f);
-        Assert.That(camera.fieldOfView, Is.EqualTo(chase.NitroFOV).Within(.5f));
+        Assert.That(camera.fieldOfView, Is.EqualTo(sustainedFOV).Within(.5f));
         car.SetExternalInput(default); car.SendMessage("FixedUpdate");
         yield return new WaitForSeconds(.8f);
         Assert.That(camera.fieldOfView, Is.EqualTo(chase.BaseFOV).Within(1));
         car.SetExternalInput(new NFSRaycastCarController.DriverInput(1, 0, 0, nitro: true));
         car.SendMessage("FixedUpdate");
         yield return new WaitForSeconds(.18f);
-        Assert.That(camera.fieldOfView, Is.GreaterThan(chase.NitroFOV + 2));
+        Assert.That(camera.fieldOfView, Is.GreaterThan(sustainedFOV + 2));
         var wall = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
         wall.transform.position = car.transform.position + new Vector3(0, 1, -3);
         wall.transform.localScale = new Vector3(20, 10, .4f);
         Physics.SyncTransforms();
         yield return null;
         Assert.That(cameraObject.transform.position.z, Is.GreaterThan(wall.transform.position.z + .4f));
-        Log($"camera: 3.9m / 1.5m; nitro impulse FOV={firstPeak:F1}; repeat and obstruction passed");
+        Log($"camera: 5.07m / 1.5m; nitro impulse FOV={firstPeak:F1}; repeat and obstruction passed");
+    }
+
+    [UnityTest]
+    public IEnumerator CameraMaintainsRelativeFramingAtTopSpeedAndRaisesRoadView()
+    {
+        var car = CreateCar();
+        car.Body.useGravity = false; car.Body.interpolation = RigidbodyInterpolation.None;
+        var cameraObject = Track(new GameObject("Speed framing test camera", typeof(Camera), typeof(NFSArcadeCamera)));
+        var chase = cameraObject.GetComponent<NFSArcadeCamera>();
+        chase.Target = car; chase.enabled = false; chase.ShakeAmount = 0;
+        var camera = cameraObject.GetComponent<Camera>();
+        float previousCaptureDelta = Time.captureDeltaTime;
+        try
+        {
+            foreach (int fps in new[] { 30, 120 })
+            {
+                Time.captureDeltaTime = 1f / fps;
+                yield return null;
+                chase.SnapToTarget();
+                foreach (float kmh in new[] { 0f, car.MaxSpeedKmh, car.MaxSpeedKmh + car.NitroMaxSpeedBonus, 0f })
+                {
+                    Vector3 velocity = Vector3.forward * (kmh / 3.6f);
+                    // Advance the target every render frame. A stationary-target test would
+                    // miss the speed-dependent lag caused by world-space SmoothDamp.
+                    for (int frame = 0; frame < fps * 2; frame++)
+                    {
+                        car.transform.position += velocity * Time.deltaTime;
+                        car.Body.linearVelocity = velocity;
+                        Physics.SyncTransforms();
+                        car.SendMessage("FixedUpdate");
+                        chase.SendMessage("LateUpdate");
+                        yield return null;
+                    }
+                    float speed = Mathf.Clamp01(kmh / car.MaxSpeedKmh);
+                    float distance = chase.FollowDistance * chase.FollowDistanceMultiplier
+                        * (speed >= 1 ? chase.MaxSpeedDistanceScale : chase.LowSpeedDistanceScale);
+                    float height = chase.FollowHeight * chase.FollowDistanceMultiplier + (speed >= 1 ? chase.MaxSpeedHeightBoost : 0);
+                    Assert.That(car.transform.position.z - cameraObject.transform.position.z, Is.EqualTo(distance).Within(.04f), $"distance at {kmh} km/h, {fps} FPS");
+                    Assert.That(cameraObject.transform.position.y - car.transform.position.y, Is.EqualTo(height).Within(.04f));
+                    Assert.That(camera.fieldOfView, Is.EqualTo(Mathf.Lerp(chase.BaseFOV, chase.MaxSpeedFOV, speed * chase.FOVExpansionMultiplier)).Within(.2f));
+                    if (speed >= 1)
+                    {
+                        Vector3 road = car.transform.position + Vector3.forward * 25 - Vector3.up * .6f;
+                        Vector3 view = camera.WorldToViewportPoint(road);
+                        Assert.That(view.z, Is.GreaterThan(0));
+                        Assert.That(view.y, Is.InRange(.35f, .95f), "Road ahead is outside the usable camera view.");
+                    }
+                    Log($"camera {kmh:F0} km/h, {fps} FPS: distance={car.transform.position.z - cameraObject.transform.position.z:F2}m; height={height:F2}m; FOV={camera.fieldOfView:F1}");
+                }
+            }
+        }
+        finally { Time.captureDeltaTime = previousCaptureDelta; }
+    }
+
+    [TestCase(120, 1)]
+    [TestCase(320, .8f)]
+    public void HighSpeedSteeringIsReducedWithoutChangingOrdinaryCornering(float kmh, float expectedRatio)
+    {
+        float original = MeasureTurn(kmh, 1);
+        float tuned = MeasureTurn(kmh, .8f);
+        Assert.That(original, Is.GreaterThan(.02f), "Baseline failed to turn.");
+        Assert.That(tuned / original, Is.EqualTo(expectedRatio).Within(.07f));
+        Log($"steering {kmh} km/h: yaw {original:F3} -> {tuned:F3} rad/s");
+    }
+
+    private float MeasureTurn(float kmh, float steeringScale)
+    {
+        var car = CreateCar(); Simulate(car, 150);
+        car.HighSpeedSteeringScale = steeringScale;
+        car.Body.linearVelocity = Vector3.forward * (kmh / 3.6f);
+        car.SetExternalInput(new NFSRaycastCarController.DriverInput(0, 0, .25f));
+        Simulate(car, 10);
+        float yaw = Mathf.Abs(car.Body.angularVelocity.y);
+        Object.DestroyImmediate(car.gameObject);
+        return yaw;
     }
 
     private static void Log(string message)
