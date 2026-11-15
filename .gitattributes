@@ -3,7 +3,6 @@
 # Unity YAML: текст, LF
 *.unity text eol=lf
 *.prefab text eol=lf
-*.asset text eol=lf
 *.meta text eol=lf
 *.mat text eol=lf
 *.anim text eol=lf
@@ -33,7 +32,13 @@
 *.xml text eol=lf
 *.md text eol=lf
 
-# Бинарники не мержим как текст
+# Бинарные ассеты и данные Unity (не мержим и не меняем переводы строк)
+*.asset binary
+*.cubemap binary
+*.lighting binary
+*.bytes binary
+
+# Изображения
 *.png binary
 *.jpg binary
 *.jpeg binary
@@ -48,6 +53,8 @@
 *.ico binary
 *.exr binary
 *.hdr binary
+
+# 3D-модели
 *.fbx binary
 *.FBX binary
 *.obj binary
@@ -59,6 +66,8 @@
 *.3ds binary
 *.stl binary
 *.glb binary
+
+# Сборки и архивы
 *.dll binary
 *.so binary
 *.dylib binary
@@ -68,6 +77,8 @@
 *.gz binary
 *.rar binary
 *.unitypackage binary
+
+# Аудио и видео
 *.mp3 binary
 *.wav binary
 *.ogg binary
@@ -79,6 +90,8 @@
 *.avi binary
 *.webm binary
 *.mkv binary
+
+# Шрифты
 *.ttf binary
 *.otf binary
 *.woff binary

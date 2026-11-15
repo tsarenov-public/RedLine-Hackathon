@@ -10,11 +10,10 @@ public class HeavyAssetsLinker
 {
     private struct HeavyAsset
     {
-        public string RelativePath; 
-        public string DriveUrl;     
+        public string RelativePath;
+        public string DriveUrl;
     }
 
-    
     private static readonly HeavyAsset[] RequiredAssets =
     {
         new HeavyAsset
@@ -35,7 +34,6 @@ public class HeavyAssetsLinker
         EditorApplication.delayCall += () => CheckAndLinkAssets(silentIfOk: true);
     }
 
-    
     [MenuItem("Tools/Link Heavy FBX Assets")]
     public static void ManualCheck()
     {
@@ -80,15 +78,18 @@ public class HeavyAssetsLinker
             foreach (var asset in missing)
             {
                 string fileName = Path.GetFileName(asset.RelativePath);
-                
                 string[] foundFiles = Directory.GetFiles(sourceFolder, fileName, SearchOption.AllDirectories);
 
                 if (foundFiles.Length > 0)
                 {
+                    string fullSource = Path.GetFullPath(foundFiles[0]);
                     string fullTarget = Path.GetFullPath(asset.RelativePath);
                     Directory.CreateDirectory(Path.GetDirectoryName(fullTarget));
-                    CreateLink(foundFiles[0], fullTarget);
-                    linkedCount++;
+
+                    if (CreateLinkOrCopy(fullSource, fullTarget))
+                    {
+                        linkedCount++;
+                    }
                 }
             }
 
@@ -97,12 +98,38 @@ public class HeavyAssetsLinker
         }
     }
 
-    private static void CreateLink(string source, string target)
+    private static bool CreateLinkOrCopy(string source, string target)
     {
+        if (File.Exists(target))
+            File.Delete(target);
+
 #if UNITY_EDITOR_OSX || UNITY_EDITOR_LINUX
-        Process.Start("ln", $"-s \"{source}\" \"{target}\"")?.WaitForExit();
+        RunProcess("ln", $"-s \"{source}\" \"{target}\"");
 #elif UNITY_EDITOR_WIN
-        Process.Start("cmd.exe", $"/c mklink /H \"{target}\" \"{source}\"")?.WaitForExit();
+        // Пробуем создать жёсткую ссылку (работает мгновенно, если файлы на одном диске)
+        RunProcess("cmd.exe", $"/c mklink /H \"{target}\" \"{source}\"");
+
+        // Если файлы на разных дисках (например, C: и D:), mklink /H не сработает — копируем файл
+        if (!File.Exists(target))
+        {
+            UnityEngine.Debug.Log($"[HeavyAssetsLinker] Файлы на разных дисках, копирую {Path.GetFileName(source)} в проект...");
+            File.Copy(source, target, overwrite: true);
+        }
 #endif
+        return File.Exists(target);
+    }
+
+    private static void RunProcess(string fileName, string arguments)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = fileName,
+            Arguments = arguments,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        using var process = Process.Start(startInfo);
+        process?.WaitForExit();
     }
 }
