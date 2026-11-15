@@ -109,7 +109,7 @@ public sealed class NFSCarSetupWizard : EditorWindow
                 var pivot = Child(root.transform, "WheelVisual_" + WheelName(i)); pivot.localPosition = bounds.center;
                 clonedWheels[i].SetParent(pivot, true);
                 var wheel = car.Wheels[i]; wheel.Radius = radius; wheel.Visual = pivot;
-                float preload = car.Mass * 9.81f / (4 * car.SpringStiffness);
+                float preload = car.Mass * Physics.gravity.magnitude * car.GravityMultiplier / (4 * car.EffectiveSpringStiffness);
                 var mount = Child(root.transform, "Suspension_" + WheelName(i));
                 mount.localPosition = bounds.center + Vector3.up * (car.SuspensionRestLength - preload);
                 wheel.SuspensionPoint = mount; wheel.LocalAnchor = mount.localPosition;
