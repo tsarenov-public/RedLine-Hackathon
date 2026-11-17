@@ -107,30 +107,30 @@ MonoBehaviour:
   - 0.5
   - 0.9166667
   - 1
-  OCOOCOCOCO: 
-  OQQOOCDCDD: 
-  OOOOCCQDQO: 
-  OQCQQCCQCQ: 
-  OQDCDDDODD: 
-  OCDDODQQDC: 
-  OQCQOQCDCO: 
-  OOCQQDDOOC: 
-  OCOOCOCOCOStart: 
-  OQQOOCDCDDStart: 
-  OOOOCCQDQOStart: 
-  OQCQQCCQCQStart: 
-  OQDCDDDODDStart: 
-  OCDDODQQDCStart: 
-  OQCQOQCDCOStart: 
-  OOCQQDDOOCStart: 
-  frontLeftRoadInts: 070000000e000000
-  frontRightRoadInts: 1f0000001a000000
-  backLeftRoadInts: 2400000029000000
-  backRightRoadInts: 3e00000037000000
+  OCQCODOCDQ: 
+  OOOCQCOOQQ: 
+  ODCQDCCQCD: 
+  OCQDDOOCDO: 
+  ODCCDDQQOD: 
+  OQOQQDQCCQ: 
+  OQOCCOCCDQ: 
+  OQODDDCDCO: 
+  OCQCODOCDQStart: 
+  OOOCQCOOQQStart: 
+  ODCQDCCQCDStart: 
+  OCQDDOOCDOStart: 
+  ODCCDDQQODStart: 
+  OQOQQDQCCQStart: 
+  OQOCCOCCDQStart: 
+  OQODDDCDCOStart: 
+  frontLeftRoadInts: 070000000e000000i
+  frontRightRoadInts: 1f0000001a000000i
+  backLeftRoadInts: 2400000029000000i
+  backRightRoadInts: 3e00000037000000i
   leftLeftRoadInts: 
   leftRightRoadInts: 
-  rightLeftRoadInts: 4300000048000000
-  rightRightRoadInts: 5700000052000000
+  rightLeftRoadInts: 4300000048000000i
+  rightRightRoadInts: 5700000052000000i
   sidewalkCorners: []
   sidewalkWidths: []
   curbHeights: []
@@ -211,7 +211,7 @@ MonoBehaviour:
       nodes:
       - {x: -3, y: 0}
       - {x: 3, y: 0}
-      hardEdge: 0000
+      hardEdge: 0000y
       priorityNodeIndexLeft: 0
       priorityNodeIndexRight: 1
       nodesV3: []
@@ -269,8 +269,7 @@ MonoBehaviour:
     roadMaterials: []
     roadPhysicsMaterial: {fileID: 0}
     roadPhysicsMaterials: []
-    connectionMaterial: {fileID: 2100000, guid: 3c555588afad81d428ad1704d5d015a7,
-      type: 2}
+    connectionMaterial: {fileID: 2100000, guid: 3c555588afad81d428ad1704d5d015a7, type: 2}
     isSideObject: 0
     isCustomRoad: 0
     subSegments: 1
@@ -432,7 +431,7 @@ MonoBehaviour:
   cornerPresetName: 
   selectedSidewalkPreset: 0
   sidewalkPresetName: 
-  OOOOOOOOCDCorner: 0
+  OQCDCDCCDDCorner: 0
   leftBottom: {x: -3, y: 0.5, z: 0}
   rightBottom: {x: 3.2928934, y: 0.5, z: -3.2928932}
   leftTop: {x: 0, y: 0, z: 0}
@@ -474,7 +473,7 @@ MonoBehaviour:
     - 1
     roadShapeUVY2: []
     hardEdge: 
-    roadShapeMaterialInts: 0000000000000000
+    roadShapeMaterialInts: 0000000000000000i
     sidewalkLeftVecs: []
     sidewalkLeftUVY: []
     sidewalkLeftMaterialInts: 
@@ -482,8 +481,8 @@ MonoBehaviour:
     sidewalkRightUVY: []
     sidewalkRightMaterialInts: 
     connectionVecs: []
-    connectionVecInts: 010000001b000000
-    fullConnectionVecInts: 010000001b000000
+    connectionVecInts: 010000001b000000i
+    fullConnectionVecInts: 010000001b000000i
     sidewalkLeftConnectionVecInts: 
     sidewalkRightConnectionVecInts: 
     doConnectionTri: 
@@ -2674,7 +2673,7 @@ MonoBehaviour:
     - 1
     roadShapeUVY2: []
     hardEdge: 
-    roadShapeMaterialInts: 0000000000000000
+    roadShapeMaterialInts: 0000000000000000i
     sidewalkLeftVecs: []
     sidewalkLeftUVY: []
     sidewalkLeftMaterialInts: 
@@ -2682,8 +2681,8 @@ MonoBehaviour:
     sidewalkRightUVY: []
     sidewalkRightMaterialInts: 
     connectionVecs: []
-    connectionVecInts: 010000001b000000
-    fullConnectionVecInts: 010000001b000000
+    connectionVecInts: 010000001b000000i
+    fullConnectionVecInts: 010000001b000000i
     sidewalkLeftConnectionVecInts: 
     sidewalkRightConnectionVecInts: 
     doConnectionTri: 
@@ -2987,7 +2986,7 @@ MonoBehaviour:
     - 0
     roadShapeUVY2: []
     hardEdge: 
-    roadShapeMaterialInts: 0000000000000000
+    roadShapeMaterialInts: 0000000000000000i
     sidewalkLeftVecs: []
     sidewalkLeftUVY: []
     sidewalkLeftMaterialInts: 
@@ -2995,8 +2994,8 @@ MonoBehaviour:
     sidewalkRightUVY: []
     sidewalkRightMaterialInts: 
     connectionVecs: []
-    connectionVecInts: 2000000038000000
-    fullConnectionVecInts: 2000000038000000
+    connectionVecInts: 2000000038000000i
+    fullConnectionVecInts: 2000000038000000i
     sidewalkLeftConnectionVecInts: 
     sidewalkRightConnectionVecInts: 
     doConnectionTri: 
@@ -3293,15 +3292,14 @@ MonoBehaviour:
     roadShapeVecs:
     - {x: -3, y: 0}
     - {x: 3, y: 0}
-    roadShapeVecsString: -4.5, 0.3;-4.3, 0.3;-3.3, 0.3;-3, 0.3;-3, 0;3, 0;3, 0.3;3.3,
-      0.3;4.3, 0.3;4.5, 0.3;
+    roadShapeVecsString: -4.5, 0.3;-4.3, 0.3;-3.3, 0.3;-3, 0.3;-3, 0;3, 0;3, 0.3;3.3, 0.3;4.3, 0.3;4.5, 0.3;
     roadShapeMatchCount: -1
     roadShapeUVY:
     - 0
     - 1
     roadShapeUVY2: []
     hardEdge: 
-    roadShapeMaterialInts: 010000000100000001000000010000000100000000000000000000000100000001000000010000000100000001000000
+    roadShapeMaterialInts: 010000000100000001000000010000000100000000000000000000000100000001000000010000000100000001000000i
     sidewalkLeftVecs:
     - {x: -4.5, y: 0.25}
     - {x: -4.25, y: 0.25}
@@ -3329,10 +3327,10 @@ MonoBehaviour:
     - 1
     sidewalkRightMaterialInts: 
     connectionVecs: []
-    connectionVecInts: fb000000f9000000f4000000ef000000ea0000003300000047000000780000007d000000820000008700000089000000
-    fullConnectionVecInts: fb000000f9000000f4000000ef000000ea0000003300000047000000780000007d000000820000008700000089000000
-    sidewalkLeftConnectionVecInts: fb000000f9000000f4000000ef000000ea000000
-    sidewalkRightConnectionVecInts: 780000007d000000820000008700000089000000
+    connectionVecInts: fb000000f9000000f4000000ef000000ea0000003300000047000000780000007d000000820000008700000089000000i
+    fullConnectionVecInts: fb000000f9000000f4000000ef000000ea0000003300000047000000780000007d000000820000008700000089000000i
+    sidewalkLeftConnectionVecInts: fb000000f9000000f4000000ef000000ea000000i
+    sidewalkRightConnectionVecInts: 780000007d000000820000008700000089000000i
     doConnectionTri: 
     outerVecInts: 
     outerVecs: []
@@ -3635,7 +3633,7 @@ MonoBehaviour:
     - 0
     roadShapeUVY2: []
     hardEdge: 
-    roadShapeMaterialInts: 0000000000000000
+    roadShapeMaterialInts: 0000000000000000i
     sidewalkLeftVecs: []
     sidewalkLeftUVY: []
     sidewalkLeftMaterialInts: 
@@ -3643,8 +3641,8 @@ MonoBehaviour:
     sidewalkRightUVY: []
     sidewalkRightMaterialInts: 
     connectionVecs: []
-    connectionVecInts: 3f00000053000000
-    fullConnectionVecInts: 3f00000053000000
+    connectionVecInts: 3f00000053000000i
+    fullConnectionVecInts: 3f00000053000000i
     sidewalkLeftConnectionVecInts: 
     sidewalkRightConnectionVecInts: 
     doConnectionTri: 
@@ -5018,7 +5016,7 @@ MonoBehaviour:
   - {x: 10.252136, y: 0, z: 10.252129}
   - {x: 10.252136, y: 0, z: 10.252129}
   - {x: 10.252136, y: 0, z: -10.252129}
-  surfaceInts: 07000000010000001f0000001b0000003e000000380000002400000020000000380000003e0000003e00000038000000430000003f0000005700000053000000010000000200000003000000040000000500000006000000070000003e0000003d0000003c0000003b0000003a0000003900000038000000
+  surfaceInts: 07000000010000001f0000001b0000003e000000380000002400000020000000380000003e0000003e00000038000000430000003f0000005700000053000000010000000200000003000000040000000500000006000000070000003e0000003d0000003c0000003b0000003a0000003900000038000000i
   leftBottomCorner: {x: 0, y: 0, z: 0}
   leftTopCorner: {x: 0, y: 0, z: 0}
   rightBottomCorner: {x: 0, y: 0, z: 0}
@@ -5042,7 +5040,7 @@ MonoBehaviour:
   topRightSidewalkCurbDepth: 0.25
   v32Sidewalks: 1
   testVec: {x: 0, y: 0, z: 0}
-  surfaceSurroundingInts: 090000000a0000000b0000000c0000000d0000000e0000000f00000010000000
+  surfaceSurroundingInts: 090000000a0000000b0000000c0000000d0000000e0000000f00000010000000i
   rotationPriorityElement: -1
   cornerPos: {x: 4.5, y: 0.25, z: 4.5}
   mainCorner: {x: 4.5, y: 0.25, z: 4.5}
@@ -5089,7 +5087,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1177434082057026}
-  m_Mesh: {fileID: 4300000, guid: e9632c06beec86940af6c9a1b3a295fe, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 27fe69895a3a0504aaa0c39df07e1a2f, type: 2}
 --- !u!23 &23699835880606756
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5110,6 +5108,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5131,9 +5131,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &64722161294490610
 MeshCollider:
@@ -5232,6 +5234,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5253,9 +5257,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &64080796813073166
 MeshCollider:
