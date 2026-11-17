@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using EasyRoads3Dv3;
 using RedLine.NFS;
 using UnityEditor;
@@ -406,18 +408,132 @@ public sealed class NFSCarSetupWizard : EditorWindow
 [CustomEditor(typeof(NFSRaycastCarController))]
 public sealed class NFSRaycastCarControllerInspector : Editor
 {
+    private static readonly Dictionary<string, string> Labels = GetLabels(typeof(NFSRaycastCarController));
+
     public override void OnInspectorGUI()
     {
-        DrawDefaultInspector();
-        var car = (NFSRaycastCarController)target;
-        EditorGUILayout.Space(); EditorGUILayout.LabelField("Runtime telemetry", EditorStyles.boldLabel);
-        using (new EditorGUI.DisabledScope(true))
+        float originalLabelWidth = EditorGUIUtility.labelWidth;
+        EditorGUIUtility.labelWidth = Mathf.Max(originalLabelWidth, Mathf.Min(345f, EditorGUIUtility.currentViewWidth - 155f));
+        try
         {
-            EditorGUILayout.FloatField("Speed (km/h)", car.SpeedKmh); EditorGUILayout.IntField("Current gear (-1 = R)", car.CurrentGear);
-            EditorGUILayout.FloatField("RPM", car.CurrentRPM); EditorGUILayout.FloatField("Slip angle", car.SlipAngle);
-            EditorGUILayout.FloatField("NOS", car.NitroAmount); EditorGUILayout.IntField("Grounded wheels", car.GroundedWheelCount);
-            EditorGUILayout.Toggle("Drifting", car.IsDrifting); EditorGUILayout.Toggle("Shifting", car.IsShifting);
+            DrawSettings();
+            DrawTelemetry((NFSRaycastCarController)target);
+        }
+        finally
+        {
+            EditorGUIUtility.labelWidth = originalLabelWidth;
         }
         if (Application.isPlaying) Repaint();
+    }
+
+    private void DrawSettings()
+    {
+        serializedObject.Update();
+        using var property = serializedObject.GetIterator();
+        bool enterChildren = true;
+        while (property.NextVisible(enterChildren))
+        {
+            enterChildren = false;
+            var label = GetLabel(property, Labels);
+            using (new EditorGUI.DisabledScope(property.propertyPath == "m_Script"))
+            {
+                if (label != null &&
+                    (property.name == nameof(NFSRaycastCarController.HighSpeedSteeringScale) ||
+                     property.name == nameof(NFSRaycastCarController.BrakeStrengthMultiplier)) &&
+                    EditorStyles.label.CalcSize(label).x > EditorGUIUtility.labelWidth - 5f)
+                {
+                    EditorGUILayout.LabelField(label, EditorStyles.wordWrappedLabel);
+                    label = GUIContent.none;
+                }
+                EditorGUILayout.PropertyField(property, label, true);
+            }
+        }
+        serializedObject.ApplyModifiedProperties();
+    }
+
+    private static void DrawTelemetry(NFSRaycastCarController car)
+    {
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Телеметрия", EditorStyles.boldLabel);
+        using (new EditorGUI.DisabledScope(true))
+        {
+            EditorGUILayout.FloatField("Скорость, км/ч", car.SpeedKmh);
+            EditorGUILayout.IntField("Передача (−1 — задняя)", car.CurrentGear);
+            EditorGUILayout.FloatField("Обороты, об/мин", car.CurrentRPM);
+            EditorGUILayout.FloatField("Угол скольжения, °", car.SlipAngle);
+            EditorGUILayout.FloatField("Заряд нитро, ед.", car.NitroAmount);
+            EditorGUILayout.IntField("Колёса в контакте", car.GroundedWheelCount);
+            EditorGUILayout.Toggle("В заносе", car.IsDrifting);
+            EditorGUILayout.Toggle("Переключение передачи", car.IsShifting);
+        }
+    }
+
+    internal static Dictionary<string, string> GetLabels(Type type) => type.GetFields()
+        .Where(field => field.IsDefined(typeof(InspectorNameAttribute)))
+        .ToDictionary(field => field.Name, field => field.GetCustomAttribute<InspectorNameAttribute>().displayName);
+
+    internal static GUIContent GetLabel(SerializedProperty property, Dictionary<string, string> labels) =>
+        labels.TryGetValue(property.name, out string label) ? new GUIContent(label, property.tooltip) : null;
+}
+
+[CustomPropertyDrawer(typeof(NFSRaycastCarController.Wheel))]
+public sealed class NFSRaycastWheelDrawer : PropertyDrawer
+{
+    private const string WheelElement = nameof(NFSRaycastCarController.Wheels) + ".Array.data";
+    private static readonly Dictionary<string, string> Labels =
+        NFSRaycastCarControllerInspector.GetLabels(typeof(NFSRaycastCarController.Wheel));
+
+    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    {
+        string wheelName = property.propertyPath switch
+        {
+            WheelElement + "[0]" => "Переднее левое",
+            WheelElement + "[1]" => "Переднее правое",
+            WheelElement + "[2]" => "Заднее левое",
+            WheelElement + "[3]" => "Заднее правое",
+            _ => label.text
+        };
+        using (var scope = new EditorGUI.PropertyScope(position, new GUIContent(wheelName, label.tooltip), property))
+        {
+            position.height = EditorGUIUtility.singleLineHeight;
+            property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, scope.content, true);
+            if (!property.isExpanded) return;
+
+            // Unity's reorderable list restores its own label width for each element.
+            EditorGUIUtility.labelWidth = Mathf.Max(EditorGUIUtility.labelWidth, Mathf.Min(345f, position.width - 115f));
+            using (new EditorGUI.IndentLevelScope())
+            {
+                foreach (var field in GetFields(property))
+                {
+                    var fieldLabel = NFSRaycastCarControllerInspector.GetLabel(field, Labels);
+                    position.y += position.height + EditorGUIUtility.standardVerticalSpacing;
+                    position.height = EditorGUI.GetPropertyHeight(field, fieldLabel, true);
+                    EditorGUI.PropertyField(position, field, fieldLabel, true);
+                }
+            }
+        }
+    }
+
+    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+    {
+        float height = EditorGUIUtility.singleLineHeight;
+        if (property.isExpanded)
+        {
+            foreach (var field in GetFields(property))
+                height += EditorGUIUtility.standardVerticalSpacing + EditorGUI.GetPropertyHeight(field, true);
+        }
+        return height;
+    }
+
+    private static IEnumerable<SerializedProperty> GetFields(SerializedProperty property)
+    {
+        using var field = property.Copy();
+        using var end = field.GetEndProperty();
+        bool enterChildren = true;
+        while (field.NextVisible(enterChildren) && !SerializedProperty.EqualContents(field, end))
+        {
+            enterChildren = false;
+            yield return field;
+        }
     }
 }

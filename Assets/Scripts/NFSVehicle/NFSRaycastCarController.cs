@@ -10,16 +10,27 @@ namespace RedLine.NFS
         [Serializable]
         public sealed class Wheel
         {
-            [Tooltip("Optional suspension mount. Its position defines the ray origin; chassis up defines its axis.")]
+            [InspectorName("Опора подвески")]
+            [Tooltip("Задаёт начало луча подвески. Направление луча — вниз по локальной оси Y кузова.")]
             public Transform SuspensionPoint;
-            [Tooltip("Wheel spin/steer pivot. Keep the model's import correction on a child of this pivot.")]
+            [InspectorName("Ось вращения колеса")]
+            [Tooltip("Объект, который поворачивается и вращается вместе с колесом. Поправку ориентации модели задавайте на его дочернем объекте.")]
             public Transform Visual;
-            [Tooltip("Optional native wheel, used only in WheelCollider mode.")] public WheelCollider PhysicsCollider;
-            [Tooltip("Chassis-local mount used when no SuspensionPoint is assigned.")]
+            [InspectorName("Коллайдер колеса")]
+            [Tooltip("Компонент WheelCollider для этого колеса. Обязателен для всех четырёх колёс в режиме WheelCollider.")]
+            public WheelCollider PhysicsCollider;
+            [InspectorName("Смещение опоры")]
+            [Tooltip("Координаты крепления относительно кузова, в м. Используются, если точка крепления подвески не назначена.")]
             public Vector3 LocalAnchor;
-            [Tooltip("Front steering wheel.")] public bool Steers;
-            [Tooltip("Receives engine torque; the default preset is rear-wheel drive.")] public bool Driven;
-            [Min(.05f), Tooltip("Rolling radius in metres.")] public float Radius = .34f;
+            [InspectorName("Поворотное колесо")]
+            [Tooltip("Включает поворот колеса рулём. Ручник действует только на неуправляемые колёса.")]
+            public bool Steers;
+            [InspectorName("Ведущее колесо")]
+            [Tooltip("Включает передачу тяги на колесо. В стандартном пресете ведущие колёса задние.")]
+            public bool Driven;
+            [Min(.05f), InspectorName("Радиус колеса")]
+            [Tooltip("Радиус качения, в м. Больший радиус удлиняет проверку опоры. У задних колёс он также снижает расчётные обороты двигателя при той же скорости.")]
+            public float Radius = .34f;
             [NonSerialized] internal Quaternion visualBindRotation;
             [NonSerialized] internal float spin;
             [NonSerialized] internal WheelContact contact;
@@ -42,86 +53,194 @@ namespace RedLine.NFS
             { Throttle = throttle; BrakeReverse = brakeReverse; Steer = steer; Handbrake = handbrake; Nitro = nitro; }
         }
 
-        [Header("Input — keyboard and gamepad, no action asset required")]
-        [Tooltip("W / Up Arrow / right trigger.")] public InputAction Throttle = new InputAction("Throttle", InputActionType.Value, expectedControlType: "Axis");
-        [Tooltip("S / Down Arrow / left trigger. Brake first, then reverse after stopping.")] public InputAction BrakeReverse = new InputAction("BrakeReverse", InputActionType.Value, expectedControlType: "Axis");
-        [Tooltip("A/D, arrows or left stick X.")] public InputAction Steer = new InputAction("Steer", InputActionType.Value, expectedControlType: "Axis");
-        [Tooltip("Space / gamepad south button.")] public InputAction Handbrake = new InputAction("Handbrake", InputActionType.Button);
-        [Tooltip("Left Shift / gamepad east button.")] public InputAction Nitro = new InputAction("Nitro", InputActionType.Button);
+        [Header("Управление с клавиатуры и геймпада")]
+        [InspectorName("Газ")]
+        [Tooltip("W, стрелка вверх или правый триггер геймпада.")] public InputAction Throttle = new InputAction("Throttle", InputActionType.Value, expectedControlType: "Axis");
+        [InspectorName("Тормоз / задний ход")]
+        [Tooltip("S, стрелка вниз или левый триггер геймпада. Удерживайте после остановки для включения заднего хода.")] public InputAction BrakeReverse = new InputAction("BrakeReverse", InputActionType.Value, expectedControlType: "Axis");
+        [InspectorName("Руль")]
+        [Tooltip("A/D, стрелки влево и вправо или ось X левого стика.")] public InputAction Steer = new InputAction("Steer", InputActionType.Value, expectedControlType: "Axis");
+        [InspectorName("Ручник")]
+        [Tooltip("Пробел или нижняя кнопка геймпада.")] public InputAction Handbrake = new InputAction("Handbrake", InputActionType.Button);
+        [InspectorName("Нитро")]
+        [Tooltip("Левый Shift или правая кнопка геймпада.")] public InputAction Nitro = new InputAction("Nitro", InputActionType.Button);
 
-        [Header("Chassis — M3 GTR inspired arcade preset")]
-        [Min(100), Tooltip("Body mass in kg.")] public float Mass = 1400;
-        [Tooltip("Low chassis-local centre of mass; metres relative to the physics root.")] public Vector3 CenterOfMass = new Vector3(0, -.25f, .05f);
-        [Range(0, 31), Tooltip("Layer assigned to own colliders. Default: built-in Ignore Raycast; no ProjectSettings changes.")]
+        [Header("Кузов и сопротивление движению")]
+        [Min(100), InspectorName("Масса кузова")]
+        [Tooltip("Масса автомобиля, в кг. Чем она больше, тем выше инерция и нагрузка на подвеску.")]
+        public float Mass = 1400;
+        [InspectorName("Центр масс")]
+        [Tooltip("Координаты относительно кузова, в м. Большее Y поднимает центр масс и усиливает крен. Используется, если маркер не назначен.")]
+        public Vector3 CenterOfMass = new Vector3(0, -.25f, .05f);
+        [Range(0, 31), InspectorName("Слой автомобиля")]
+        [Tooltip("Номер слоя собственных коллайдеров. Лучевая подвеска исключает этот слой из поиска опоры.")]
         public int VehicleLayer = 2;
-        [Tooltip("Drivable layers; the vehicle's own layer is always excluded.")] public LayerMask GroundLayers = Physics.DefaultRaycastLayers;
-        [Min(0), Tooltip("Quadratic aerodynamic resistance, N / (m/s)^2.")] public float AeroDrag = .42f;
-        [Min(0), Tooltip("Rolling deceleration in m/s², active on the ground.")] public float RollingResistance = .12f;
-        [Range(1, 4), Tooltip("Vehicle-only gravity multiplier. Suspension support is compensated to preserve ride height.")] public float GravityMultiplier = 3;
+        [InspectorName("Слои опорной поверхности")]
+        [Tooltip("Слои, на которых лучевая подвеска ищет опору. Слой автомобиля исключается.")]
+        public LayerMask GroundLayers = Physics.DefaultRaycastLayers;
+        [Min(0), InspectorName("Аэродинамическое сопротивление")]
+        [Tooltip("Коэффициент сопротивления воздуха, в Н/(м/с)². При увеличении машина сильнее теряет скорость, особенно на высоких скоростях.")]
+        public float AeroDrag = .42f;
+        [Min(0), InspectorName("Сопротивление качению")]
+        [Tooltip("Замедление на опорной поверхности, в м/с². При увеличении машина быстрее теряет скорость накатом.")]
+        public float RollingResistance = .12f;
+        [Range(1, 4), InspectorName("Множитель гравитации")]
+        [Tooltip("Чем выше множитель, тем сильнее гравитация автомобиля при включённой гравитации Rigidbody. Лучевая подвеска усиливает пружины и демпферы, сохраняя статическую просадку.")]
+        public float GravityMultiplier = 3;
 
-        [Header("Four raycast wheels — FL, FR, RL, RR")]
-        [Tooltip("Exactly four wheels, ordered front left, front right, rear left, rear right.")]
+        [Header("Колёса и подвеска")]
+        [InspectorName("Колёса")]
+        [Tooltip("Порядок четырёх колёс — переднее левое, переднее правое, заднее левое, заднее правое.")]
         public Wheel[] Wheels = DefaultWheels();
-        [Tooltip("Use four native WheelColliders instead of raycast spring/tyre forces. All four references are required.")]
+        [InspectorName("Использовать WheelCollider")]
+        [Tooltip("Включает физику WheelCollider вместо лучевой подвески и её сил сцепления. Требуются четыре назначенных коллайдера.")]
         public bool UseWheelColliders;
-        [Tooltip("Optional centre-of-mass marker, in chassis space.")] public Transform CenterOfMassTransform;
-        [Min(.05f), Tooltip("Unloaded spring length in metres.")] public float SuspensionRestLength = .36f;
-        [Min(.02f), Tooltip("Maximum compression and extra droop travel in metres.")] public float SuspensionTravel = .22f;
-        [Min(1000), Tooltip("Hooke spring stiffness per wheel, N/m.")] public float SpringStiffness = 38000;
-        [Min(0), Tooltip("Suspension damping per wheel, N/(m/s).")] public float DamperStiffness = 4200;
-        [Range(0, 1), Tooltip("Sphere radius for suspension casts; zero selects a raycast.")] public float CastRadius = .1f;
-        [Range(0, 1), Tooltip("Couples the left/right suspension to resist body roll.")] public float AntiRoll = .45f;
+        [InspectorName("Маркер центра масс")]
+        [Tooltip("Если маркер назначен, его позиция задаёт центр масс при запуске.")]
+        public Transform CenterOfMassTransform;
+        [Min(.05f), InspectorName("Длина подвески без нагрузки")]
+        [Tooltip("Длина пружины без нагрузки, в м. При увеличении растёт клиренс в лучевом режиме. В режиме WheelCollider служит базой для расчёта сжатия.")]
+        public float SuspensionRestLength = .36f;
+        [Min(.02f), InspectorName("Ход подвески")]
+        [Tooltip("Ход от положения без нагрузки в каждую сторону, в м. При увеличении растёт запас сжатия и вывешивания лучевой подвески.")]
+        public float SuspensionTravel = .22f;
+        [Min(1000), InspectorName("Жёсткость пружин")]
+        [Tooltip("Жёсткость на колесо, в Н/м. При увеличении лучевая подвеска меньше проседает, а стабилизатор сильнее сопротивляется крену в обоих режимах.")]
+        public float SpringStiffness = 38000;
+        [Min(0), InspectorName("Демпфирование подвески")]
+        [Tooltip("Коэффициент демпфирования на колесо, в Н/(м/с). При увеличении колебания лучевой подвески гасятся сильнее.")]
+        public float DamperStiffness = 4200;
+        [Range(0, 1), InspectorName("Радиус лучевой проверки")]
+        [Tooltip("Радиус сферы для поиска опоры, в м. При увеличении зона поиска шире, но не больше 80% радиуса колеса. Ноль включает обычный луч.")]
+        public float CastRadius = .1f;
+        [Range(0, 1), InspectorName("Жёсткость стабилизатора крена")]
+        [Tooltip("При увеличении разница хода левого и правого колёс создаёт большее усилие против крена. Оба колеса оси должны иметь контакт.")]
+        public float AntiRoll = .45f;
 
-        [Header("Engine and automatic transmission")]
-        [Min(10), Tooltip("Forward speed limit without nitro, km/h.")] public float MaxSpeedKmh = 320;
-        [Min(1), Tooltip("Peak crankshaft torque, N·m.")] public float EngineTorque = 540;
-        [Tooltip("Torque multiplier over normalized engine RPM.")]
+        [Header("Двигатель и автоматическая КПП")]
+        [Min(10), InspectorName("Предел скорости вперёд")]
+        [Tooltip("Предел без нитро, в км/ч. При увеличении тяга начинает спадать на более высокой скорости.")]
+        public float MaxSpeedKmh = 320;
+        [Min(1), InspectorName("Пиковый момент двигателя")]
+        [Tooltip("Базовый крутящий момент до применения кривой, в Н·м. При увеличении растёт расчётная тяга на ведущих колёсах.")]
+        public float EngineTorque = 540;
+        [InspectorName("Кривая крутящего момента")]
+        [Tooltip("По X — доля максимальных оборотов. По Y — множитель момента. Поднимите кривую там, где нужна большая тяга.")]
         public AnimationCurve TorqueCurve = new AnimationCurve(new Keyframe(0, .65f), new Keyframe(.45f, 1), new Keyframe(.8f, .95f), new Keyframe(1, .55f));
-        [Tooltip("Index 0 is a negative reverse ratio; indices 1–6 are forward ratios.")]
+        [InspectorName("Передаточные числа КПП")]
+        [Tooltip("Элемент 0 — отрицательное число заднего хода, остальные — передачи вперёд. Большее число по модулю даёт больше тяги и оборотов при той же скорости.")]
         public float[] GearRatios = { -3.4f, 3.65f, 2.15f, 1.55f, 1.18f, .96f, .78f };
-        [Min(.1f), Tooltip("Final drive reduction.")] public float FinalDrive = 3.8f;
-        [Min(100), Tooltip("Upshift threshold, RPM.")] public float ShiftUpRPM = 7200;
-        [Min(100), Tooltip("Downshift threshold, RPM.")] public float ShiftDownRPM = 3200;
-        [Min(100), Tooltip("Minimum running engine speed, RPM.")] public float IdleRPM = 950;
-        [Min(1000), Tooltip("Engine redline, RPM.")] public float MaxRPM = 8000;
-        [Range(.05f, 1), Tooltip("Torque interruption duration per shift, seconds.")] public float ShiftDelay = .18f;
-        [Range(.1f, 1), Tooltip("Hold the opposite pedal at rest for this long before changing direction.")] public float DirectionChangeDelay = .22f;
-        [Min(1), Tooltip("Maximum reverse speed, km/h.")] public float ReverseMaxSpeedKmh = 40;
-        [Min(1), Tooltip("Service brake deceleration, m/s².")] public float BrakeAcceleration = 15;
-        [Range(1, 4), Tooltip("Service brake strength multiplier; does not strengthen the handbrake.")] public float BrakeStrengthMultiplier = 2;
+        [Min(.1f), InspectorName("Передаточное число главной пары")]
+        [Tooltip("При увеличении растут тяга и обороты двигателя при той же скорости на любой передаче.")]
+        public float FinalDrive = 3.8f;
+        [Min(100), InspectorName("Обороты переключения вверх")]
+        [Tooltip("Порог, в об/мин. При увеличении автомат дольше держит низкую передачу при разгоне.")]
+        public float ShiftUpRPM = 7200;
+        [Min(100), InspectorName("Обороты переключения вниз")]
+        [Tooltip("Порог, в об/мин. При увеличении автомат раньше понижает передачу, если обороты после переключения достаточно низкие.")]
+        public float ShiftDownRPM = 3200;
+        [Min(100), InspectorName("Обороты холостого хода")]
+        [Tooltip("Нижний предел, в об/мин. При увеличении двигатель держит более высокие обороты при отпущенном газе.")]
+        public float IdleRPM = 950;
+        [Min(1000), InspectorName("Максимальные обороты")]
+        [Tooltip("Верхний предел, в об/мин. При увеличении расширяется диапазон оборотов, по которому читается кривая момента.")]
+        public float MaxRPM = 8000;
+        [Range(.05f, 1), InspectorName("Время переключения передачи")]
+        [Tooltip("Длительность переключения, в с. При увеличении дольше сохраняется ослабленная тяга.")]
+        public float ShiftDelay = .18f;
+        [Range(.1f, 1), InspectorName("Задержка смены направления")]
+        [Tooltip("Время удержания педали противоположного направления при отпущенной второй педали и скорости ниже 2,2 км/ч, в с. Чем больше, тем дольше ожидание.")]
+        public float DirectionChangeDelay = .22f;
+        [Min(1), InspectorName("Предел скорости заднего хода")]
+        [Tooltip("Предел, в км/ч. При увеличении машина может быстрее ехать задним ходом.")]
+        public float ReverseMaxSpeedKmh = 40;
+        [Header("Торможение")]
+        [Min(1), InspectorName("Базовое тормозное замедление")]
+        [Tooltip("Базовое замедление, в м/с². При увеличении растёт усилие рабочих тормозов и ручника.")]
+        public float BrakeAcceleration = 15;
+        [Range(1, 4), InspectorName("Множитель силы рабочих тормозов")]
+        [Tooltip("Чем выше множитель, тем больше общее усилие рабочих тормозов при том же нажатии педали. Коэффициент одинаков для всех колёс.")]
+        public float BrakeStrengthMultiplier = 2;
 
-        [Header("Steering and tyre grip")]
-        [Range(5, 50), Tooltip("Low-speed front steering angle, degrees.")] public float MaxSteerAngle = 32;
-        [Tooltip("Steering angle multiplier over SpeedKmh / MaxSpeedKmh.")]
+        [Header("Руление и сцепление шин")]
+        [Range(5, 50), InspectorName("Максимальный угол поворота колёс")]
+        [Tooltip("Базовый угол при полном руле, в градусах. При увеличении колёса поворачиваются сильнее, особенно на малой скорости.")]
+        public float MaxSteerAngle = 32;
+        [InspectorName("Кривая угла поворота от скорости")]
+        [Tooltip("По X — доля предела скорости без нитро. По Y — множитель угла. Поднимите кривую там, где нужен больший угол поворота колёс.")]
         public AnimationCurve SteeringBySpeed = new AnimationCurve(new Keyframe(0, 1), new Keyframe(.3f, .48f), new Keyframe(.7f, .2f), new Keyframe(1, .13f));
-        [Range(.5f, 1), Tooltip("Additional steering angle scale at top speed; fades in above 65% of MaxSpeedKmh without reducing tyre grip.")] public float HighSpeedSteeringScale = .8f;
-        [Range(1, 15), Tooltip("Front lateral velocity damping, 1/s.")] public float FrontGrip = 9;
-        [Range(1, 15), Tooltip("Rear lateral velocity damping, 1/s.")] public float RearGrip = 7.5f;
-        [Range(.1f, 6), Tooltip("Rear lateral grip with handbrake or lift-off oversteer.")] public float DriftRearGrip = 1.65f;
-        [Range(.5f, 3), Tooltip("Tyre force limit relative to suspension normal load.")] public float TyreFriction = 1.65f;
-        [Range(1, 15), Tooltip("Smooth steering/input response, 1/s.")] public float SteeringResponse = 7;
+        [Range(.5f, 1), InspectorName("Множитель угла поворота колёс на высокой скорости")]
+        [Tooltip("Чем ближе к 1, тем больший угол доступен на высокой скорости. Множитель плавно вступает в силу после 65% предела скорости без нитро.")]
+        public float HighSpeedSteeringScale = .8f;
+        [Range(1, 15), InspectorName("Боковое сцепление спереди")]
+        [Tooltip("Коэффициент гашения бокового скольжения управляемых колёс в лучевом режиме, в 1/с. При увеличении колёса сильнее сопротивляются сносу.")]
+        public float FrontGrip = 9;
+        [Range(1, 15), InspectorName("Боковое сцепление сзади")]
+        [Tooltip("Коэффициент гашения бокового скольжения неуправляемых колёс в лучевом режиме, в 1/с. При увеличении сцепление вне заноса растёт, а в режиме WheelCollider усиливается его снижение при ручнике или сбросе газа.")]
+        public float RearGrip = 7.5f;
+        [Range(.1f, 6), InspectorName("Боковое сцепление в скольжении")]
+        [Tooltip("Чем выше значение, тем меньше скользят неуправляемые колёса при ручнике или резком сбросе газа в повороте. В лучевом режиме измеряется в 1/с. Для WheelCollider используется отношение к заднему сцеплению.")]
+        public float DriftRearGrip = 1.65f;
+        [Range(.5f, 3), InspectorName("Коэффициент трения шин")]
+        [Tooltip("При увеличении растёт предельная сила сцепления относительно нагрузки на колесо в лучевом режиме. У WheelCollider этот параметр задаёт исходное трение при сборке префаба.")]
+        public float TyreFriction = 1.65f;
+        [Range(1, 15), InspectorName("Отклик руля")]
+        [Tooltip("Скорость изменения команды руля, в 1/с. При увеличении колёса быстрее реагируют на поворот и отпускание руля.")]
+        public float SteeringResponse = 7;
 
-        [Header("Drift assist")]
-        [Range(3, 35), Tooltip("Minimum slip angle for drift assist, degrees.")] public float DriftThreshold = 10;
-        [Range(15, 70), Tooltip("Target controllable drift angle at full steering input.")] public float TargetDriftAngle = 34;
-        [Range(35, 85), Tooltip("Extra counter-torque beyond this slip angle.")] public float MaxDriftAngle = 58;
-        [Range(0, 15), Tooltip("Yaw-rate correction strength during a drift.")] public float DriftAssistStrength = 5;
-        [Range(.3f, 3), Tooltip("Maximum grounded yaw rate, radians per second.")] public float MaxYawRate = 1.55f;
-        [Range(0, 4), Tooltip("Small forward acceleration retained during a drift, m/s².")] public float DriftForwardBoost = 1.2f;
+        [Header("Занос")]
+        [Range(3, 35), InspectorName("Порог входа в занос")]
+        [Tooltip("При увеличении требуется больший угол скольжения, в градусах. Контроллер определяет занос на передаче переднего хода, выше 30 км/ч и при контакте хотя бы двух колёс.")]
+        public float DriftThreshold = 10;
+        [Range(15, 70), InspectorName("Целевой угол в заносе")]
+        [Tooltip("Угол скольжения при полном руле, в градусах. При увеличении стабилизация удерживает больший угол на дуге. При возврате руля к центру целевой угол стремится к нулю.")]
+        public float TargetDriftAngle = 34;
+        [Range(35, 85), InspectorName("Порог коррекции глубокого заноса")]
+        [Tooltip("Угол скольжения, в градусах, после которого коррекция стремится к предельной скорости разворота. При увеличении коррекция глубокого заноса включается позже.")]
+        public float MaxDriftAngle = 58;
+        [Range(0, 15), InspectorName("Сила стабилизации в заносе")]
+        [Tooltip("Коэффициент коррекции скорости разворота, в 1/с. При увеличении машина активнее держит целевой угол на дуге и быстрее выпрямляется при отпускании руля, пока определяется занос.")]
+        public float DriftAssistStrength = 5;
+        [Range(.3f, 3), InspectorName("Предел скорости разворота")]
+        [Tooltip("Максимальная скорость вращения вокруг нормали к опоре, в рад/с. При увеличении машина может быстрее разворачиваться на поверхности.")]
+        public float MaxYawRate = 1.55f;
+        [Range(0, 4), InspectorName("Добавочное ускорение в заносе")]
+        [Tooltip("Ускорение вперёд при полном газе, в м/с². При увеличении машина получает больше тяги в заносе при газе выше 10% и скорости ниже предела без нитро.")]
+        public float DriftForwardBoost = 1.2f;
 
-        [Header("NOS")]
-        [Min(1), Tooltip("Maximum nitro charge.")] public float NitroCapacity = 100;
-        [Min(.1f), Tooltip("Charge consumed per second.")] public float NitroBurnRate = 25;
-        [Min(0), Tooltip("Charge regenerated per second above 50 km/h.")] public float NitroRegenRate = 6;
-        [Min(1), Tooltip("Regeneration multiplier during a grounded drift.")] public float NitroDriftRegenMultiplier = 2.5f;
-        [Range(1, 3), Tooltip("Additional engine thrust multiplier while nitro is active.")] public float NitroForceMultiplier = 1.7f;
-        [Min(0), Tooltip("Extra forward speed allowance with NOS, km/h.")] public float NitroMaxSpeedBonus = 50;
+        [Header("Нитро")]
+        [Min(1), InspectorName("Ёмкость нитро")]
+        [Tooltip("Максимальный заряд, в единицах. При увеличении полного заряда хватает на более длинное ускорение.")]
+        public float NitroCapacity = 100;
+        [Min(.1f), InspectorName("Расход нитро")]
+        [Tooltip("Расход заряда, в ед./с. При увеличении заряд заканчивается быстрее.")]
+        public float NitroBurnRate = 25;
+        [Min(0), InspectorName("Восстановление нитро")]
+        [Tooltip("Пополнение заряда, в ед./с. При увеличении заряд возвращается быстрее при отпущенной кнопке нитро, скорости выше 50 км/ч и контакте хотя бы двух колёс.")]
+        public float NitroRegenRate = 6;
+        [Min(1), InspectorName("Множитель пополнения в заносе")]
+        [Tooltip("При увеличении нитро быстрее восстанавливается в заносе при выполнении условий пополнения.")]
+        public float NitroDriftRegenMultiplier = 2.5f;
+        [Range(1, 3), InspectorName("Множитель тяги при нитро")]
+        [Tooltip("Чем выше множитель, тем больше добавочная тяга вперёд во время работы нитро. При 1 добавочной тяги нет.")]
+        public float NitroForceMultiplier = 1.7f;
+        [Min(0), InspectorName("Прибавка к скорости с нитро")]
+        [Tooltip("Прибавка к пределу скорости, в км/ч. При увеличении с активным нитро тяга сохраняется до более высокой скорости.")]
+        public float NitroMaxSpeedBonus = 50;
 
-        [Header("Road holding, air control and wall sliding")]
-        [Min(0), Tooltip("Downforce in newtons per m/s, applied only while grounded.")] public float DownforceFactor = 75;
-        [Range(0, 40), Tooltip("Airborne pitch/roll levelling angular acceleration.")] public float AirLevelStrength = 16;
-        [Range(0, 15), Tooltip("Airborne pitch/roll angular damping.")] public float AirAngularDamping = 5;
-        [Range(0, 1), Tooltip("Restores tangential speed lost in a shallow wall collision, without adding energy.")] public float WallSlideAssist = 1;
+        [Header("Прижим и стабилизация")]
+        [Min(0), InspectorName("Прижимная сила")]
+        [Tooltip("Прижим на единицу скорости, в Н/(м/с). При увеличении машина сильнее прижимается к поверхности при контакте хотя бы одного колеса.")]
+        public float DownforceFactor = 75;
+        [Range(0, 40), InspectorName("Выравнивание кузова в воздухе")]
+        [Tooltip("Коэффициент углового ускорения на радиан наклона, в 1/с². При увеличении кузов активнее возвращается в вертикальное положение в воздухе.")]
+        public float AirLevelStrength = 16;
+        [Range(0, 15), InspectorName("Гашение вращения в воздухе")]
+        [Tooltip("Коэффициент демпфирования, в 1/с. При увеличении быстрее гасится вращение кузова по крену и тангажу в воздухе.")]
+        public float AirAngularDamping = 5;
+        [Range(0, 1), InspectorName("Сохранение скорости вдоль стены")]
+        [Tooltip("Доля потерянной скорости вдоль стены, которую возвращает контроллер. При увеличении скользящее столкновение сильнее сохраняет ход.")]
+        public float WallSlideAssist = 1;
 
         public Rigidbody Body { get; private set; }
         public float EffectiveSpringStiffness => SpringStiffness * GravityMultiplier;
