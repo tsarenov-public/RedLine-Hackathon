@@ -27,6 +27,7 @@ public sealed class NFSCarSetupWizard : EditorWindow
         using (new EditorGUI.DisabledScope(EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling))
         {
             if (GUILayout.Button("Spawn Ready Test Car on Road")) Run(() => SpawnReadyTestCar());
+            if (GUILayout.Button("Auto Setup Selected Car Prefabs")) NFSAutoSetupCarPrefabs.SetupSelection();
             EditorGUILayout.Space();
             model = (GameObject)EditorGUILayout.ObjectField("Custom model root", model, typeof(GameObject), true);
             frontLeft = (Transform)EditorGUILayout.ObjectField("Front Left wheel", frontLeft, typeof(Transform), true);
