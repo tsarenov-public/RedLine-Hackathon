@@ -22,14 +22,14 @@ namespace Arcade.Vehicle
     [Serializable]
     public sealed class WheelRig
     {
-        public Transform mount;        // пустышка: верх стойки
-        public Transform visual;       // модель колеса (child of mount)
-        public float radius = 0.34f;
+        public Transform mount;
+        public Transform visual;
+        public float radius = 0.345f;
         public bool steered;
         public bool driven = true;
         public bool handbraked;
         [Range(0.6f, 1.4f)] public float gripScale = 1f;
-        public Quaternion modelOffset = Quaternion.identity; // если модель повёрнута не по осям
+        public Quaternion modelOffset = Quaternion.identity;
     }
 
     public sealed class Wheel
@@ -41,7 +41,7 @@ namespace Arcade.Vehicle
         public float suspLength, compression, load, staticLoad;
         public float steerAngle, vLong, vLat, slipAngleDeg, slipIntensity, longSlip;
         public float driveRequest;
-        public Vector2 force;          // сглаженные силы: x = продольная, y = боковая
+        public Vector2 force;
         public float spinAngle, spinRate, lastGroundTime;
         public float Radius => rig.radius;
     }
@@ -51,7 +51,7 @@ namespace Arcade.Vehicle
         public Vector3 velocity, groundNormal = Vector3.up;
         public float speed, speedKmh, forwardSpeed, lateralSpeed, yawRate, bodySlipDeg;
         public int groundedWheels;
-        public float airTime, groundedTime;
+        public float airTime, groundedTime, handbrakeTime;
         public bool drifting; public float driftAmount, driftScore, driftTime;
         public float rpm, engineTorque, throttle, brake;
         public int gear; public float gearRatio; public bool shifting, reversing;

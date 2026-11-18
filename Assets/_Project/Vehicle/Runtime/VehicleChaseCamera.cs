@@ -6,21 +6,29 @@ namespace Arcade.Vehicle
     public sealed class VehicleChaseCamera : MonoBehaviour
     {
         public ArcadeVehicle vehicle;
-        public float height = 1.9f, distance = 5.2f, distanceAddAtSpeed = 1.6f;
-        public float lookAhead = 3.5f, lookHeight = 1.0f;
-        public float posSmooth = 0.12f, rotSmooth = 0.10f, fovSmooth = 0.15f;
-        public float fovBase = 62f, fovMax = 80f, fovNosKick = 6f;
+        public float height = 1.45f, distance = 3.8f, distanceAddAtSpeed = 0.3f;
+        public float lookAhead = 2.0f, lookHeight = 1.0f;
+        public float posSmooth = 0.08f, rotSmooth = 0.10f, fovSmooth = 0.15f;
+        public float fovBase = 60f, fovMax = 72f, fovNosKick = 6f;
         [Range(0f, 1f)] public float driftFollow = 0.55f;
         public LayerMask obstacleMask = 1;
 
         Camera _cam; Vector3 _posVel, _look;
 
-        void Awake() { _cam = GetComponent<Camera>(); _look = vehicle.transform.position; }
+        void Awake() { _cam = GetComponent<Camera>(); }
+
+        public void Bind(ArcadeVehicle v)
+        {
+            vehicle = v;
+            if (v != null) { _look = v.transform.position; _posVel = Vector3.zero; }
+        }
 
         void LateUpdate()
         {
-            float dt = Time.unscaledDeltaTime;      // камера не «дёргается» в слоу-мо
+            if (vehicle == null) return;
+            float dt = Time.unscaledDeltaTime;
             if (dt <= 0f) return;
+
             var t = vehicle.transform;
             var s = vehicle.State;
 
@@ -34,9 +42,11 @@ namespace Arcade.Vehicle
             Vector3 desired = t.position - dir * (distance + distanceAddAtSpeed * speedT) + Vector3.up * height;
 
             Vector3 from = t.position + Vector3.up * lookHeight;
-            if (Physics.SphereCast(from, 0.25f, (desired - from).normalized, out var hit,
-                                   (desired - from).magnitude, obstacleMask, QueryTriggerInteraction.Ignore))
-                desired = from + (desired - from).normalized * Mathf.Max(0.5f, hit.distance - 0.1f);
+            Vector3 delta = desired - from;
+            if (delta.sqrMagnitude > 0.01f &&
+                Physics.SphereCast(from, 0.25f, delta.normalized, out var hit, delta.magnitude,
+                                   obstacleMask, QueryTriggerInteraction.Ignore))
+                desired = from + delta.normalized * Mathf.Max(0.5f, hit.distance - 0.1f);
 
             transform.position = Vector3.SmoothDamp(transform.position, desired, ref _posVel, posSmooth, Mathf.Infinity, dt);
 

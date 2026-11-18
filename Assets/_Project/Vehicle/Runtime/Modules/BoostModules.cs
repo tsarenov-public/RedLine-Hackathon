@@ -34,7 +34,7 @@ namespace Arcade.Vehicle
         bool _active;
         float _scale = 1f, _baseFixed;
 
-        public void Init(VehicleContext ctx) { c = ctx; _baseFixed = Time.fixedDeltaTime; }
+        public void Init(VehicleContext ctx) { c = ctx; _baseFixed = VehiclePhysicsBootstrap.BaseFixedDelta; }
         public void FixedTick(float dt) { }
 
         public void RealtimeTick(float udt)
@@ -51,10 +51,10 @@ namespace Arcade.Vehicle
             s.speedbreaker = _active;
 
             _scale = Mathf.Lerp(_scale, _active ? sb.timeScale : 1f, 1f - Mathf.Exp(-udt / sb.blend));
-            if (Mathf.Abs(_scale - 1f) < 0.002f && !_active) _scale = 1f;
+            if (!_active && Mathf.Abs(_scale - 1f) < 0.002f) _scale = 1f;
 
             Time.timeScale = _scale;
-            Time.fixedDeltaTime = _baseFixed * _scale;   // ← без этого слоу-мо дёргается
+            Time.fixedDeltaTime = _baseFixed * _scale;
 
             float k = Mathf.InverseLerp(1f, sb.timeScale, _scale);
             s.steerMult = Mathf.Lerp(1f, sb.steerMult, k);

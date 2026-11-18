@@ -9,14 +9,17 @@ namespace Arcade.Vehicle
         [Header("Конфиг")]
         public VehicleTuning tuning;
         public WheelRig[] wheelRigs = new WheelRig[4];
-        public LayerMask groundMask = 1;      // только Ground!
+        public LayerMask groundMask = 1;
+
+        [Header("Визуал")]
+        [Range(1f, 2.5f)] public float visualSteerMultiplier = 1.6f;
 
         public VehicleContext Ctx { get; private set; }
         public VehicleState State => Ctx.s;
         public Wheel[] Wheels => Ctx.wheels;
         public Rigidbody Rb { get; private set; }
 
-        public event Action<Vector3, Vector3, float> WallHit;      // point, normal, impulse
+        public event Action<Vector3, Vector3, float> WallHit;
         public event Action<bool> NosChanged;
         public event Action<bool> SpeedbreakerChanged;
         public event Action<int> GearChanged;
@@ -24,10 +27,12 @@ namespace Arcade.Vehicle
         IInputSource _input;
         IVehicleModule[] _modules;
         IRealtimeModule[] _realtime;
-        SpeedbreakerModule _sb;
 
         void Awake()
         {
+            if (tuning == null) { Debug.LogError("Не назначен Tuning!", this); enabled = false; return; }
+            tuning.Recalculate();
+
             Rb = GetComponent<Rigidbody>();
             var ch = tuning.chassis;
             Rb.mass = ch.mass;
@@ -45,6 +50,7 @@ namespace Arcade.Vehicle
             for (int i = 0; i < wheels.Length; i++)
             {
                 var r = wheelRigs[i];
+                if (r.mount == null) { Debug.LogError($"WheelRig {i}: не назначен mount", this); enabled = false; return; }
                 wheels[i] = new Wheel
                 {
                     rig = r,
@@ -63,14 +69,14 @@ namespace Arcade.Vehicle
             foreach (var mb in GetComponents<MonoBehaviour>())
                 if (mb is IInputSource src) { _input = src; break; }
 
-            _sb = new SpeedbreakerModule();
+            var sb = new SpeedbreakerModule();
             _modules = new IVehicleModule[]
             {
                 new SteeringModule(), new SuspensionModule(), new EngineModule(),
                 new GearboxModule(), new TireModule(), new DriftModule(),
-                new StabilityModule(), new NosModule(), _sb
+                new StabilityModule(), new NosModule(), sb
             };
-            _realtime = new IRealtimeModule[] { _sb };
+            _realtime = new IRealtimeModule[] { sb };
             foreach (var m in _modules) m.Init(Ctx);
         }
 
@@ -98,7 +104,6 @@ namespace Arcade.Vehicle
             s.yawRate = Vector3.Dot(Rb.angularVelocity, transform.up);
             s.bodySlipDeg = s.speed > 1f ? Vector3.SignedAngle(fwdFlat, flat.normalized, Vector3.up) : 0f;
 
-            // реверс меняет смысл педалей
             float th = Ctx.input.Throttle, br = Ctx.input.Brake;
             if (s.reversing) { th = Ctx.input.Brake; br = Ctx.input.Throttle; }
             s.throttle = Mathf.Clamp01(th);
@@ -114,14 +119,12 @@ namespace Arcade.Vehicle
 
         void UpdateWheelVisuals(float dt)
         {
-            var rest = tuning.suspension.restLength;
             foreach (var w in Ctx.wheels)
             {
                 if (w.rig.visual == null) continue;
-                w.spinAngle += w.spinRate * dt * Mathf.Rad2Deg;
-                w.spinAngle %= 360f;
+                w.spinAngle = Mathf.Repeat(w.spinAngle + w.spinRate * dt * Mathf.Rad2Deg, 360f);
                 w.rig.visual.localRotation =
-                    Quaternion.Euler(0f, w.steerAngle, 0f) *
+                    Quaternion.Euler(0f, w.steerAngle * visualSteerMultiplier, 0f) *
                     Quaternion.Euler(w.spinAngle, 0f, 0f) *
                     w.rig.modelOffset;
                 w.rig.visual.localPosition = new Vector3(w.visualRestLocal.x, -w.suspLength, w.visualRestLocal.z);
@@ -137,7 +140,7 @@ namespace Arcade.Vehicle
             float headOn = Mathf.Clamp01(-Vector3.Dot(Rb.linearVelocity.normalized, n));
             float loss = Mathf.Lerp(tuning.chassis.scrapeSpeedLoss, tuning.chassis.impactSpeedLoss, headOn);
             Rb.linearVelocity *= 1f - loss;
-            Rb.angularVelocity *= 0.6f;                       // прощаем удар о стену
+            Rb.angularVelocity *= 0.6f;
             WallHit?.Invoke(contact.point, n, imp);
         }
 

@@ -29,8 +29,8 @@ namespace Arcade.Vehicle
             s.rpm = _rpm;
 
             float nos = Mathf.Lerp(1f, c.cfg.nos.torqueMult, s.nosActive);
-            float torque = e.torqueByRpm.Evaluate(_rpm) * s.throttle * nos;
-            if (_rpm > e.redlineRpm * 0.985f) torque *= 0.15f;   // отсечка
+            float torque = e.torqueShape.Evaluate(_rpm) * e.peakTorque * s.throttle * nos;
+            if (_rpm > e.redlineRpm * 0.985f) torque *= 0.15f;
             s.engineTorque = torque;
         }
     }
@@ -53,13 +53,11 @@ namespace Arcade.Vehicle
             var s = c.s;
             _sinceShift += dt;
 
-            // реверс
             if (!s.reversing && c.input.Brake > 0.2f && s.forwardSpeed < 0.6f && c.input.Throttle < 0.1f)
                 s.reversing = true;
             if (s.reversing && c.input.Throttle > 0.2f && s.forwardSpeed > -0.6f)
                 s.reversing = false;
 
-            // авто-переключение
             if (_shiftTimer > 0f)
             {
                 _shiftTimer -= dt;

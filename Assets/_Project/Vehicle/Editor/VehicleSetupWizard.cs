@@ -22,17 +22,16 @@ namespace Arcade.Vehicle.EditorTools
                 PrefabUtility.UnpackPrefabInstance(model, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
             }
 
-            var tuning = FindOrCreateTuning();
-            float rest = tuning.suspension.restLength;
+            var template = FindTemplate();
+            float rest = template.suspension.restLength;
 
-            // ---- ищем колёса ----
             var wheels = new List<Transform>();
             foreach (var t in model.GetComponentsInChildren<Transform>())
             {
                 string n = t.name.ToLowerInvariant();
                 if (n.Contains("wheel") && !n.Contains("steering")) wheels.Add(t);
             }
-            if (wheels.Count != 4) { Debug.LogError($"Найдено {wheels.Count} колёс, нужно ровно 4."); return; }
+            if (wheels.Count != 4) { Debug.LogError($"Найдено {wheels.Count} колёс, нужно 4."); return; }
 
             var centers = new Vector3[4];
             var radii = new float[4];
@@ -49,26 +48,18 @@ namespace Arcade.Vehicle.EditorTools
                 isFront[i] = wheels[i].name.ToLowerInvariant().Contains("front");
                 if (isFront[i]) frontCount++;
             }
-            if (frontCount != 2)
-            {
-                Debug.LogError("Нужно ровно 2 колеса со словом 'Front' в имени. Проверь имена мешей колёс.");
-                return;
-            }
+            if (frontCount != 2) { Debug.LogError("Нужно ровно 2 колеса с 'Front' в имени."); return; }
 
-            // ---- ГЛАВНОЕ: направление берём из расположения осей ----
             Vector3 avg = Vector3.zero, frontCenter = Vector3.zero, rearCenter = Vector3.zero;
             for (int i = 0; i < 4; i++)
             {
                 avg += centers[i] * 0.25f;
-                if (isFront[i]) frontCenter += centers[i] * 0.5f;
-                else rearCenter += centers[i] * 0.5f;
+                if (isFront[i]) frontCenter += centers[i] * 0.5f; else rearCenter += centers[i] * 0.5f;
             }
-            Vector3 fwd = frontCenter - rearCenter;
-            fwd.y = 0f;
-            if (fwd.sqrMagnitude < 0.01f) { Debug.LogError("Не удалось определить направление машины."); return; }
+            Vector3 fwd = frontCenter - rearCenter; fwd.y = 0f;
+            if (fwd.sqrMagnitude < 0.01f) { Debug.LogError("Не определить направление машины."); return; }
             Quaternion rootRot = Quaternion.LookRotation(fwd.normalized, Vector3.up);
 
-            // ---- корень ----
             var rootGO = new GameObject(model.name + "_Car");
             Undo.RegisterCreatedObjectUndo(rootGO, "Setup Car");
             rootGO.transform.SetPositionAndRotation(new Vector3(avg.x, groundY, avg.z), rootRot);
@@ -76,7 +67,6 @@ namespace Arcade.Vehicle.EditorTools
 
             foreach (var col in model.GetComponentsInChildren<Collider>()) Undo.DestroyObjectImmediate(col);
 
-            // ---- mounts + visual ----
             var mounts = new Transform[4];
             var visuals = new Transform[4];
             var wheelSet = new HashSet<Transform>(wheels);
@@ -95,11 +85,9 @@ namespace Arcade.Vehicle.EditorTools
                 visual.transform.SetPositionAndRotation(centers[i], rootRot);
 
                 Undo.SetTransformParent(wheels[i], visual.transform, true, "Setup Car");
-                mounts[i] = mount.transform;
-                visuals[i] = visual.transform;
+                mounts[i] = mount.transform; visuals[i] = visual.transform;
             }
 
-            // ----_bounds кузова (без колёс) ----
             var bodyRenderers = new List<Renderer>();
             foreach (var r in model.GetComponentsInChildren<Renderer>())
             {
@@ -111,22 +99,52 @@ namespace Arcade.Vehicle.EditorTools
 
             float lowerH = bb.size.y * 0.55f;
             float cabH = bb.size.y - lowerH;
-
             var lower = Undo.AddComponent<BoxCollider>(rootGO);
             lower.center = new Vector3(bb.center.x, bb.min.y + lowerH * 0.5f + 0.04f, bb.center.z);
             lower.size = new Vector3(bb.size.x * 0.94f, lowerH, bb.size.z * 0.98f);
-
             var cabin = Undo.AddComponent<BoxCollider>(rootGO);
             cabin.center = new Vector3(bb.center.x, bb.min.y + lowerH + cabH * 0.5f, bb.center.z - bb.size.z * 0.05f);
             cabin.size = new Vector3(bb.size.x * 0.82f, cabH, bb.size.z * 0.48f);
 
-            // ---- компоненты ----
+            // ---- персональный тюнинг ----
+            float track = 0f;
+            for (int i = 0; i < 4; i++)
+                for (int j = i + 1; j < 4; j++)
+                    if (isFront[i] == isFront[j])
+                        track = Mathf.Max(track, Vector3.Distance(centers[i], centers[j]));
+
+            var cfg = Object.Instantiate(template);
+            cfg.chassis.wheelbase = Vector3.Distance(frontCenter, rearCenter);
+            cfg.chassis.track = track;
+            cfg.chassis.wheelRadius = radii[0];
+            cfg.chassis.bodyWidth = bb.size.x;
+            cfg.chassis.bodyHeight = bb.size.y;
+            cfg.chassis.bodyLength = bb.size.z;
+
+            float lScale = Mathf.Clamp(cfg.chassis.wheelbase / Mathf.Max(1f, cfg.character.refWheelbase), 0.7f, 1.5f);
+            var curve = cfg.steering.maxAngleByKmh;
+            for (int i = 0; i < curve.length; i++)
+            {
+                var k = curve[i]; k.value *= lScale; curve.MoveKey(i, k);
+            }
+            for (int i = 0; i < curve.length; i++) curve.SmoothTangents(i, 0f);
+            cfg.Recalculate();
+
+            string dir = "Assets/_Project/Vehicle/Tunings/Cars";
+            if (!AssetDatabase.IsValidFolder("Assets/_Project/Vehicle/Tunings"))
+                AssetDatabase.CreateFolder("Assets/_Project/Vehicle", "Tunings");
+            if (!AssetDatabase.IsValidFolder(dir))
+                AssetDatabase.CreateFolder("Assets/_Project/Vehicle/Tunings", "Cars");
+            string path = AssetDatabase.GenerateUniqueAssetPath($"{dir}/Tuning_{model.name}.asset");
+            AssetDatabase.CreateAsset(cfg, path);
+            AssetDatabase.SaveAssets();
+
             var av = Undo.AddComponent<ArcadeVehicle>(rootGO);
             Undo.AddComponent<VehicleInputSource>(rootGO);
             Undo.AddComponent<VehicleEffects>(rootGO);
 
             var so = new SerializedObject(av);
-            so.FindProperty("tuning").objectReferenceValue = tuning;
+            so.FindProperty("tuning").objectReferenceValue = cfg;
             var arr = so.FindProperty("wheelRigs");
             arr.arraySize = 4;
             for (int i = 0; i < 4; i++)
@@ -151,15 +169,14 @@ namespace Arcade.Vehicle.EditorTools
             Selection.activeGameObject = rootGO;
             EditorSceneManager.MarkSceneDirty(rootGO.scene);
 
-            Debug.Log($"[VehicleSetup] Готово: {rootGO.name}\n" +
+            Debug.Log($"[VehicleSetup] {rootGO.name}\n" +
                       $"Кузов Ш×В×Д: {bb.size.x:F2} × {bb.size.y:F2} × {bb.size.z:F2}\n" +
-                      $"Радиусы колёс: {radii[0]:F3} / {radii[1]:F3} / {radii[2]:F3} / {radii[3]:F3}\n" +
-                      $"База: {Vector3.Distance(frontCenter, rearCenter):F2} м");
-
-            if (bb.size.z < bb.size.x)
-                Debug.LogWarning("[VehicleSetup] Длина меньше ширины — ориентация всё ещё неверная, напиши мне.");
-            else
-                Debug.Log("[VehicleSetup] Ориентация OK ✅ (длина по Z). Можно ехать.");
+                      $"Радиус: {radii[0]:F3} | База: {cfg.chassis.wheelbase:F2} | Колея: {track:F2}\n" +
+                      $"{cfg.engine.horsePower} л.с. → момент {cfg.engine.peakTorque:F0} Нм @ {cfg.engine.powerPeakRpm:F0} об/мин\n" +
+                      $"Максималка ≈ {cfg.engine.topSpeedKmh:F0} км/ч | finalDrive {cfg.gearbox.finalDrive:F2}\n" +
+                      $"Tuning: {path}");
+            if (bb.size.z < bb.size.x) Debug.LogWarning("[VehicleSetup] Длина < ширины — ориентация неверная!");
+            else Debug.Log("[VehicleSetup] Ориентация OK ✅");
         }
 
         static void SetLayerRecursive(GameObject go, int layer)
@@ -168,16 +185,24 @@ namespace Arcade.Vehicle.EditorTools
             foreach (Transform t in go.transform) SetLayerRecursive(t.gameObject, layer);
         }
 
-        static VehicleTuning FindOrCreateTuning()
+        static VehicleTuning FindTemplate()
         {
             var guids = AssetDatabase.FindAssets("t:VehicleTuning");
-            if (guids.Length > 0)
-                return AssetDatabase.LoadAssetAtPath<VehicleTuning>(AssetDatabase.GUIDToAssetPath(guids[0]));
-            var t = ScriptableObject.CreateInstance<VehicleTuning>();
+            VehicleTuning fallback = null;
+            foreach (var g in guids)
+            {
+                var t = AssetDatabase.LoadAssetAtPath<VehicleTuning>(AssetDatabase.GUIDToAssetPath(g));
+                if (t == null) continue;
+                if (t.name.ToUpperInvariant().Contains("TEMPLATE")) return t;
+                if (fallback == null) fallback = t;
+            }
+            if (fallback != null) return fallback;
+
+            var nt = ScriptableObject.CreateInstance<VehicleTuning>();
             System.IO.Directory.CreateDirectory("Assets/_Project/Vehicle");
-            AssetDatabase.CreateAsset(t, "Assets/_Project/Vehicle/Tuning_Car.asset");
+            AssetDatabase.CreateAsset(nt, "Assets/_Project/Vehicle/Tuning_TEMPLATE.asset");
             AssetDatabase.SaveAssets();
-            return t;
+            return nt;
         }
 
         static Bounds WorldBounds(IEnumerable<Renderer> rs)
@@ -195,9 +220,7 @@ namespace Arcade.Vehicle.EditorTools
                 var wb = r.bounds; var c = wb.center; var e = wb.extents;
                 for (int i = 0; i < 8; i++)
                 {
-                    var p = c + new Vector3((i & 1) == 0 ? -e.x : e.x,
-                                            (i & 2) == 0 ? -e.y : e.y,
-                                            (i & 4) == 0 ? -e.z : e.z);
+                    var p = c + new Vector3((i & 1) == 0 ? -e.x : e.x, (i & 2) == 0 ? -e.y : e.y, (i & 4) == 0 ? -e.z : e.z);
                     var lp = root.InverseTransformPoint(p);
                     if (first) { b = new Bounds(lp, Vector3.zero); first = false; } else b.Encapsulate(lp);
                 }
