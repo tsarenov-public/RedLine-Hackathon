@@ -15,7 +15,7 @@ MonoBehaviour:
   autoCalculate: 1
   character:
     archetypeName: Muscle RWD
-    rideFrequencyHz: 1.7
+    rideFrequencyHz: 1.99
     bumpDampingRatio: 0.3
     reboundDampingRatio: 0.45
     antiRollRatio: 0.45
@@ -33,22 +33,22 @@ MonoBehaviour:
     bodyHeight: 1.6449814
     bodyLength: 5.211025
     centerOfMass: {x: 0, y: 0.36196125, z: 0.058266547}
-    rideHeight: 0.46472502
+    rideHeight: 0.474725
     inertiaScale: {x: 1.15, y: 1.6, z: 1.15}
     scrapeSpeedLoss: 0.1
     impactSpeedLoss: 0.45
     wallHitMinImpulse: 2500
   suspension:
-    restLength: 0.24
+    restLength: 0.26
     frontWeightBias: 0.52
     maxLoadMult: 3.5
     stickForce: 0.25
-    stiffness: 8214.669
-    bumpDamping: 1922.6548
-    reboundDamping: 2883.982
-    antiRoll: 3696.6008
-    antiRollMax: 3696.6008
-    stickExtraTravel: 0.096
+    stiffness: 12194.401
+    bumpDamping: 2250.6372
+    reboundDamping: 3375.9556
+    antiRoll: 5487.4805
+    antiRollMax: 5487.4805
+    stickExtraTravel: 0.103999995
   tires:
     baseGrip: 1.5
     loadSensitivity: 0.12

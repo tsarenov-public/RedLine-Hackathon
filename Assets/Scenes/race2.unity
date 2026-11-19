@@ -190645,17 +190645,6 @@ MonoBehaviour:
   markerStartUVY: 0.42437744
   customPoints: []
   handleObject: {fileID: 0}
---- !u!114 &1102132928 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6396219554289193623, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
-  m_PrefabInstance: {fileID: 3373970549276307643}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5cdb55e163e5404892b95a731592904, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Arcade.Vehicle.ArcadeVehicle
 --- !u!114 &1102738809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191111,7 +191100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27e74f434f10649eab21ea4fc3a6f10d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Arcade.Vehicle.VehicleChaseCamera
-  vehicle: {fileID: 1102132928}
+  vehicle: {fileID: 2628456302950744473}
   height: 1.45
   distance: 3.8
   distanceAddAtSpeed: 0.3
@@ -338194,7 +338183,7 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!1001 &3373970549276307643
+--- !u!1001 &1949043400502339495
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -338202,55 +338191,66 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1750917224067797482, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
+    - target: {fileID: 5267424971468891298, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
+      propertyPath: m_Name
+      value: miata_Car 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8736298722069556793, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2021.0212
+      value: 1760.1797
       objectReference: {fileID: 0}
-    - target: {fileID: 1750917224067797482, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
+    - target: {fileID: 8736298722069556793, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.288
+      value: 24.5
       objectReference: {fileID: 0}
-    - target: {fileID: 1750917224067797482, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
+    - target: {fileID: 8736298722069556793, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1379.9019
+      value: 1420.23
       objectReference: {fileID: 0}
-    - target: {fileID: 1750917224067797482, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
+    - target: {fileID: 8736298722069556793, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1750917224067797482, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
+    - target: {fileID: 8736298722069556793, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1750917224067797482, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
+    - target: {fileID: 8736298722069556793, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
       propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1750917224067797482, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
+    - target: {fileID: 8736298722069556793, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1750917224067797482, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
+    - target: {fileID: 8736298722069556793, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1750917224067797482, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
+    - target: {fileID: 8736298722069556793, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1750917224067797482, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
+    - target: {fileID: 8736298722069556793, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2162626223608706514, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
-      propertyPath: m_Name
-      value: miata_Car
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 60bfb5167920f8a4ca45f399b20c61bf, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
+--- !u!114 &2628456302950744473 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5243359600974885444, guid: 8598b7175f750de45b38322d62c7a8db, type: 3}
+  m_PrefabInstance: {fileID: 1949043400502339495}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5cdb55e163e5404892b95a731592904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Arcade.Vehicle.ArcadeVehicle
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -338258,5 +338258,5 @@ SceneRoots:
   - {fileID: 2088214612}
   - {fileID: 538376778}
   - {fileID: 28583380}
-  - {fileID: 3373970549276307643}
   - {fileID: 1215216000}
+  - {fileID: 1949043400502339495}
