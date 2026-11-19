@@ -1,0 +1,140 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8367182581944492831
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5095366504691869112}
+  - component: {fileID: 8444073881761881621}
+  m_Layer: 0
+  m_Name: CityCarGearboxWhine_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5095366504691869112
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8367182581944492831}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8444073881761881621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8367182581944492831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2b87e50c0a27ee47949d06f042c7a14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  masterVolume: 0.5
+  audioMixer: {fileID: 24300002, guid: ed7b40a08ecba4843a1c14b789f18c48, type: 2}
+  onLoopClip: {fileID: 8300000, guid: fb12ec9abb3539c4eb1db0d0b4ed62e1, type: 3}
+  onLoadVolCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.01882413
+      outSlope: 0.01882413
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.050119333
+    - serializedVersion: 3
+      time: 0.039784756
+      value: 0.006489622
+      inSlope: 0.68429214
+      outSlope: 0.68429214
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.051297132
+    - serializedVersion: 3
+      time: 0.9984131
+      value: 1
+      inSlope: 0.732404
+      outSlope: 0.732404
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.044742327
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  offLoadVolCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: -0.024428042
+      outSlope: -0.024428042
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.2523286
+    - serializedVersion: 3
+      time: 0.19977987
+      value: 0.012097875
+      inSlope: 0.1210633
+      outSlope: 0.1210633
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.05166424
+    - serializedVersion: 3
+      time: 1
+      value: 0.8
+      inSlope: 0.4683587
+      outSlope: 0.4683587
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.08152089
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  pitchCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.4
+      inSlope: 0.6
+      outSlope: 0.6
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.6
+      outSlope: 0.6
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  minDistance: 2
+  maxDistance: 70
