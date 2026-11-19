@@ -1,0 +1,5 @@
+This integration is made for custom car physics controllers, that you made by yourself.
+It contain a well commented example script for integration which is a good quick start to connect your custom car controller with Realistic Engine Sounds 2. You need to modify this script in a way to make it work with you custom car controller. This script will convert values from your car to RES2.
+This unitypackage also contain demo scenes, where you can test all engine sounds by switching between them with UI buttons. You just need to drag and drop the pre-made gameobject named as "RES2 High Quality Prefabs - drop this into your car" into your car, make sure this gameobject is positioned inside your car. If you modified the above mentioned script correctly, your car will have new engine sounds! :)
+
+Read the Documentation.pdf for more details.
