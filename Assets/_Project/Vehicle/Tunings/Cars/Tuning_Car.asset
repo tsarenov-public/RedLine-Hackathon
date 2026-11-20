@@ -214,7 +214,7 @@ MonoBehaviour:
     counterSteerLimit: 18
     ackermann: 0.6
   engine:
-    horsePower: 350
+    horsePower: 500
     torqueShape:
       serializedVersion: 2
       m_Curve:
@@ -287,9 +287,9 @@ MonoBehaviour:
     idleRpm: 900
     redlineRpm: 6200
     rpmResponse: 0.08
-    peakTorque: 433.9912
+    peakTorque: 619.9874
     powerPeakRpm: 6200
-    topSpeedKmh: 241.18036
+    topSpeedKmh: 271.62888
   gearbox:
     forwardRatios:
     - 3.1
@@ -304,7 +304,7 @@ MonoBehaviour:
     shiftTime: 0.22
     awd: 0
     frontTorqueSplit: 0.4
-    finalDrive: 2.9050648
+    finalDrive: 2.5794187
   assists:
     yawDamping: 3
     spinThreshold: 45

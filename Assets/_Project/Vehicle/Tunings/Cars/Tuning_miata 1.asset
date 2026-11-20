@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d80554ea2d16a48f1867eb99d10ea4a5, type: 3}
-  m_Name: Tuning_police
+  m_Name: Tuning_miata 1
   m_EditorClassIdentifier: Assembly-CSharp::Arcade.Vehicle.VehicleTuning
   autoCalculate: 1
   character:
@@ -25,15 +25,15 @@ MonoBehaviour:
     topSpeedFactor: 1
     refWheelbase: 2.91
   chassis:
-    mass: 1200
-    wheelbase: 2.91333
-    track: 1.6593018
-    wheelRadius: 0.344725
-    bodyWidth: 2.2353208
-    bodyHeight: 1.6449814
-    bodyLength: 5.211025
-    centerOfMass: {x: 0, y: 0.22407125, z: 0.058266547}
-    rideHeight: 0.514725
+    mass: 2000
+    wheelbase: 2.327942
+    track: 1.4511719
+    wheelRadius: 0.34366193
+    bodyWidth: 1.8651123
+    bodyHeight: 2.6984987
+    bodyLength: 4.022583
+    centerOfMass: {x: 0, y: 0.22338025, z: 0.046558794}
+    rideHeight: 0.5136619
     inertiaScale: {x: 0.85, y: 0.9, z: 0.85}
     scrapeSpeedLoss: 0.1
     impactSpeedLoss: 0.45
@@ -43,11 +43,11 @@ MonoBehaviour:
     frontWeightBias: 0.52
     maxLoadMult: 5
     stickForce: 0.25
-    stiffness: 36241.19
-    bumpDamping: 3392.9202
-    reboundDamping: 5089.38
-    antiRoll: 28992.953
-    antiRollMax: 28992.953
+    stiffness: 60401.984
+    bumpDamping: 5654.867
+    reboundDamping: 8482.3
+    antiRoll: 48321.59
+    antiRollMax: 48321.59
     stickExtraTravel: 0.136
   tires:
     baseGrip: 2.5
@@ -130,7 +130,7 @@ MonoBehaviour:
     handbrakeLateralGrip: 0.19
     handbrakeLock: 1
     handbrakeFadeTime: 0.2
-    brakeForce: 25898.402
+    brakeForce: 43164.004
     brakeBias: 0.62
     rollingResistance: 0.015
     engineBrake: 260
@@ -149,54 +149,54 @@ MonoBehaviour:
       m_Curve:
       - serializedVersion: 3
         time: 1.5555534
-        value: 32.059647
-        inSlope: -0.2845531
-        outSlope: -0.2845531
+        value: 25.647076
+        inSlope: -0.12839451
+        outSlope: -0.12839451
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 42.333336
-        value: 25.514929
-        inSlope: -0.22527121
-        outSlope: -0.22527121
+        value: 20.411432
+        inSlope: -0.11541082
+        outSlope: -0.11541082
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 100.22223
-        value: 18.103003
-        inSlope: -0.12449197
-        outSlope: -0.12449197
+        value: 14.482039
+        inSlope: -0.09883973
+        outSlope: -0.09883973
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 147.22221
-        value: 12.506789
-        inSlope: -0.06125795
-        outSlope: -0.06125795
+        value: 10.005181
+        inSlope: -0.07248701
+        outSlope: -0.07248701
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 193.22223
-        value: 9.64772
-        inSlope: -0.029245738
-        outSlope: -0.029245738
+        value: 7.7179832
+        inSlope: -0.038154718
+        outSlope: -0.038154718
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 295.55554
-        value: 6.246619
-        inSlope: -0.018970203
-        outSlope: -0.018970203
+        value: 4.9971704
+        inSlope: -0.026587753
+        outSlope: -0.026587753
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
@@ -214,7 +214,7 @@ MonoBehaviour:
     counterSteerLimit: 18
     ackermann: 0.6
   engine:
-    horsePower: 250
+    horsePower: 450
     torqueShape:
       serializedVersion: 2
       m_Curve:
@@ -285,11 +285,11 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     idleRpm: 900
-    redlineRpm: 6000
+    redlineRpm: 7000
     rpmResponse: 0.08
-    peakTorque: 314.67328
-    powerPeakRpm: 6000
-    topSpeedKmh: 215.59198
+    peakTorque: 536.57996
+    powerPeakRpm: 6825
+    topSpeedKmh: 236.20078
   gearbox:
     forwardRatios:
     - 3.1
@@ -299,12 +299,12 @@ MonoBehaviour:
     - 1.15
     reverseRatio: 3
     efficiency: 0.92
-    upshiftRpm: 5800
+    upshiftRpm: 6500
     downshiftRpm: 3000
     shiftTime: 0.22
     awd: 0
     frontTorqueSplit: 0.4
-    finalDrive: 3.1450295
+    finalDrive: 3.2552629
   assists:
     yawDamping: 3
     spinThreshold: 45
@@ -330,10 +330,10 @@ MonoBehaviour:
     airPitchControl: 2.2
     flipDot: 0.15
     flipResetTime: 1.5
-    frontalArea: 3.125502
-    dragCoeff: 0.78762656
-    downforceCoeff: 0.72
-    staticDownforce: 240
+    frontalArea: 4.278053
+    dragCoeff: 1.0780693
+    downforceCoeff: 1.2
+    staticDownforce: 400
   nos:
     duration: 3
     minToActivate: 0.15
