@@ -285,10 +285,10 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     idleRpm: 900
-    redlineRpm: 6000
+    redlineRpm: 5500
     rpmResponse: 0.08
-    peakTorque: 314.67328
-    powerPeakRpm: 6000
+    peakTorque: 328.37283
+    powerPeakRpm: 5500
     topSpeedKmh: 215.59198
   gearbox:
     forwardRatios:
@@ -299,12 +299,12 @@ MonoBehaviour:
     - 1.15
     reverseRatio: 3
     efficiency: 0.92
-    upshiftRpm: 5800
+    upshiftRpm: 5200
     downshiftRpm: 3000
     shiftTime: 0.22
     awd: 0
     frontTorqueSplit: 0.4
-    finalDrive: 3.1450295
+    finalDrive: 2.8829439
   assists:
     yawDamping: 3
     spinThreshold: 45
