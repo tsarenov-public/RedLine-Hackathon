@@ -1333,7 +1333,7 @@ MonoBehaviour:
   - version: 2.0.0
     name: 'Coast Rock Wall '
     id: 1513626610.6119134
-    timestamp: 1513627804.8928013
+    timestamp: 1795142062.035658
     objectType: 1
     gameobjectGUID: 
     textureGUID: 
@@ -1481,7 +1481,7 @@ MonoBehaviour:
     deformationOffset: 0
     markerIndent: 0
     markerSurrounding: 0
-    indentController: 1
+    indentController: 0
     excludeTerrainSplats: 0
     scale: {x: 1, y: 1, z: 1}
     indentExt: 0
@@ -1592,7 +1592,7 @@ MonoBehaviour:
     maxBaseRotation: 0
     baseChildIndex: -1
     baseConnectorIndex: -1
-    continueOnConnections: 1
+    continueOnConnections: 0
     ignoreOffsetsOnConnections: 0
     triangulateDualSided: 0
     dualSidedMaterial: {fileID: 0}
@@ -20802,7 +20802,7 @@ MonoBehaviour:
   - version: 2.0.0
     name: Wall Country Side
     id: 1477826774.0961607
-    timestamp: 1795118728.669718
+    timestamp: 1795142088.6544728
     objectType: 2
     gameobjectGUID: 
     textureGUID: 
@@ -21296,13 +21296,13 @@ MonoBehaviour:
   - version: 2.0.0
     name: Tratuar
     id: 1795023959.728739
-    timestamp: 1795030508.1599588
+    timestamp: 1795140620.0245938
     objectType: 1
     gameobjectGUID: 
     textureGUID: 
     m_distance: 10
     uvx: 0.1
-    uvy: 1
+    uvy: 2
     position: 0
     splinePosition: 0
     selectedRotation: 0
@@ -21310,25 +21310,25 @@ MonoBehaviour:
     randomYAxisMaxRotation: 0
     nodeList:
     - {x: 0, y: 0}
-    - {x: 0, y: 0.26}
-    - {x: 20.007118, y: 0.26}
-    - {x: 20, y: -0.15876514}
+    - {x: 0.1664439, y: 0.2}
+    - {x: 20.04795, y: 0.2}
+    - {x: 20.12377, y: -0.22143522}
     uvs:
     - 0
-    - 0.012572194
-    - 0.9800083
+    - 0.012723121
+    - 0.9774802
     - 1
     uvDistances:
     - 0
-    - 0.012568921
-    - 0.97975314
+    - 0.012649504
+    - 0.9791831
     - 1
     clampUVs: 1
     clampUVY: 1
     clampUVYValue: 1
     terrainUVs: 0
-    reverseUVs: 0
-    totalDistance: 20.685944
+    reverseUVs: 1
+    totalDistance: 20.569906
     snapList: 00000000y
     snapWeightList:
     - 0
@@ -21381,7 +21381,7 @@ MonoBehaviour:
     startObject: {fileID: 0}
     endObject: {fileID: 0}
     connectionObject: {fileID: 0}
-    material: {fileID: 2100000, guid: 4de4f2b7fec6fda4b8764f89b2f7d822, type: 2}
+    material: {fileID: 2100000, guid: d74dc327ca3fad8408eeeaf8ad54a110, type: 2}
     physicMaterial: {fileID: 0}
     meshObjects: []
     boxSize: {x: 0, y: 0}
@@ -21420,7 +21420,7 @@ MonoBehaviour:
     deformationObject: 0
     isStatic: 1
     castShadows: 1
-    scaleToRoad: 0
+    scaleToRoad: 1
     splitInBatches: 0
     randomRotation: {x: 0, y: 0, z: 0}
     randomMinRotation: 0
@@ -21477,14 +21477,14 @@ MonoBehaviour:
     surroundingControl: 0
     indentControl: 0
     nodeListMirrored:
-    - {x: -20, y: -0.15876514}
-    - {x: -20.007118, y: 0.26}
-    - {x: -0, y: 0.26}
+    - {x: -20.12377, y: -0.22143522}
+    - {x: -20.04795, y: 0.2}
+    - {x: -0.1664439, y: 0.2}
     - {x: -0, y: 0}
     uvsMirrored:
     - 1
-    - 0.9800083
-    - 0.012572194
+    - 0.9774802
+    - 0.012723121
     - 0
     snapWeightListMirrored:
     - 0
@@ -21554,12 +21554,12 @@ MonoBehaviour:
     buildOtherSideObjectChilds: []
     minSectionLength: 50
     maxSlope: 45
-    tag: Untagged
-    selectedTag: 0
+    tag: Ground
+    selectedTag: 7
     doubleSidedBendFlag: 0
     recalculateNormals: 0
     x1: 0
-    x2: 20.007118
+    x2: 20.12377
     xf1: 0
     xf2: 0
     xf1Total: 0
