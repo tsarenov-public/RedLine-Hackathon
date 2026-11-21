@@ -299,6 +299,7 @@ GameObject:
   - component: {fileID: 6953799602509033404}
   - component: {fileID: 4631178965996168274}
   - component: {fileID: 5083186510925536494}
+  - component: {fileID: 6430127335359299365}
   m_Layer: 0
   m_Name: Building_37
   m_TagString: Untagged
@@ -373,8 +374,29 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 63.044254, y: 24.52725, z: 51.889427}
-  m_Center: {x: 0.37237358, y: -4.8939524, z: 1.4666405}
+  m_Size: {x: 50.433357, y: 24.52725, z: 45.338833}
+  m_Center: {x: 5.9597816, y: -4.8939524, z: 4.7419376}
+--- !u!65 &6430127335359299365
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3722001593993855145}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 28.058891, y: 7.8203793, z: 39.64051}
+  m_Center: {x: -17.096443, y: -3.4101896, z: -3.9792786}
 --- !u!1 &6532199214332599109
 GameObject:
   m_ObjectHideFlags: 0
