@@ -434308,6 +434308,7 @@ GameObject:
   - component: {fileID: 1072201842}
   - component: {fileID: 1072201846}
   - component: {fileID: 1072201845}
+  - component: {fileID: 1072201847}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -434368,7 +434369,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
-  m_AllowMSAA: 1
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -434461,6 +434462,37 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &1072201847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1072201841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38b0ea747f6a4af4a822ef8bc850135d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TND.Upscaling.Framework.Runtime.URP::TND.Upscaling.Framework.TNDUpscaler
+  upscalerChain:
+  - TND.Upscaling.DLSS4.DLSS4UpscalerPlugin
+  qualityMode: 5
+  enableSharpening: 1
+  sharpness: 1
+  injectionPoint: 0
+  upscalerSettings:
+  - identifier: TND.Upscaling.DLSS4.DLSS4UpscalerPlugin
+    settings: {fileID: 1118632978}
+  autoGenerateReactiveMask: 1
+  autoReactiveSettings:
+    scale: 0.9
+    cutoffThreshold: 0.05
+    binaryValue: 0.5
+    flags: 13
+  enableCustomReactiveMask: 0
+  customReactiveMaskLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &1072293755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442372,6 +442404,28 @@ MonoBehaviour:
   endSplinePointIndexes: 
   startSplinePointIndexesMirrored: 
   endSplinePointIndexesMirrored: 
+--- !u!114 &1118632978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ba83d996f893414485a83e2c5bda240, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TND.Upscaling.DLSS4::TND.Upscaling.DLSS4.DLSS4UpscalerSettings
+  renderPresets:
+    dlaa: 0
+    ultraQuality: 0
+    quality: 0
+    balanced: 0
+    performance: 0
+    ultraPerformance: 0
+  transparencyMask: {fileID: 0}
+  advancedSettings:
+    projectID: 
 --- !u!114 &1119573974
 MonoBehaviour:
   m_ObjectHideFlags: 0

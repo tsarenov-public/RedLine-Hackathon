@@ -1,5 +1,21 @@
 {
   "dependencies": {
+    "com.tnd.upscaler.dlss4": {
+      "version": "file:com.tnd.upscaler.dlss4",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.tnd.upscaling": "1.1.0"
+      }
+    },
+    "com.tnd.upscaling": {
+      "version": "file:com.tnd.upscaling",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.1"
+      }
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.14",
       "depth": 0,
@@ -75,6 +91,13 @@
     "com.unity.nuget.mono-cecil": {
       "version": "1.11.6",
       "depth": 3,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.2",
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
