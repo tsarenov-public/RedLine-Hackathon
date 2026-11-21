@@ -101,6 +101,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3990293561318374161}
   - component: {fileID: 5855021414352137424}
+  - component: {fileID: 6361656383166620061}
   m_Layer: 0
   m_Name: StreetLightB
   m_TagString: Untagged
@@ -150,6 +151,27 @@ LODGroup:
     renderers: []
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
+--- !u!65 &6361656383166620061
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3993326818858613085}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.30419922, y: 6.1213074, z: 0.2331543}
+  m_Center: {x: -0.0024414062, y: -0.3770628, z: -0.009521484}
 --- !u!1 &4026399333005451586
 GameObject:
   m_ObjectHideFlags: 0

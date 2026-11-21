@@ -200,6 +200,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4900886869674571616}
   - component: {fileID: 7868944216495734142}
+  - component: {fileID: 3279663644292467272}
   m_Layer: 0
   m_Name: TransmissionPole_B
   m_TagString: Untagged
@@ -249,3 +250,24 @@ LODGroup:
     renderers: []
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
+--- !u!65 &3279663644292467272
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8374967304223762674}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.4675293, y: 16.658493, z: 0.48657227}
+  m_Center: {x: 135.76184, y: 8.118801, z: 66.10889}
