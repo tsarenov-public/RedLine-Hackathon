@@ -1,0 +1,353 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d80554ea2d16a48f1867eb99d10ea4a5, type: 3}
+  m_Name: Tuning_police
+  m_EditorClassIdentifier: Assembly-CSharp::Arcade.Vehicle.VehicleTuning
+  autoCalculate: 1
+  character:
+    archetypeName: Muscle RWD
+    rideFrequencyHz: 3
+    bumpDampingRatio: 0.3
+    reboundDampingRatio: 0.45
+    antiRollRatio: 0.8
+    cgHeightPerRadius: 0.65
+    brakeDecelG: 2.2
+    downforcePerKg: 0.0006
+    topSpeedFactor: 1
+    refWheelbase: 2.91
+  chassis:
+    mass: 2000
+    wheelbase: 2.91333
+    track: 1.6593018
+    wheelRadius: 0.344725
+    bodyWidth: 2.2353208
+    bodyHeight: 1.6449814
+    bodyLength: 5.211025
+    centerOfMass: {x: 0, y: 0.22407125, z: 0.058266547}
+    rideHeight: 0.514725
+    inertiaScale: {x: 0.85, y: 0.9, z: 0.85}
+    scrapeSpeedLoss: 0.1
+    impactSpeedLoss: 0.45
+    wallHitMinImpulse: 2500
+  suspension:
+    restLength: 0.34
+    frontWeightBias: 0.52
+    maxLoadMult: 5
+    stickForce: 0.25
+    stiffness: 60401.984
+    bumpDamping: 5654.867
+    reboundDamping: 8482.3
+    antiRoll: 48321.59
+    antiRollMax: 48321.59
+    stickExtraTravel: 0.136
+  tires:
+    baseGrip: 2.5
+    loadSensitivity: 0.027
+    lateralGrip:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: -0.94218826
+        value: 0
+        inSlope: 0.20666666
+        outSlope: 0.20666666
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 5.4831543
+        value: 0.6244403
+        inSlope: 0.15083334
+        outSlope: 0.15083334
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 7.5945625
+        value: 1.0885162
+        inSlope: 0.0425
+        outSlope: 0.0425
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 18.703812
+        value: 1.2501175
+        inSlope: 0.001575976
+        outSlope: 0.001575976
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.9588235
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 74.45421
+        value: 1.1957657
+        inSlope: -0.0020403597
+        outSlope: -0.0020403597
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 1
+      - serializedVersion: 3
+        time: 102.41087
+        value: 1.1545849
+        inSlope: -0.0011666665
+        outSlope: -0.0011666665
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 127.961426
+        value: 1.120755
+        inSlope: -0.000999999
+        outSlope: -0.000999999
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    lateralScale: 1
+    frontGripBias: 1.12
+    rearGripBias: 1.15
+    driftScrubRetention: 0.7
+    driftEllipseBoost: 1.7
+    driftThrottleBoost: 0.35
+    handbrakeLateralGrip: 0.19
+    handbrakeLock: 1
+    handbrakeFadeTime: 0.2
+    brakeForce: 43164.004
+    brakeBias: 0.62
+    rollingResistance: 0.015
+    engineBrake: 260
+    tractionLimit: 1
+    ellipsePower: 1.5
+    slipEpsilon: 1.6
+    relaxLateral: 0.07
+    relaxLongitudinal: 0.04
+    impulseClamp: 0.9
+    slipFxStartDeg: 6
+    slipFxFullDeg: 22
+    wheelSpinExtra: 5
+  steering:
+    maxAngleByKmh:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 1.5555534
+        value: 32.059647
+        inSlope: -0.2845531
+        outSlope: -0.2845531
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 42.333336
+        value: 25.514929
+        inSlope: -0.22527121
+        outSlope: -0.22527121
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 100.22223
+        value: 18.103003
+        inSlope: -0.12449197
+        outSlope: -0.12449197
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 147.22221
+        value: 12.506789
+        inSlope: -0.06125795
+        outSlope: -0.06125795
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 193.22223
+        value: 9.64772
+        inSlope: -0.029245738
+        outSlope: -0.029245738
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 295.55554
+        value: 6.246619
+        inSlope: -0.018970203
+        outSlope: -0.018970203
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    inputExponent: 1.35
+    inputSmooth: 0.03
+    inputReturnSmooth: 0.02
+    rateLowSpeed: 250
+    rateHighSpeed: 120
+    counterSteer: 0.98
+    counterSteerGain: 0.1
+    counterSteerLimit: 18
+    ackermann: 0.6
+  engine:
+    horsePower: 500
+    torqueShape:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.25
+        inSlope: 0.0003
+        outSlope: 0.0003
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1000
+        value: 0.55
+        inSlope: 0.00023333334
+        outSlope: 0.00023333334
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 2500
+        value: 0.8
+        inSlope: 0.00014215686
+        outSlope: 0.00014215686
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 4200
+        value: 1
+        inSlope: 0.000039379083
+        outSlope: 0.000039379083
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 6000
+        value: 0.93
+        inSlope: -0.000096111115
+        outSlope: -0.000096111115
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 7500
+        value: 0.7
+        inSlope: -0.00039809523
+        outSlope: -0.00039809523
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 8200
+        value: 0.25
+        inSlope: -0.0006428571
+        outSlope: -0.0006428571
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    idleRpm: 900
+    redlineRpm: 6200
+    rpmResponse: 0.8
+    peakTorque: 619.9874
+    powerPeakRpm: 6200
+    topSpeedKmh: 271.62888
+  gearbox:
+    forwardRatios:
+    - 3.1
+    - 2.05
+    - 1.5
+    - 1.15
+    - 1.15
+    reverseRatio: 3
+    efficiency: 0.92
+    upshiftRpm: 6000
+    downshiftRpm: 1000
+    shiftTime: 0.22
+    awd: 0
+    frontTorqueSplit: 0.4
+    finalDrive: 2.5794187
+  assists:
+    yawDamping: 3
+    spinThreshold: 45
+    spinSaveGain: 0.22
+    alignGain: 0.2
+    handbrakeKick: 8
+    handbrakeKickTime: 0.15
+    driftMinAngle: 8
+    driftFullAngle: 45
+    driftRampTime: 0.2
+  aero:
+    dragCd: 0.42
+    rollDamping: 3.5
+    pitchDamping: 2.5
+    groundAlignGain: 6
+    stickTime: 0.25
+    stickDistance: 0.9
+    stickAccel: 12
+    airAlignDelay: 0.12
+    airAlignGain: 5
+    airAlignSmooth: 0.15
+    airYawControl: 1.6
+    airPitchControl: 2.2
+    flipDot: 0.15
+    flipResetTime: 1.5
+    frontalArea: 3.125502
+    dragCoeff: 0.78762656
+    downforceCoeff: 1.2
+    staticDownforce: 400
+  nos:
+    duration: 3
+    minToActivate: 0.15
+    torqueMult: 1.65
+    dragMult: 0.85
+    driftFill: 0.1
+    airFill: 0.12
+    passiveFill: 0.012
+    requireHold: 1
+    rampTime: 0.15
+  speedbreaker:
+    timeScale: 0.32
+    duration: 4
+    refillRate: 0.06
+    blend: 0.08
+    steerMult: 1.5
+    gripMult: 1.08

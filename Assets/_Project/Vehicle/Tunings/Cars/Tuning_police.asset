@@ -15,15 +15,15 @@ MonoBehaviour:
   autoCalculate: 1
   character:
     archetypeName: Muscle RWD
-    rideFrequencyHz: 1.7
+    rideFrequencyHz: 3
     bumpDampingRatio: 0.3
     reboundDampingRatio: 0.45
-    antiRollRatio: 0.45
-    cgHeightPerRadius: 1.05
-    brakeDecelG: 1.3
+    antiRollRatio: 0.8
+    cgHeightPerRadius: 0.65
+    brakeDecelG: 2.2
     downforcePerKg: 0.0006
     topSpeedFactor: 1
-    refWheelbase: 2.91
+    refWheelbase: 2.92
   chassis:
     mass: 1200
     wheelbase: 2.91333
@@ -32,31 +32,31 @@ MonoBehaviour:
     bodyWidth: 2.2353208
     bodyHeight: 1.6449814
     bodyLength: 5.211025
-    centerOfMass: {x: 0, y: 0.36196125, z: 0.058266547}
-    rideHeight: 0.504725
-    inertiaScale: {x: 1.15, y: 1.6, z: 1.15}
+    centerOfMass: {x: 0, y: 0.22407125, z: 0.058266547}
+    rideHeight: 0.514725
+    inertiaScale: {x: 0.85, y: 0.9, z: 0.85}
     scrapeSpeedLoss: 0.1
     impactSpeedLoss: 0.45
     wallHitMinImpulse: 2500
   suspension:
-    restLength: 0.32
+    restLength: 0.34
     frontWeightBias: 0.52
-    maxLoadMult: 3.5
+    maxLoadMult: 5
     stickForce: 0.25
-    stiffness: 10952.893
-    bumpDamping: 1922.6548
-    reboundDamping: 2883.982
-    antiRoll: 4928.802
-    antiRollMax: 4928.802
-    stickExtraTravel: 0.128
+    stiffness: 36241.19
+    bumpDamping: 3392.9202
+    reboundDamping: 5089.38
+    antiRoll: 28992.953
+    antiRollMax: 28992.953
+    stickExtraTravel: 0.136
   tires:
-    baseGrip: 1.5
-    loadSensitivity: 0.12
+    baseGrip: 2.5
+    loadSensitivity: 0.027
     lateralGrip:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0
+        time: -0.94218826
         value: 0
         inSlope: 0.20666666
         outSlope: 0.20666666
@@ -65,8 +65,8 @@ MonoBehaviour:
         inWeight: 0
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 3
-        value: 0.62
+        time: 5.4831543
+        value: 0.6244403
         inSlope: 0.15083334
         outSlope: 0.15083334
         tangentMode: 0
@@ -74,8 +74,8 @@ MonoBehaviour:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 9.25
-        value: 0.9532623
+        time: 7.5945625
+        value: 1.0885162
         inSlope: 0.0425
         outSlope: 0.0425
         tangentMode: 0
@@ -83,8 +83,8 @@ MonoBehaviour:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 16.25
-        value: 1.0554574
+        time: 18.703812
+        value: 1.2501175
         inSlope: 0.001575976
         outSlope: 0.001575976
         tangentMode: 0
@@ -92,8 +92,8 @@ MonoBehaviour:
         inWeight: 0.9588235
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 60.796875
-        value: 0.9762604
+        time: 74.45421
+        value: 1.1957657
         inSlope: -0.0020403597
         outSlope: -0.0020403597
         tangentMode: 0
@@ -101,8 +101,8 @@ MonoBehaviour:
         inWeight: 0.33333334
         outWeight: 1
       - serializedVersion: 3
-        time: 80.0625
-        value: 0.94616514
+        time: 102.41087
+        value: 1.1545849
         inSlope: -0.0011666665
         outSlope: -0.0011666665
         tangentMode: 0
@@ -110,8 +110,8 @@ MonoBehaviour:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 113.0625
-        value: 0.9212006
+        time: 127.961426
+        value: 1.120755
         inSlope: -0.000999999
         outSlope: -0.000999999
         tangentMode: 0
@@ -122,34 +122,34 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     lateralScale: 1
-    frontGripBias: 1.05
-    rearGripBias: 0.95
+    frontGripBias: 1.12
+    rearGripBias: 1.15
     driftScrubRetention: 0.7
     driftEllipseBoost: 1.7
     driftThrottleBoost: 0.35
-    handbrakeLateralGrip: 0.3
-    handbrakeLock: 0.9
-    handbrakeFadeTime: 0.5
-    brakeForce: 15303.6
+    handbrakeLateralGrip: 0.19
+    handbrakeLock: 1
+    handbrakeFadeTime: 0.2
+    brakeForce: 25898.402
     brakeBias: 0.62
     rollingResistance: 0.015
     engineBrake: 260
-    tractionLimit: 0.95
-    ellipsePower: 2.05
+    tractionLimit: 1
+    ellipsePower: 1.5
     slipEpsilon: 1.6
     relaxLateral: 0.07
     relaxLongitudinal: 0.04
     impulseClamp: 0.9
     slipFxStartDeg: 6
     slipFxFullDeg: 22
-    wheelSpinExtra: 45
+    wheelSpinExtra: 5
   steering:
     maxAngleByKmh:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0
-        value: 30.35233
+        time: 1.5555534
+        value: 32.059647
         inSlope: -0.2845531
         outSlope: -0.2845531
         tangentMode: 0
@@ -157,8 +157,8 @@ MonoBehaviour:
         inWeight: 0
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 40
-        value: 18.970205
+        time: 42.333336
+        value: 25.514929
         inSlope: -0.22527121
         outSlope: -0.22527121
         tangentMode: 0
@@ -166,8 +166,8 @@ MonoBehaviour:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 80
-        value: 12.330633
+        time: 100.22223
+        value: 18.103003
         inSlope: -0.12449197
         outSlope: -0.12449197
         tangentMode: 0
@@ -175,8 +175,8 @@ MonoBehaviour:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 120
-        value: 9.010848
+        time: 147.22221
+        value: 12.506789
         inSlope: -0.06125795
         outSlope: -0.06125795
         tangentMode: 0
@@ -184,8 +184,8 @@ MonoBehaviour:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 180
-        value: 6.6395717
+        time: 193.22223
+        value: 9.64772
         inSlope: -0.029245738
         outSlope: -0.029245738
         tangentMode: 0
@@ -193,8 +193,8 @@ MonoBehaviour:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 280
-        value: 4.7425513
+        time: 295.55554
+        value: 6.246619
         inSlope: -0.018970203
         outSlope: -0.018970203
         tangentMode: 0
@@ -205,12 +205,12 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     inputExponent: 1.35
-    inputSmooth: 0.09
-    inputReturnSmooth: 0.06
-    rateLowSpeed: 200
-    rateHighSpeed: 90
+    inputSmooth: 0.03
+    inputReturnSmooth: 0.02
+    rateLowSpeed: 250
+    rateHighSpeed: 120
     counterSteer: 0.98
-    counterSteerGain: 0.55
+    counterSteerGain: 0.1
     counterSteerLimit: 18
     ackermann: 0.6
   engine:
@@ -285,10 +285,10 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     idleRpm: 900
-    redlineRpm: 7600
+    redlineRpm: 5500
     rpmResponse: 0.08
-    peakTorque: 298.09998
-    powerPeakRpm: 6825
+    peakTorque: 328.37283
+    powerPeakRpm: 5500
     topSpeedKmh: 215.59198
   gearbox:
     forwardRatios:
@@ -296,21 +296,22 @@ MonoBehaviour:
     - 2.05
     - 1.5
     - 1.15
+    - 1.15
     reverseRatio: 3
     efficiency: 0.92
-    upshiftRpm: 6900
+    upshiftRpm: 5200
     downshiftRpm: 3000
     shiftTime: 0.22
     awd: 0
     frontTorqueSplit: 0.4
-    finalDrive: 3.5774713
+    finalDrive: 2.8829439
   assists:
-    yawDamping: 2.2
+    yawDamping: 3
     spinThreshold: 45
     spinSaveGain: 0.22
-    alignGain: 0.03
-    handbrakeKick: 3.5
-    handbrakeKickTime: 0.25
+    alignGain: 0.2
+    handbrakeKick: 8
+    handbrakeKickTime: 0.15
     driftMinAngle: 8
     driftFullAngle: 45
     driftRampTime: 0.2

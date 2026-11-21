@@ -103,6 +103,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8940130901555050940}
   - component: {fileID: 8243259253854597026}
+  - component: {fileID: 6338464361772542277}
+  - component: {fileID: 8379659135056588869}
   m_Layer: 0
   m_Name: WaterTower
   m_TagString: Untagged
@@ -153,6 +155,48 @@ LODGroup:
     renderers: []
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
+--- !u!65 &6338464361772542277
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745238491716457312}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 15.130859, y: 24.054749, z: 2.206787}
+  m_Center: {x: -0.024902344, y: -11.527372, z: 0.014892578}
+--- !u!65 &8379659135056588869
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1745238491716457312}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.1831055, y: 22.20274, z: 14.078613}
+  m_Center: {x: 0.01928711, y: -10.60137, z: -0.35705566}
 --- !u!1 &4938454200094340411
 GameObject:
   m_ObjectHideFlags: 0

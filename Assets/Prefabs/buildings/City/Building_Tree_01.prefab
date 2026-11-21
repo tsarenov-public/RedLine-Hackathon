@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &8467906482457818559
 Transform:
@@ -103,12 +103,13 @@ GameObject:
   m_Component:
   - component: {fileID: 6277971633799807983}
   - component: {fileID: 2699150494351558731}
+  - component: {fileID: 8968846207321329082}
   m_Layer: 0
   m_Name: Building_Tree_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &6277971633799807983
 Transform:
@@ -151,6 +152,27 @@ LODGroup:
     - renderer: {fileID: 3902708171387676158}
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
+--- !u!65 &8968846207321329082
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4843064719180012986}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.6044073, y: 4.237747, z: 0.73565674}
+  m_Center: {x: 0.42347574, y: -1.6188736, z: 0.6925354}
 --- !u!1 &4857672635024491463
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,7 +189,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &2061852510440907470
 Transform:
