@@ -193,6 +193,7 @@ GameObject:
   - component: {fileID: 5502525595950672633}
   - component: {fileID: 8008642619330885252}
   - component: {fileID: 5643649696833036726}
+  - component: {fileID: -4588407000491593417}
   m_Layer: 0
   m_Name: StreetLightA
   m_TagString: Untagged
@@ -263,3 +264,30 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.28320312, y: 5.6310587, z: 0.2659912}
   m_Center: {x: -0.013183594, y: -0.6109414, z: -1.2904663}
+--- !u!54 &-4588407000491593417
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8391372612390475170}
+  serializedVersion: 5
+  m_Mass: 15
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 2

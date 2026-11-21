@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2695418705898253630}
   - component: {fileID: 7146351171246718245}
   - component: {fileID: 7645725834035790350}
+  - component: {fileID: 23402301819878852}
   m_Layer: 0
   m_Name: DumpsterC
   m_TagString: Untagged
@@ -82,6 +83,33 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.1071777, y: 1.4164733, z: 1.1989746}
   m_Center: {x: -0.013305664, y: -0.07056719, z: -0.008056641}
+--- !u!54 &23402301819878852
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1943831385447282489}
+  serializedVersion: 5
+  m_Mass: 15
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 2
 --- !u!1 &2251288728556440111
 GameObject:
   m_ObjectHideFlags: 0

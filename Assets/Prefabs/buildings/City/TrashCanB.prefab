@@ -287,6 +287,7 @@ GameObject:
   - component: {fileID: 2460793476574114581}
   - component: {fileID: 8624051014800868225}
   - component: {fileID: 1525678774783591622}
+  - component: {fileID: 1557611662812452748}
   m_Layer: 0
   m_Name: TrashCanB
   m_TagString: Untagged
@@ -358,3 +359,30 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.814209, y: 1, z: 0.67663574}
   m_Center: {x: 0.01965332, y: 0, z: -0.109313965}
+--- !u!54 &1557611662812452748
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8377252876732454767}
+  serializedVersion: 5
+  m_Mass: 15
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 2
