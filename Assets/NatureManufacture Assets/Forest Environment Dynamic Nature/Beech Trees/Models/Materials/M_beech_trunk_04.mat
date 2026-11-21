@@ -354,11 +354,11 @@ Material:
     - _AlphaDstBlend: 0
     - _AlphaSrcBlend: 1
     - _Anisotropy: 0
-    - _BarkAORemapMax: 1
+    - _BarkAORemapMax: 0.71
     - _BarkAORemapMin: 0
-    - _BarkMetallic: 1
-    - _BarkNormalScale: 1
-    - _BarkSmoothnessRemapMax: 1
+    - _BarkMetallic: 0.73
+    - _BarkNormalScale: 2.1
+    - _BarkSmoothnessRemapMax: 0
     - _BarkSmoothnessRemapMin: 0
     - _BarkUseUV3: 1
     - _BlendMode: 0
@@ -592,11 +592,11 @@ Material:
     - _TransparentDepthPostpassEnable: 0
     - _TransparentDepthPrepassEnable: 0
     - _TransparentSortPriority: 0
-    - _TrunkAORemapMax: 1
-    - _TrunkAORemapMin: 0
-    - _TrunkMetallic: 1
-    - _TrunkNormalScale: 1
-    - _TrunkSmoothnessRemapMax: 1
+    - _TrunkAORemapMax: 0.64
+    - _TrunkAORemapMin: 0.33
+    - _TrunkMetallic: 0.62
+    - _TrunkNormalScale: 1.9
+    - _TrunkSmoothnessRemapMax: 0
     - _TrunkSmoothnessRemapMin: 0
     - _UVBase: 0
     - _UVBase0: 0
@@ -650,7 +650,7 @@ Material:
     - _ThicknessRemap2: {r: 0, g: 1, b: 0, a: 0}
     - _ThicknessRemap3: {r: 0, g: 1, b: 0, a: 0}
     - _TransmittanceColor: {r: 1, g: 1, b: 1, a: 1}
-    - _TrunkBaseColor: {r: 0.9056604, g: 0.9022878, b: 0.89284444, a: 1}
+    - _TrunkBaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _TrunkTilingOffset: {r: 1, g: 1, b: 0, a: 0}
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVDetailsMappingMask0: {r: 1, g: 0, b: 0, a: 0}
