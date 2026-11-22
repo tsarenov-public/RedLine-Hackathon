@@ -1,5 +1,4 @@
 * text=auto
-
 # Unity YAML: текст, LF
 *.unity text eol=lf
 *.prefab text eol=lf
@@ -31,13 +30,11 @@
 *.json text eol=lf
 *.xml text eol=lf
 *.md text eol=lf
-
 # Бинарные ассеты и данные Unity (не мержим и не меняем переводы строк)
 *.asset binary
 *.cubemap binary
 *.lighting binary
 *.bytes binary
-
 # Изображения
 *.png binary
 *.jpg binary
@@ -53,7 +50,6 @@
 *.ico binary
 *.exr binary
 *.hdr binary
-
 # 3D-модели
 *.fbx binary
 *.FBX binary
@@ -66,7 +62,6 @@
 *.3ds binary
 *.stl binary
 *.glb binary
-
 # Сборки и архивы
 *.dll binary
 *.so binary
@@ -77,7 +72,6 @@
 *.gz binary
 *.rar binary
 *.unitypackage binary
-
 # Аудио и видео
 *.mp3 binary
 *.wav binary
@@ -90,9 +84,9 @@
 *.avi binary
 *.webm binary
 *.mkv binary
-
 # Шрифты
 *.ttf binary
 *.otf binary
 *.woff binary
 *.woff2 binary
+Assets/Scenes/Stage_1.unity filter=lfs diff=lfs merge=lfs -text
