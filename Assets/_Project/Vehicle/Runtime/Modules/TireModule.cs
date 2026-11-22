@@ -58,19 +58,30 @@ namespace Arcade.Vehicle
                 float latTarget = -Mathf.Sign(vLat) * t.lateralGrip.Evaluate(Mathf.Abs(alpha)) * maxF * latScale;
 
                 // ---- продольная ----
-                float longTarget = w.driveRequest * driveBoost;
+                float driveForce = w.driveRequest * driveBoost;
                 float brakeF = s.brake * t.brakeForce * (w.rig.steered ? t.brakeBias : 1f - t.brakeBias) * 0.5f;
                 float resist = brakeF + t.rollingResistance * w.load
                              + (w.rig.driven ? t.engineBrake * (1f - s.throttle) : 0f);
-                longTarget -= Mathf.Sign(vLong) * resist;
 
                 if (hb)
                 {
                     // долгое удержание ручника не должно останавливать машину
                     float fade = Mathf.Clamp01(s.handbrakeTime / Mathf.Max(0.05f, t.handbrakeFadeTime));
                     float lockF = Mathf.Lerp(t.handbrakeLock, t.handbrakeLock * 0.35f, fade);
-                    longTarget = -Mathf.Sign(vLong) * maxF * lockF;
+                    driveForce = 0f;
+                    resist = maxF * lockF;
                 }
+
+                float motionSign = Mathf.Sign(vLong);
+                float absLongSpeed = Mathf.Abs(vLong);
+                if (absLongSpeed < 3f)
+                {
+                    // Торможение может погасить движение и попутную тягу. Тяга при смене направления сохраняется.
+                    float forceToStop = perWheelMass * absLongSpeed / dt;
+                    float driveWithMotion = Mathf.Max(0f, motionSign * driveForce);
+                    resist = Mathf.Min(resist, forceToStop + driveWithMotion);
+                }
+                float longTarget = driveForce - motionSign * resist;
 
                 float limit = maxF * t.tractionLimit;
                 if (Mathf.Abs(longTarget) > limit)
@@ -91,11 +102,6 @@ namespace Arcade.Vehicle
                 // ---- анти-джиттер ----
                 float maxLatImp = perWheelMass * Mathf.Abs(vLat) / dt * t.impulseClamp;
                 latTarget = Mathf.Clamp(latTarget, -maxLatImp, maxLatImp);
-                if (Mathf.Sign(longTarget) != Mathf.Sign(vLong) && Mathf.Abs(vLong) < 3f)
-                {
-                    float maxLongImp = perWheelMass * Mathf.Abs(vLong) / dt;
-                    longTarget = Mathf.Clamp(longTarget, -maxLongImp, maxLongImp);
-                }
                 if (s.speed < 0.5f && s.throttle < 0.02f && !hb)
                 {
                     longTarget = -vLong * perWheelMass / dt * 0.5f;
