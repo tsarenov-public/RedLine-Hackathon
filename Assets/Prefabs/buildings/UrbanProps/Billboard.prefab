@@ -9,12 +9,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5818315419606151629}
+  - component: {fileID: 1240986437474124743}
+  - component: {fileID: 8546691825114900850}
   m_Layer: 0
   m_Name: Billboard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &5818315419606151629
 Transform:
@@ -32,6 +34,48 @@ Transform:
   - {fileID: 5868976199433886264}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1240986437474124743
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3813802116110086046}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.56, y: 8.5, z: 1.56}
+  m_Center: {x: 0, y: 4.25, z: 0}
+--- !u!65 &8546691825114900850
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3813802116110086046}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.35, y: 3.54, z: 6.2}
+  m_Center: {x: 0, y: 10.1, z: -0.035}
 --- !u!1 &9095176494959996307
 GameObject:
   m_ObjectHideFlags: 0
@@ -48,7 +92,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &5868976199433886264
 Transform:
@@ -72,7 +116,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9095176494959996307}
-  m_Mesh: {fileID: -7850409618950385026, guid: 3e834cad44b990243928b93aa9b5b613, type: 3}
+  m_Mesh: {fileID: 4300000, guid: c4088ebc72ba30d4c9f16e8fd22e9034, type: 2}
 --- !u!23 &428361457195035045
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -101,6 +145,7 @@ MeshRenderer:
   - {fileID: 2100000, guid: 8989ae47bf39dfa41ad0e5a8009f063a, type: 2}
   - {fileID: 2100000, guid: 64f5ae74ba811d74ba29a5019b27bd6a, type: 2}
   - {fileID: 2100000, guid: f390a011824797c42ad86e499a87c24c, type: 2}
+  - {fileID: 2100000, guid: b2f85137f07235346bdba39ec0afe5ac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

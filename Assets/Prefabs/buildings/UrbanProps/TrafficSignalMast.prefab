@@ -40,7 +40,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3663583404721256273}
-  m_Mesh: {fileID: 1777974266377063969, guid: 3e834cad44b990243928b93aa9b5b613, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 320937f8d331b1c469497779d2f4600f, type: 2}
 --- !u!23 &8731230723551956204
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -68,11 +68,11 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: 40c0a4f616b976840844c7d2a432b653, type: 2}
   - {fileID: 2100000, guid: 64f5ae74ba811d74ba29a5019b27bd6a, type: 2}
-  - {fileID: 2100000, guid: 8989ae47bf39dfa41ad0e5a8009f063a, type: 2}
+  - {fileID: 2100000, guid: ccaf5cfdd4f034d4e9968d1e99c99ae7, type: 2}
   - {fileID: 2100000, guid: 4d6f341e675573542907afa4813eaeb3, type: 2}
   - {fileID: 2100000, guid: 6a04b929f22e12e49a82ba16c98681a9, type: 2}
   - {fileID: 2100000, guid: 17bdc3ddaf725dd41b7e0a532c3b6c88, type: 2}
-  - {fileID: 2100000, guid: 0759e26c3a734ad46b33dbbdf8aa8cb9, type: 2}
+  - {fileID: 2100000, guid: 8cde0a3edc78ccd42814d7ea228ae554, type: 2}
   - {fileID: 2100000, guid: d05ecb475368b5843a9eed496ed0df8e, type: 2}
   - {fileID: 2100000, guid: 1b6f4ba598cd1d04fbc80e8a3742a9e0, type: 2}
   - {fileID: 2100000, guid: 59b480c8218024d43aed2a1ae31120f1, type: 2}
@@ -108,6 +108,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2302221928749367251}
+  - component: {fileID: 1297591256282777399}
+  - component: {fileID: 1015516610376344614}
+  - component: {fileID: 1559202488190882074}
+  - component: {fileID: 6455183111426419030}
+  - component: {fileID: 3653255974429979326}
   m_Layer: 0
   m_Name: TrafficSignalMast
   m_TagString: Untagged
@@ -131,3 +136,106 @@ Transform:
   - {fileID: 3822955286290360838}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1297591256282777399
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6956507660781351834}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.55, y: 4.5, z: 0.93}
+  m_Center: {x: 0.045, y: 2.25, z: 0.04}
+--- !u!65 &1015516610376344614
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6956507660781351834}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.52, y: 0.92, z: 6.55}
+  m_Center: {x: 0.055, y: 4.6, z: -3.35}
+--- !u!54 &1559202488190882074
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6956507660781351834}
+  serializedVersion: 5
+  m_Mass: 15
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 3
+--- !u!65 &6455183111426419030
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6956507660781351834}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.7, y: 5.05, z: 3.0800002}
+  m_Center: {x: 0.045, y: 2.45, z: 0.04}
+--- !u!114 &3653255974429979326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6956507660781351834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee3135382d9631848aca444059167728, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BreakableStreetProp
+  approachTrigger: {fileID: 6455183111426419030}
