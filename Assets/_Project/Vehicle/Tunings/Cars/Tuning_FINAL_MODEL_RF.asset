@@ -124,16 +124,16 @@ MonoBehaviour:
     lateralScale: 1
     frontGripBias: 1.12
     rearGripBias: 1.15
-    driftScrubRetention: 0.7
-    driftEllipseBoost: 1.7
-    driftThrottleBoost: 0.35
+    driftScrubRetention: 0.32
+    driftEllipseBoost: 3
+    driftThrottleBoost: 1
     handbrakeLateralGrip: 0.19
     handbrakeLock: 1
     handbrakeFadeTime: 0.2
     brakeForce: 25898.402
     brakeBias: 0.62
     rollingResistance: 0.015
-    engineBrake: 260
+    engineBrake: 300
     tractionLimit: 1
     ellipsePower: 1.5
     slipEpsilon: 1.6
@@ -310,7 +310,7 @@ MonoBehaviour:
     spinThreshold: 45
     spinSaveGain: 0.22
     alignGain: 0.2
-    handbrakeKick: 8
+    handbrakeKick: 7.05
     handbrakeKickTime: 0.15
     driftMinAngle: 8
     driftFullAngle: 45
