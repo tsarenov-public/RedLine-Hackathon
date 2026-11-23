@@ -7,11 +7,20 @@ namespace Arcade.Vehicle
     public sealed class NFSCameraController : MonoBehaviour
     {
         [SerializeField] private ArcadeVehicle manualTarget;
-        [Min(1f)] public float baseDistance = 3.28f;
-        [Min(.4f)] public float heightOffset = 1.34f;
-        public Vector3 lookAtOffset = new(0f, .5f, .55f);
-        [Min(.01f)] public float positionDamping = .12f;
-        [Min(.01f)] public float rotationDamping = .095f;
+        [Range(1f, 7f), Tooltip("Base chase distance before speed and NOS offsets, in metres.")]
+        public float baseDistance = 3f;
+        [Range(.4f, 4f), Tooltip("Height above the chassis origin, in metres.")]
+        public float heightOffset = 1.86f;
+        [Tooltip("Aim point relative to the chassis in chase space. Positive Z looks down the track.")]
+        public Vector3 lookAtOffset = new(0f, .54f, 1.30f);
+        [Range(-10f, 28f), Tooltip("Extra downward pitch in degrees, applied after looking at the aim point.")]
+        public float pitchAngleOffset = 14.4f;
+        [Range(.03f, .5f), Tooltip("Seconds of damping for orbit, height and lateral movement.")]
+        public float positionDamping = .16f;
+        [Range(.03f, .5f), Tooltip("Seconds of smoothing for the camera's aim.")]
+        public float rotationDamping = .115f;
+        [Range(0f, .8f), Tooltip("Maximum sideways camera offset on turns and drifts, in metres.")]
+        public float cornerOffset = .29f;
         [Range(0f, 1f)] public float driftFollow = .34f;
         public LayerMask obstacleMask = 201;
         [Min(.05f)] public float collisionRadius = .27f;
@@ -29,6 +38,7 @@ namespace Arcade.Vehicle
         private readonly RaycastHit[] hits = new RaycastHit[24];
         private float nextSearch;
         private float orbitYaw, orbitVelocity, followHeight, heightVelocity;
+        private float lateralOffset, lateralVelocity;
         private float chassisDistanceOffset, chassisRoof;
         private float speedOffset, speedVelocity, nosOffset, nosVelocity;
         private float obstructionDistance, obstructionVelocity;
@@ -121,12 +131,16 @@ namespace Arcade.Vehicle
             if (reset)
             {
                 orbitYaw = targetYaw;
-                orbitVelocity = heightVelocity = obstructionVelocity = 0f;
+                orbitVelocity = heightVelocity = obstructionVelocity = lateralOffset = lateralVelocity = 0f;
                 followHeight = targetHeight;
                 obstructionDistance = float.PositiveInfinity;
             }
             orbitYaw = Mathf.SmoothDampAngle(orbitYaw, targetYaw, ref orbitVelocity, positionDamping, Mathf.Infinity, dt);
             followHeight = Mathf.SmoothDamp(followHeight, targetHeight, ref heightVelocity,
+                positionDamping, Mathf.Infinity, dt);
+            float corner = Mathf.Clamp(state.steerDeg / 34f * .65f + state.lateralSpeed / 13f * .35f, -1f, 1f);
+            float lateralGoal = state.reversing ? 0f : -corner * cornerOffset * Mathf.InverseLerp(15f, 85f, state.speedKmh);
+            lateralOffset = Mathf.SmoothDamp(lateralOffset, lateralGoal, ref lateralVelocity,
                 positionDamping, Mathf.Infinity, dt);
             speedOffset = Mathf.SmoothDamp(speedOffset, state.speedKmh > 150f ? highSpeedPullback : 0f,
                 ref speedVelocity, pullbackDamping, Mathf.Infinity, dt);
@@ -136,9 +150,10 @@ namespace Arcade.Vehicle
             var orbit = Quaternion.Euler(0f, orbitYaw, 0f);
             var lookOffset = lookAtOffset;
             lookOffset.y = Mathf.Max(lookOffset.y, chassisRoof * .43f);
+            lookOffset.x += lateralOffset * .26f;
             var aim = position + orbit * lookOffset;
             var pivot = position + Vector3.up * Mathf.Max(.65f, lookOffset.y);
-            var intended = position - orbit * Vector3.forward * FollowDistance;
+            var intended = position + orbit * new Vector3(lateralOffset, 0f, -FollowDistance);
             intended.y = Mathf.Max(followHeight, position.y + .45f);
             var arm = intended - pivot;
             float blocked = ClearDistance(pivot, arm);
@@ -152,6 +167,7 @@ namespace Arcade.Vehicle
             Vector3 cameraPosition = pivot + arm.normalized * obstructionDistance;
             var aimDirection = aim - cameraPosition;
             Quaternion look = aimDirection.sqrMagnitude > .0001f ? Quaternion.LookRotation(aimDirection, Vector3.up) : orbit;
+            look *= Quaternion.Euler(pitchAngleOffset, 0f, 0f);
             stableRotation = reset ? look : Quaternion.Slerp(stableRotation, look, 1f - Mathf.Exp(-dt / rotationDamping));
 
             ShakeStrength = Mathf.InverseLerp(100f, 280f, state.speedKmh);

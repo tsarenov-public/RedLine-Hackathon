@@ -57,7 +57,7 @@ namespace Arcade.Vehicle
             mr.receiveShadows = false;
         }
 
-        public void AddMark(int wheel, Vector3 pos, Vector3 normal, Vector3 right, float intensity)
+        public void AddMark(int wheel, Vector3 pos, Vector3 normal, Vector3 right, float intensity, float opacityGain = 1f)
         {
             if (_last == null || wheel >= _last.Length) return;
             if (intensity < minIntensity) { _last[wheel].valid = false; return; }
@@ -70,7 +70,11 @@ namespace Arcade.Vehicle
             {
                 float d = Vector3.Distance(p, e.mid);
                 if (d < minDistance) return;
-                if (d < maxGap) Write(e.l, e.r, p - side, p + side, intensity, e.v + d * uvTiling);
+                if (d < maxGap)
+                {
+                    float opacity = 1f - Mathf.Pow(1f - Mathf.Clamp01(intensity), opacityGain);
+                    Write(e.l, e.r, p - side, p + side, opacity, e.v + d * uvTiling);
+                }
                 _last[wheel] = new Edge { l = p - side, r = p + side, mid = p, v = e.v + d * uvTiling, valid = true };
             }
             else _last[wheel] = new Edge { l = p - side, r = p + side, mid = p, v = 0f, valid = true };

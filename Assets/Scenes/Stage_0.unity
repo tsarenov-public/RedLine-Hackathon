@@ -651798,7 +651798,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4644b337d4073fe40bb77472e0c24d4d, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Arcade.Vehicle.CameraSpeedEffects
   speedLines: {fileID: 1829877665}
   speedVolume: {fileID: 1106154634}
@@ -651808,6 +651808,9 @@ MonoBehaviour:
   response: 0.18
   lineStartKmh: 118
   maximumLineRate: 48
+  speedLinesSizeMultiplier: 1
+  speedLinesIntensity: 1.2
+  speedLinesBrightness: 1.15
 --- !u!114 &1072201849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -651818,14 +651821,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2021b5d06f9d9a746a3cf088f438b12f, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Arcade.Vehicle.NFSCameraController
   manualTarget: {fileID: 0}
-  baseDistance: 4
-  heightOffset: 1.34
-  lookAtOffset: {x: 0, y: 0.5, z: 0.55}
-  positionDamping: 0.12
-  rotationDamping: 0.095
+  baseDistance: 3
+  heightOffset: 1.86
+  lookAtOffset: {x: 0, y: 0.54, z: 1.3}
+  pitchAngleOffset: 14.4
+  positionDamping: 0.16
+  rotationDamping: 0.115
+  cornerOffset: 0.29
   driftFollow: 0.34
   obstacleMask:
     serializedVersion: 2
@@ -1059527,7 +1059532,7 @@ ParticleSystem:
   lengthInSec: 5
   simulationSpeed: 1
   stopAction: 0
-  cullingMode: 0
+  cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
@@ -1059563,8 +1059568,8 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 3
       minMaxState: 3
-      scalar: 0.32
-      minScalar: 0.22
+      scalar: 0.25
+      minScalar: 0.17
       maxCurve:
         serializedVersion: 2
         m_Curve: []
@@ -1059579,12 +1059584,30 @@ ParticleSystem:
         m_RotationOrder: 4
     startSpeed:
       serializedVersion: 3
-      minMaxState: 0
-      scalar: 0
-      minScalar: 5
+      minMaxState: 3
+      scalar: 70
+      minScalar: 45
       maxCurve:
         serializedVersion: 2
-        m_Curve: []
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 1
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
@@ -1059598,7 +1059621,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.82, g: 0.91, b: 1, a: 0.64}
+      maxColor: {r: 0.82, g: 0.91, b: 1, a: 0.57}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -1059662,8 +1059685,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 3
       minMaxState: 3
-      scalar: 0.11
-      minScalar: 0.055
+      scalar: 0.22
+      minScalar: 0.1
       maxCurve:
         serializedVersion: 2
         m_Curve: []
@@ -1059763,7 +1059786,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 64
+    maxNumParticles: 96
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -1059787,15 +1059810,15 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 6
     enabled: 1
-    type: 10
+    type: 17
     angle: 25
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 0.035
-    donutRadius: 0.2
+    donutRadius: 0.035
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
-    m_Scale: {x: 11.5, y: 6.3, z: 1}
+    m_Scale: {x: 12.1, y: 6.44, z: 0.25}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -1060090,8 +1060113,8 @@ ParticleSystem:
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 0}
-        key1: {r: 1, g: 1, b: 1, a: 0.78}
-        key2: {r: 0, g: 0, b: 0, a: 0.78}
+        key1: {r: 1, g: 1, b: 1, a: 0.88}
+        key2: {r: 0, g: 0, b: 0, a: 0.88}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
@@ -1060106,8 +1060129,8 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 10486
-        atime2: 40632
+        atime1: 7864
+        atime2: 45219
         atime3: 65535
         atime4: 0
         atime5: 0
@@ -1060218,7 +1060241,7 @@ ParticleSystem:
     flipU: 0
     flipV: 0
   VelocityModule:
-    enabled: 1
+    enabled: 0
     x:
       serializedVersion: 3
       minMaxState: 0
@@ -1061756,8 +1061779,8 @@ ParticleSystemRenderer:
   m_MinParticleSize: 0
   m_MaxParticleSize: 0.5
   m_CameraVelocityScale: 0
-  m_VelocityScale: 0.095
-  m_LengthScale: 5.5
+  m_VelocityScale: 0.34
+  m_LengthScale: 17
   m_SortingFudge: 0
   m_NormalDirection: 1
   m_ShadowBias: 0

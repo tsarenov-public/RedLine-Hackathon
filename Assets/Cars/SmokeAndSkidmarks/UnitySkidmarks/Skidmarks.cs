@@ -19,6 +19,7 @@ public class Skidmarks : MonoBehaviour
     private const float HalfWidth = 0.175f;
     private const float MinDistanceSquared = 0.25f * 0.25f;
     private const float MaxGapSquared = 2.5f * 2.5f;
+    private static readonly int OpacityGainId = Shader.PropertyToID("_OpacityGain");
 
     private struct MarkSection
     {
@@ -94,6 +95,12 @@ public class Skidmarks : MonoBehaviour
     public void BindRoadSurface(Collider surface)
     {
         roadSurface = surface;
+    }
+
+    public void SetOpacityGain(float gain)
+    {
+        if (runtimeMaterial != null && runtimeMaterial.HasProperty(OpacityGainId))
+            runtimeMaterial.SetFloat(OpacityGainId, Mathf.Clamp(gain, .2f, 3f));
     }
 
     public int AddSkidMark(Vector3 position, Vector3 normal, float opacity, int lastIndex)

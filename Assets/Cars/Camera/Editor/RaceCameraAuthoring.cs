@@ -15,13 +15,18 @@ internal static class RaceCameraAuthoring
     private const string DebrisFolder = "Assets/Cars/Effects/SpeedDebris/";
     private const string DebrisPrefab = DebrisFolder + "WindDebrisParticles.prefab";
     private const string StagePath = "Assets/Scenes/Stage_0.unity";
+    private const string WheelEffectsFolder = "Assets/Cars/SmokeAndSkidmarks/";
 
     [MenuItem("Tools/Arcade Vehicle/Build race camera and wind effects")]
     public static void Build()
     {
-        var windMaterial = ParticleMaterial(CameraFolder + "Speed Lines.mat", CameraFolder + "Speed_Line.png");
-        var paperMaterial = ParticleMaterial(DebrisFolder + "Wind Paper.mat", DebrisFolder + "Speed_Debris_Paper.png");
+        var windMaterial = ParticleMaterial(CameraFolder + "Speed Lines.mat", CameraFolder + "Speed_Line.png", true);
+        var paperMaterial = ParticleMaterial(DebrisFolder + "Wind Paper.mat", DebrisFolder + "Speed_Debris_Paper.png", false);
         var debris = BuildDebrisPrefab(paperMaterial);
+        var smoke = AssetDatabase.LoadAssetAtPath<GameObject>(WheelEffectsFolder +
+            "Prefabs/Prefabs/Particles/P_WheelSmokeAsphalt.prefab").GetComponent<ParticleSystem>();
+        var marks = AssetDatabase.LoadAssetAtPath<GameObject>(WheelEffectsFolder +
+            "UnitySkidmarks/SkidmarksController.prefab").GetComponent<Skidmarks>();
         foreach (string guid in AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Cars" }))
         {
             string path = AssetDatabase.GUIDToAssetPath(guid);
@@ -30,7 +35,11 @@ internal static class RaceCameraAuthoring
             var root = PrefabUtility.LoadPrefabContents(path);
             try
             {
-                foreach (var car in root.GetComponentsInChildren<ArcadeVehicle>(true)) BindDebris(car, debris);
+                foreach (var car in root.GetComponentsInChildren<ArcadeVehicle>(true))
+                {
+                    BindDebris(car, debris);
+                    BindWheelEffects(car, smoke, marks);
+                }
                 if (PrefabUtility.SaveAsPrefabAsset(root, path) == null)
                     throw new InvalidOperationException("Could not save " + path);
                 Debug.Log("RACE_CAMERA prefab " + path);
@@ -53,6 +62,7 @@ internal static class RaceCameraAuthoring
             foreach (var car in roots.SelectMany(root => root.GetComponentsInChildren<ArcadeVehicle>(true)))
             {
                 BindDebris(car, debris);
+                BindWheelEffects(car, smoke, marks);
                 Debug.Log("RACE_CAMERA Stage_0 " + car.name);
             }
             if (!EditorSceneManager.SaveScene(stage))
@@ -68,6 +78,13 @@ internal static class RaceCameraAuthoring
     {
         if (camera.TryGetComponent<VehicleChaseCamera>(out var legacy)) legacy.enabled = false;
         var follow = GetOrAdd<NFSCameraController>(camera.gameObject);
+        follow.baseDistance = 3f;
+        follow.heightOffset = 1.86f;
+        follow.lookAtOffset = new Vector3(0f, .54f, 1.30f);
+        follow.pitchAngleOffset = 14.4f;
+        follow.positionDamping = .16f;
+        follow.rotationDamping = .115f;
+        follow.cornerOffset = .29f;
         var effects = GetOrAdd<CameraSpeedEffects>(camera.gameObject);
         camera.fieldOfView = effects.baseFov;
         camera.nearClipPlane = .15f;
@@ -79,27 +96,26 @@ internal static class RaceCameraAuthoring
         var main = particles.main;
         main.playOnAwake = false;
         main.loop = true;
-        main.startLifetime = new ParticleSystem.MinMaxCurve(.22f, .32f);
-        main.startSpeed = 0f;
-        main.startSize = new ParticleSystem.MinMaxCurve(.055f, .11f);
-        main.startColor = new Color(.82f, .91f, 1f, .64f);
+        main.startLifetime = new ParticleSystem.MinMaxCurve(.17f, .25f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(45f, 70f);
+        main.startSize = new ParticleSystem.MinMaxCurve(.10f, .22f);
+        main.startColor = new Color(.82f, .91f, 1f, .57f);
         main.simulationSpace = ParticleSystemSimulationSpace.Local;
-        main.maxParticles = 64;
+        main.cullingMode = ParticleSystemCullingMode.AlwaysSimulate;
+        main.maxParticles = 96;
         var shape = particles.shape;
         shape.enabled = true;
-        shape.shapeType = ParticleSystemShapeType.Circle;
+        shape.shapeType = ParticleSystemShapeType.Donut;
         shape.radius = 1f;
-        shape.radiusThickness = .035f;
-        shape.scale = new Vector3(11.5f, 6.3f, 1f);
+        shape.donutRadius = .035f;
+        shape.scale = new Vector3(12.1f, 6.44f, .25f);
         var velocity = particles.velocityOverLifetime;
-        velocity.enabled = true;
-        velocity.space = ParticleSystemSimulationSpace.Local;
-        velocity.z = 35f;
-        SetFade(particles, .78f, .16f, .62f);
+        velocity.enabled = false;
+        SetFade(particles, .88f, .12f, .69f);
         var renderer = particles.GetComponent<ParticleSystemRenderer>();
         renderer.renderMode = ParticleSystemRenderMode.Stretch;
-        renderer.lengthScale = 5.5f;
-        renderer.velocityScale = .095f;
+        renderer.lengthScale = 17f;
+        renderer.velocityScale = .34f;
         ConfigureRenderer(renderer, material);
         SetIdle(particles);
 
@@ -164,59 +180,13 @@ internal static class RaceCameraAuthoring
 
     private static GameObject BuildDebrisPrefab(Material material)
     {
-        var root = new GameObject("WindDebrisParticles", typeof(ParticleSystem), typeof(SpeedDebrisController));
+        var root = new GameObject("WindDebrisParticles", typeof(SpeedDebrisController));
         try
         {
-            var particles = root.GetComponent<ParticleSystem>();
-            var main = particles.main;
-            main.playOnAwake = false;
-            main.loop = true;
-            main.simulationSpace = ParticleSystemSimulationSpace.World;
-            main.scalingMode = ParticleSystemScalingMode.Local;
-            main.maxParticles = 88;
-            main.startLifetime = new ParticleSystem.MinMaxCurve(1.5f, 2f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(4.2f, 8.2f);
-            main.gravityModifier = .25f;
-            main.startSize3D = true;
-            main.startSizeX = new ParticleSystem.MinMaxCurve(.19f, .28f);
-            main.startSizeY = new ParticleSystem.MinMaxCurve(.27f, .38f);
-            main.startSizeZ = 1f;
-            main.startRotation3D = true;
-            main.startRotationX = RandomAngle();
-            main.startRotationY = RandomAngle();
-            main.startRotationZ = RandomAngle();
-            var shape = particles.shape;
-            shape.shapeType = ParticleSystemShapeType.Box;
-            shape.scale = new Vector3(2.8f, .15f, 1f);
-            var lift = particles.velocityOverLifetime;
-            lift.enabled = true;
-            lift.space = ParticleSystemSimulationSpace.World;
-            lift.y = 3.1f;
-
-            var noise = particles.noise;
-            noise.enabled = true;
-            noise.strength = 3.5f;
-            noise.frequency = 1.2f;
-            noise.rotationAmount = 2f;
-            var spin = particles.rotationOverLifetime;
-            spin.enabled = true;
-            spin.separateAxes = true;
-            spin.x = new ParticleSystem.MinMaxCurve(-2.5f, 3.7f);
-            spin.y = new ParticleSystem.MinMaxCurve(-3.9f, 2.9f);
-            spin.z = new ParticleSystem.MinMaxCurve(-3.6f, 3.6f);
-
-            var sheet = particles.textureSheetAnimation;
-            sheet.enabled = true;
-            sheet.numTilesX = sheet.numTilesY = 2;
-            sheet.frameOverTime = 0f;
-            sheet.startFrame = new ParticleSystem.MinMaxCurve(0f, .999f);
-            SetFade(particles, .94f, .08f, .73f);
-            var renderer = particles.GetComponent<ParticleSystemRenderer>();
-            renderer.renderMode = ParticleSystemRenderMode.Mesh;
-            renderer.mesh = PaperQuad();
-            renderer.enableGPUInstancing = false;
-            ConfigureRenderer(renderer, material);
-            SetIdle(particles);
+            var binding = new SerializedObject(root.GetComponent<SpeedDebrisController>());
+            binding.FindProperty("left").objectReferenceValue = CreatePaperEmitter(root.transform, "Left", -7.4f, material);
+            binding.FindProperty("right").objectReferenceValue = CreatePaperEmitter(root.transform, "Right", 7.4f, material);
+            binding.ApplyModifiedPropertiesWithoutUndo();
             return PrefabUtility.SaveAsPrefabAsset(root, DebrisPrefab)
                 ?? throw new InvalidOperationException("Could not save wind particles prefab.");
         }
@@ -226,21 +196,81 @@ internal static class RaceCameraAuthoring
         }
     }
 
+    private static ParticleSystem CreatePaperEmitter(Transform parent, string name, float side, Material material)
+    {
+        var emitter = new GameObject(name, typeof(ParticleSystem));
+        emitter.transform.SetParent(parent, false);
+        emitter.transform.SetLocalPositionAndRotation(new Vector3(side, 1.6f, 12.5f), Quaternion.Euler(0, 180f, 0));
+        var particles = emitter.GetComponent<ParticleSystem>();
+        var main = particles.main;
+        main.playOnAwake = false;
+        main.loop = true;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.scalingMode = ParticleSystemScalingMode.Local;
+        main.maxParticles = 70;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(1.5f, 2f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(24f, 38f);
+        main.gravityModifier = .25f;
+        main.startSize3D = true;
+        main.startSizeX = new ParticleSystem.MinMaxCurve(.32f, .38f);
+        main.startSizeY = new ParticleSystem.MinMaxCurve(.46f, .54f);
+        main.startSizeZ = 1f;
+        main.startRotation3D = true;
+        main.startRotationX = RandomAngle();
+        main.startRotationY = RandomAngle();
+        main.startRotationZ = RandomAngle();
+        var shape = particles.shape;
+        shape.shapeType = ParticleSystemShapeType.Box;
+        shape.scale = new Vector3(1.2f, 2.7f, 1.25f);
+
+        var noise = particles.noise;
+        noise.enabled = true;
+        noise.strength = 3.5f;
+        noise.frequency = 1.2f;
+        noise.rotationAmount = 2f;
+        var spin = particles.rotationOverLifetime;
+        spin.enabled = true;
+        spin.separateAxes = true;
+        spin.x = new ParticleSystem.MinMaxCurve(-2.5f, 3.7f);
+        spin.y = new ParticleSystem.MinMaxCurve(-3.9f, 2.9f);
+        spin.z = new ParticleSystem.MinMaxCurve(-3.6f, 3.6f);
+
+        var sheet = particles.textureSheetAnimation;
+        sheet.enabled = true;
+        sheet.numTilesX = sheet.numTilesY = 2;
+        sheet.frameOverTime = 0f;
+        sheet.startFrame = new ParticleSystem.MinMaxCurve(0f, .999f);
+        SetFade(particles, .98f, .04f, .73f);
+        var renderer = particles.GetComponent<ParticleSystemRenderer>();
+        renderer.renderMode = ParticleSystemRenderMode.Mesh;
+        renderer.mesh = PaperQuad();
+        renderer.enableGPUInstancing = false;
+        ConfigureRenderer(renderer, material);
+        SetIdle(particles);
+        return particles;
+    }
+
     private static void BindDebris(ArcadeVehicle car, GameObject prefab)
     {
         var emitter = car.transform.Find(prefab.name);
         if (emitter == null)
             emitter = ((GameObject)PrefabUtility.InstantiatePrefab(prefab, car.transform)).transform;
-        float nose = car.GetComponents<BoxCollider>()
-            .Where(box => box.enabled && !box.isTrigger)
-            .Select(box => box.center.z + box.size.z * .5f).DefaultIfEmpty(2.1f).Max();
-        emitter.SetLocalPositionAndRotation(new Vector3(0, .15f, nose + .35f), Quaternion.Euler(-12f, 180f, 0f));
+        emitter.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         var controller = emitter.GetComponent<SpeedDebrisController>();
         var binding = new SerializedObject(controller);
         binding.FindProperty("vehicle").objectReferenceValue = car;
         binding.ApplyModifiedPropertiesWithoutUndo();
         PrefabUtility.RecordPrefabInstancePropertyModifications(emitter);
         PrefabUtility.RecordPrefabInstancePropertyModifications(controller);
+    }
+
+    private static void BindWheelEffects(ArcadeVehicle car, ParticleSystem smoke, Skidmarks marks)
+    {
+        var effects = GetOrAdd<VehicleEffects>(car.gameObject);
+        effects.vehicle = car;
+        if (effects.smokePrefab == null) effects.smokePrefab = smoke;
+        if (effects.skidmarksPrefab == null && effects.skidmarks == null) effects.skidmarksPrefab = marks;
+        PrefabUtility.RecordPrefabInstancePropertyModifications(effects);
     }
 
     private static void SetIdle(ParticleSystem particles)
@@ -270,29 +300,37 @@ internal static class RaceCameraAuthoring
         renderer.receiveShadows = false;
     }
 
-    private static Material ParticleMaterial(string path, string texturePath)
+    private static Material ParticleMaterial(string path, string texturePath, bool lines)
     {
         var importer = (TextureImporter)AssetImporter.GetAtPath(texturePath);
-        importer.alphaIsTransparency = true;
-        importer.wrapMode = TextureWrapMode.Clamp;
-        importer.SaveAndReimport();
+        if (!importer.alphaIsTransparency || importer.wrapMode != TextureWrapMode.Clamp)
+        {
+            importer.alphaIsTransparency = true;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            importer.SaveAndReimport();
+        }
+
+        var shader = Shader.Find("Arcade/Peripheral Particles");
         var material = AssetDatabase.LoadAssetAtPath<Material>(path);
         if (material == null)
         {
-            material = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
+            material = new Material(shader);
             AssetDatabase.CreateAsset(material, path);
         }
+
+        int queue = material.renderQueue;
+        var tint = material.HasProperty("_BaseColor") ? material.GetColor("_BaseColor") : Color.white;
+        material.shader = shader;
+        material.shaderKeywords = Array.Empty<string>();
+        material.renderQueue = queue;
         material.SetTexture("_BaseMap", AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath));
-        material.SetFloat("_Surface", 1f);
+        material.SetColor("_BaseColor", tint);
+        material.SetFloat("_SideStart", lines ? .70f : .68f);
+        material.SetFloat("_TopStart", .76f);
+        material.SetFloat("_Feather", .09f);
+        material.SetFloat("_TopWeight", lines ? 1f : 0f);
+        material.SetFloat("_Brightness", lines ? 1f : 1.3f);
         material.SetFloat("_Cull", (float)CullMode.Off);
-        material.SetFloat("_ZWrite", 0f);
-        material.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-        material.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-        material.SetFloat("_SrcBlendAlpha", (float)BlendMode.One);
-        material.SetFloat("_DstBlendAlpha", (float)BlendMode.OneMinusSrcAlpha);
-        material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-        material.SetOverrideTag("RenderType", "Transparent");
-        material.renderQueue = (int)RenderQueue.Transparent + 5;
         EditorUtility.SetDirty(material);
         AssetDatabase.SaveAssetIfDirty(material);
         return material;

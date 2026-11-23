@@ -69073,15 +69073,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eca034a785ca44236b4981f8698d4dc8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Arcade.Vehicle.VehicleEffects
   vehicle: {fileID: 6597988583344112095}
   smokePrefab: {fileID: 198987657094923722, guid: e2c4a8323f8addc4696c51e0372cf7c7, type: 3}
   sparksPrefab: {fileID: 0}
   skidmarks: {fileID: 0}
   skidmarksPrefab: {fileID: 5537431246241365613, guid: 3e7f96afc2225384a9be4b8ba394e1d3, type: 3}
+  nosFlames: []
+  brakeLights: []
   smokeMaxRate: 70
+  smokeBrightness: 1.6
+  skidMarkBrightness: 1.5
   sparksMinImpulse: 4000
+  nosFlameRate: 48
 --- !u!114 &6224868428604465121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129060,27 +129065,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.612991
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.000000043471935
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.0000000045690842
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9945219
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.104528464
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

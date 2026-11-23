@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
   version: 10
 --- !u!21 &2100000
@@ -21,23 +21,20 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Wind Paper
-  m_Shader: {fileID: 4800000, guid: 0406db5a14f94604a8c57ccfbc9f3b46, type: 3}
+  m_Shader: {fileID: 4800000, guid: ee5b29b3d001ead41ae055a505b0c736, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _SURFACE_TYPE_TRANSPARENT
-  m_InvalidKeywords:
-  - _FLIPBOOKBLENDING_OFF
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 1
   m_CustomRenderQueue: 3000
-  stringTagMap:
-    RenderType: Transparent
+  stringTagMap: {}
   disabledShaderPasses:
   - DepthOnly
   - SHADOWCASTER
-  m_LockedProperties: 
+  m_LockedProperties:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -59,6 +56,7 @@ Material:
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendOp: 0
+    - _Brightness: 1.3
     - _CameraFadingEnabled: 0
     - _CameraFarFadeDistance: 2
     - _CameraNearFadeDistance: 1
@@ -71,16 +69,20 @@ Material:
     - _DistortionStrengthScaled: 0.1
     - _DstBlend: 10
     - _DstBlendAlpha: 10
+    - _Feather: 0.09
     - _FlipbookBlending: 0
     - _FlipbookMode: 0
     - _Mode: 0
     - _QueueOffset: 0
+    - _SideStart: 0.68
     - _SoftParticlesEnabled: 0
     - _SoftParticlesFarFadeDistance: 1
     - _SoftParticlesNearFadeDistance: 0
     - _SrcBlend: 5
     - _SrcBlendAlpha: 1
     - _Surface: 1
+    - _TopStart: 0.76
+    - _TopWeight: 0
     - _ZWrite: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
