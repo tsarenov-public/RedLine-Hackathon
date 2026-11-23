@@ -3349,6 +3349,7 @@ Transform:
   - {fileID: 5078450543619565491}
   - {fileID: 2808634184173724839}
   - {fileID: 1851672964542977906}
+  - {fileID: 5208763860601674159}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1343507826189631031
@@ -4494,3 +4495,65 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1001 &2769851478711671779
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1639377439511077188}
+    m_Modifications:
+    - target: {fileID: 5058582909395981694, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+      propertyPath: m_Name
+      value: Police Emergency Equipment
+      objectReference: {fileID: 0}
+    - target: {fileID: 7942452109415088716, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.00043311948
+      objectReference: {fileID: 0}
+    - target: {fileID: 7942452109415088716, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0000047683716
+      objectReference: {fileID: 0}
+    - target: {fileID: 7942452109415088716, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.0000031292439
+      objectReference: {fileID: 0}
+    - target: {fileID: 7942452109415088716, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7942452109415088716, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7942452109415088716, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7942452109415088716, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7942452109415088716, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7942452109415088716, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7942452109415088716, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+--- !u!4 &5208763860601674159 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7942452109415088716, guid: d8ac398f586c96c4fa395354b0a601b8, type: 3}
+  m_PrefabInstance: {fileID: 2769851478711671779}
+  m_PrefabAsset: {fileID: 0}
