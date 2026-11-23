@@ -85,6 +85,7 @@ namespace Arcade.Vehicle
             float dt = Time.fixedDeltaTime;
             Ctx.dt = dt;
             Ctx.input = _input != null ? _input.Sample(dt) : default;
+            if (Ctx.input.BrakeOnly) Ctx.s.reversing = false;
             UpdateKinematics();
             for (int i = 0; i < _modules.Length; i++) _modules[i].FixedTick(dt);
         }

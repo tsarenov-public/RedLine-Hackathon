@@ -43860,7 +43860,7 @@ GameObject:
   - component: {fileID: 122848831}
   - component: {fileID: 122848830}
   - component: {fileID: 122848829}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Default T Crossing (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -192869,7 +192869,7 @@ GameObject:
   - component: {fileID: 392149938}
   - component: {fileID: 392149937}
   - component: {fileID: 392149936}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Default X Crossing (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -217948,7 +217948,7 @@ GameObject:
   - component: {fileID: 431049036}
   - component: {fileID: 431049035}
   - component: {fileID: 431049034}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Default T Crossing (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -292413,7 +292413,7 @@ GameObject:
   - component: {fileID: 625585232}
   - component: {fileID: 625585231}
   - component: {fileID: 625585230}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: new road 21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -416545,7 +416545,7 @@ GameObject:
   - component: {fileID: 983734089}
   - component: {fileID: 983734088}
   - component: {fileID: 983734087}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: new road 20
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -421550,7 +421550,7 @@ GameObject:
   - component: {fileID: 990158759}
   - component: {fileID: 990158758}
   - component: {fileID: 990158757}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Default T Crossing (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -449233,7 +449233,7 @@ GameObject:
   - component: {fileID: 1051115055}
   - component: {fileID: 1051115054}
   - component: {fileID: 1051115053}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: new road 20
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -452987,7 +452987,7 @@ GameObject:
   - component: {fileID: 1059753618}
   - component: {fileID: 1059753617}
   - component: {fileID: 1059753616}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: new road 21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -495579,11 +495579,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIRacerController
   path: {fileID: 1617277857}
-  reachDistance: 5
-  loopTrack: 1
+  reachDistance: 3.2
+  loopTrack: 0
   maxThrottle: 0.85
-  steerSensitivity: 2.2
-  cornerBrakeStrength: 0.5
+  cruiseSpeedKmh: 72
+  steerSensitivity: 1.6
+  cornerBrakeStrength: 0.75
 --- !u!4 &1147010290 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 615104329529909267, guid: cdf7b5aca632c4c24b9a1a07247a1f40, type: 3}
@@ -527174,7 +527175,7 @@ GameObject:
   - component: {fileID: 1230675896}
   - component: {fileID: 1230675895}
   - component: {fileID: 1230675894}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: new road 11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -588822,7 +588823,7 @@ GameObject:
   - component: {fileID: 1420848571}
   - component: {fileID: 1420848570}
   - component: {fileID: 1420848569}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Default X Crossing (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -620903,7 +620904,7 @@ GameObject:
   - component: {fileID: 1503289960}
   - component: {fileID: 1503289959}
   - component: {fileID: 1503289958}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: new road 24
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -629725,7 +629726,7 @@ GameObject:
   - component: {fileID: 1507577504}
   - component: {fileID: 1507577503}
   - component: {fileID: 1507577502}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: new road 10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -760924,7 +760925,7 @@ GameObject:
   - component: {fileID: 1869585492}
   - component: {fileID: 1869585491}
   - component: {fileID: 1869585490}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: new road 17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -845781,7 +845782,7 @@ GameObject:
   - component: {fileID: 2061061745}
   - component: {fileID: 2061061744}
   - component: {fileID: 2061061743}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: new road 16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1187255,7 +1187256,7 @@ GameObject:
   - component: {fileID: 2139549541}
   - component: {fileID: 2139549540}
   - component: {fileID: 2139549539}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: new road 23
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1198131,7 +1198132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Arcade.Vehicle.VehicleInputSource
   stickDeadzone: 0.12
-  debugInput: 1
+  debugInput: 0
 --- !u!33 &4294163404248837494
 MeshFilter:
   m_ObjectHideFlags: 0

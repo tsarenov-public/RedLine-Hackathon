@@ -8,7 +8,7 @@ namespace Arcade.Vehicle
     public sealed class VehicleInputSource : MonoBehaviour, IInputSource
     {
         [Range(0f, 0.4f)] public float stickDeadzone = 0.12f;
-        public bool debugInput = true;
+        public bool debugInput;
 
         private AIRacerController _aiController;
         private float _nextLogTime;
@@ -80,20 +80,17 @@ namespace Arcade.Vehicle
 
         public VehicleInputState Sample(float dt)
         {
-            if (_aiController != null && _aiController.enabled)
+            if (_aiController != null && _aiController.isActiveAndEnabled)
             {
-                LogState($"AI -> Газ: {_aiController.CurrentThrottle:F2}, Руль: {_aiController.CurrentSteer:F2}, Тормоз: {_aiController.CurrentBrake:F2}");
-
-                return new VehicleInputState
+                var aiInput = new VehicleInputState
                 {
                     Steer = _aiController.CurrentSteer,
                     Throttle = _aiController.CurrentThrottle,
                     Brake = _aiController.CurrentBrake,
-                    Handbrake = false,
-                    Nos = false,
-                    Speedbreaker = false,
-                    Reset = false
+                    BrakeOnly = true
                 };
+                LogState("AI", aiInput);
+                return aiInput;
             }
 
 #if ENABLE_INPUT_SYSTEM
@@ -103,9 +100,7 @@ namespace Arcade.Vehicle
             float throttle = Mathf.Clamp01(_throttle.ReadValue<float>());
             float brake = Mathf.Clamp01(_brake.ReadValue<float>());
 
-            LogState($"ИГРОК (New Input) -> Газ: {throttle:F2}, Руль: {steer:F2}, Тормоз: {brake:F2}");
-
-            return new VehicleInputState
+            var playerInput = new VehicleInputState
             {
                 Steer = steer,
                 Throttle = throttle,
@@ -120,9 +115,7 @@ namespace Arcade.Vehicle
             float throttle = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) ? 1f : 0f;
             float brake = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) ? 1f : 0f;
 
-            LogState($"ИГРОК (Legacy Input) -> Газ: {throttle:F2}, Руль: {steer:F2}, Тормоз: {brake:F2}");
-
-            return new VehicleInputState
+            var playerInput = new VehicleInputState
             {
                 Steer = steer,
                 Throttle = throttle,
@@ -133,14 +126,16 @@ namespace Arcade.Vehicle
                 Reset = Input.GetKeyDown(KeyCode.R)
             };
 #endif
+            LogState("ИГРОК", playerInput);
+            return playerInput;
         }
 
-        private void LogState(string message)
+        private void LogState(string source, VehicleInputState input)
         {
             if (debugInput && Time.unscaledTime >= _nextLogTime)
             {
                 _nextLogTime = Time.unscaledTime + 0.5f;
-                Debug.Log($"[{gameObject.name}] {message}");
+                Debug.Log($"[{gameObject.name}] {source} -> Газ: {input.Throttle:F2}, Руль: {input.Steer:F2}, Тормоз: {input.Brake:F2}");
             }
         }
     }
