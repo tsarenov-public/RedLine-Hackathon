@@ -7,21 +7,24 @@ namespace Arcade.Vehicle
     public sealed class ArcadeSpeedometerHUD : MonoBehaviour
     {
         private const float MphPerKmh = 0.621371f;
-        private const float MaxDialMph = 200f;
-        private static readonly Color NosIdle = new(0.27f, 0.94f, 0.88f);
-        private static readonly Color NosActive = new(0.32f, 0.66f, 1f);
+        private const float MaxDialRpm = 10000f;
+        public const float NosSweepDegrees = 53f;
+        private static readonly Color NosIdle = new(.69f, 1f, .16f);
+        private static readonly Color NosActive = new(.89f, 1f, .54f);
         private static ArcadeSpeedometerHUD visibleHud;
 
         [SerializeField] private ArcadeVehicle vehicle;
         [SerializeField] private Canvas display;
         [SerializeField] private RectTransform needle;
         [SerializeField] private Image nitroFill;
-        [SerializeField] private Text digitalSpeed;
-        [SerializeField] private Text gearLabel;
+        [SerializeField] private LcdDisplay digitalSpeed;
+        [SerializeField] private LcdDisplay gearLabel;
+        [SerializeField] private Image upshift;
+        [SerializeField] private ArcadeMinimapHUD minimap;
 
         private VehicleInputSource inputSource;
         private AIRacerController aiController;
-        private float displayedMph;
+        private float displayedRpm;
         private int lastSpeed = -1;
         private int lastGear = int.MinValue;
 
@@ -76,23 +79,28 @@ namespace Arcade.Vehicle
 
             var state = vehicle.State;
             float speed = Mathf.Max(0f, state.speedKmh * MphPerKmh);
-            float dialMph = Mathf.Min(speed, MaxDialMph);
-            displayedMph = display.enabled
-                ? Mathf.Lerp(displayedMph, dialMph, 1f - Mathf.Exp(-12f * Time.unscaledDeltaTime))
-                : dialMph;
-            needle.localRotation = Quaternion.Euler(0f, 0f, Mathf.Lerp(135f, -135f, displayedMph / MaxDialMph));
+            float rpm = Mathf.Clamp(state.rpm, 0f, MaxDialRpm);
+            displayedRpm = display.enabled
+                ? Mathf.Lerp(displayedRpm, rpm, 1f - Mathf.Exp(-12f * Time.unscaledDeltaTime))
+                : rpm;
+            needle.localRotation = Quaternion.Euler(0f, 0f, Mathf.Lerp(135f, -135f, displayedRpm / MaxDialRpm));
 
             int roundedSpeed = Mathf.RoundToInt(Mathf.Min(speed, 999f));
             if (lastSpeed != roundedSpeed)
             {
                 lastSpeed = roundedSpeed;
-                digitalSpeed.text = roundedSpeed.ToString("D3", CultureInfo.InvariantCulture);
+                digitalSpeed.Value = roundedSpeed.ToString("D3", CultureInfo.InvariantCulture);
             }
 
-            nitroFill.fillAmount = Mathf.Clamp01(state.nos);
+            nitroFill.fillAmount = Mathf.Clamp01(state.nos) * (NosSweepDegrees / 360f);
             float pulse = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 18f);
             nitroFill.color = state.nosActive > 0.01f ? Color.Lerp(NosActive, Color.white, pulse * 0.55f) : NosIdle;
             SetGear(state.reversing ? -1 : state.gear);
+            float shiftRpm = Mathf.Clamp(vehicle.tuning.gearbox.upshiftRpm * .97f, 1500f, 9000f);
+            bool shiftNow = !state.reversing && state.gear > 0 &&
+                state.gear < vehicle.tuning.gearbox.forwardRatios.Length && state.rpm >= shiftRpm;
+            upshift.color = new Color(.19f, .128f, .065f, shiftNow ? 1f : .20f);
+            if (minimap != null) minimap.Refresh(vehicle);
             if (!display.enabled)
             {
                 // Overlay canvases render at the scene root. The binding stays with the car.
@@ -122,7 +130,7 @@ namespace Arcade.Vehicle
         {
             if (lastGear == gear) return;
             lastGear = gear;
-            gearLabel.text = gear < 0 ? "R" : gear == 0 ? "N" : gear.ToString(CultureInfo.InvariantCulture);
+            gearLabel.Value = gear < 0 ? "R" : gear == 0 ? "N" : gear.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

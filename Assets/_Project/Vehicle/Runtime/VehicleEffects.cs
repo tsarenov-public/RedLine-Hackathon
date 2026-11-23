@@ -12,10 +12,13 @@ namespace Arcade.Vehicle
         public ParticleSystem sparksPrefab;
         public SkidmarkSystem skidmarks;
         public Skidmarks skidmarksPrefab;
+        public ParticleSystem[] nosFlames;
+        public Light[] brakeLights;
 
         [Header("Интенсивность")]
         public float smokeMaxRate = 70f;
         public float sparksMinImpulse = 4000f;
+        [Min(0f)] public float nosFlameRate = 48f;
 
         ParticleSystem[] _smoke;
         Skidmarks _wheelMarks;
@@ -58,6 +61,13 @@ namespace Arcade.Vehicle
             }
 
             if (_wheelMarks == null && skidmarks != null) skidmarks.Init(wheels.Length);
+            if (nosFlames != null)
+                foreach (var flame in nosFlames)
+                    if (flame != null)
+                    {
+                        SetRate(flame, 0f);
+                        flame.Play();
+                    }
             vehicle.WallHit += OnWallHit;
             _ready = true;
         }
@@ -65,6 +75,10 @@ namespace Arcade.Vehicle
         void OnDisable()
         {
             if (_lastWheelMark != null) System.Array.Fill(_lastWheelMark, -1);
+            if (_smoke != null)
+                foreach (var smoke in _smoke)
+                    if (smoke != null) SetRate(smoke, 0f);
+            UpdateBodyEffects(0f, false);
         }
 
         void OnDestroy()
@@ -76,6 +90,7 @@ namespace Arcade.Vehicle
         void Update()
         {
             if (!_ready || vehicle == null) return;
+            UpdateBodyEffects(vehicle.State.nosActive, vehicle.State.brake > 0.08f && !vehicle.State.reversing);
             var wheels = vehicle.Wheels;
             if (wheels == null) return;
 
@@ -89,8 +104,7 @@ namespace Arcade.Vehicle
                     _smoke[i].transform.SetPositionAndRotation(
                         w.contactPoint + w.contactNormal * 0.06f,
                         Quaternion.LookRotation(Vector3.up));
-                    var em = _smoke[i].emission;
-                    em.rateOverTime = slip * smokeMaxRate;
+                    SetRate(_smoke[i], slip * smokeMaxRate);
                 }
 
                 if (_wheelMarks != null)
@@ -105,6 +119,22 @@ namespace Arcade.Vehicle
                     else skidmarks.BreakStrip(i);
                 }
             }
+        }
+
+        void UpdateBodyEffects(float nos, bool brake)
+        {
+            if (nosFlames != null)
+                foreach (var flame in nosFlames)
+                    if (flame != null) SetRate(flame, nos * nosFlameRate);
+            if (brakeLights != null)
+                foreach (var lamp in brakeLights)
+                    if (lamp != null) lamp.enabled = brake;
+        }
+
+        static void SetRate(ParticleSystem particles, float rate)
+        {
+            var emission = particles.emission;
+            emission.rateOverTime = rate;
         }
 
         void OnWallHit(Vector3 point, Vector3 normal, float impulse)
