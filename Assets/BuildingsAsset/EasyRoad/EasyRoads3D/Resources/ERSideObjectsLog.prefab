@@ -20563,11 +20563,11 @@ MonoBehaviour:
   - version: 2.0.0
     name: Wall CC
     id: 1492873209.4315598
-    timestamp: 1502549523.0667052
+    timestamp: 1795391774.993711
     objectType: 0
     gameobjectGUID: 
     textureGUID: 
-    m_distance: 4.25
+    m_distance: 4
     uvx: 0.1
     uvy: 1
     position: 0
@@ -20647,7 +20647,7 @@ MonoBehaviour:
     defaultEndOffset: 0
     segmentOffset: 0
     totalZDistance: 4.3485003
-    middleZDistance: 4.25
+    middleZDistance: 4
     startZDistance: -2000
     endZDistance: -2000
     minStartZ: 1000
@@ -20662,7 +20662,7 @@ MonoBehaviour:
     targetObject: {fileID: 0}
     bridgeObject: 0
     tunnelObject: 0
-    snapToTerrain: 1
+    snapToTerrain: 0
     layer: 0
     deformationObject: 0
     isStatic: 1
@@ -20802,7 +20802,7 @@ MonoBehaviour:
     maxBaseRotation: 0
     baseChildIndex: -1
     baseConnectorIndex: -1
-    continueOnConnections: 1
+    continueOnConnections: 0
     ignoreOffsetsOnConnections: 0
     triangulateDualSided: 0
     dualSidedMaterial: {fileID: 0}
@@ -21304,7 +21304,7 @@ MonoBehaviour:
   - version: 2.0.0
     name: Tratuar
     id: 1795023959.728739
-    timestamp: 1795363626.694742
+    timestamp: 1795408194.856895
     objectType: 1
     gameobjectGUID: 
     textureGUID: 
@@ -21563,7 +21563,7 @@ MonoBehaviour:
     minSectionLength: 50
     maxSlope: 45
     tag: Ground
-    selectedTag: 0
+    selectedTag: 7
     doubleSidedBendFlag: 0
     recalculateNormals: 0
     x1: 0
@@ -21834,7 +21834,7 @@ MonoBehaviour:
   - version: 2.0.0
     name: TratuarBrige
     id: 1795221415.867486
-    timestamp: 1795222719.4528809
+    timestamp: 1795408288.178885
     objectType: 1
     gameobjectGUID: 
     textureGUID: 
@@ -21848,8 +21848,8 @@ MonoBehaviour:
     randomYAxisMaxRotation: 0
     nodeList:
     - {x: 0, y: 0}
-    - {x: 0.1664439, y: 0.2}
-    - {x: 9.8133335, y: 0.19333337}
+    - {x: 0.1, y: 0.1}
+    - {x: 9.8133335, y: 0.1}
     - {x: 9.8, y: -1}
     uvs:
     - 1
@@ -21858,15 +21858,15 @@ MonoBehaviour:
     - 0
     uvDistances:
     - 0
-    - 0.023440307
-    - 0.8924906
+    - 0.0129094925
+    - 0.89958036
     - 1
     clampUVs: 1
     clampUVY: 1
     clampUVYValue: 1
     terrainUVs: 0
     reverseUVs: 0
-    totalDistance: 11.100499
+    totalDistance: 10.954835
     snapList: 00000000y
     snapWeightList:
     - 0
@@ -22016,8 +22016,8 @@ MonoBehaviour:
     indentControl: 0
     nodeListMirrored:
     - {x: -9.8, y: -1}
-    - {x: -9.8133335, y: 0.19333337}
-    - {x: -0.1664439, y: 0.2}
+    - {x: -9.8133335, y: 0.1}
+    - {x: -0.1, y: 0.1}
     - {x: -0, y: 0}
     uvsMirrored:
     - 0
@@ -22117,7 +22117,7 @@ MonoBehaviour:
   - version: 2.0.0
     name: TratuarBrigeLeft
     id: 1795222734.0342538
-    timestamp: 1795223164.860988
+    timestamp: 1795408345.7937958
     objectType: 1
     gameobjectGUID: 
     textureGUID: 
@@ -22131,8 +22131,8 @@ MonoBehaviour:
     randomYAxisMaxRotation: 0
     nodeList:
     - {x: 0, y: 0}
-    - {x: 0.1664439, y: 0.2}
-    - {x: 8.1, y: 0.1575135}
+    - {x: 0.1, y: 0.1}
+    - {x: 8.1, y: 0.1}
     - {x: 8.1, y: -0.94508195}
     uvs:
     - 1
@@ -22141,15 +22141,15 @@ MonoBehaviour:
     - 0
     uvDistances:
     - 0
-    - 0.027989037
-    - 0.8813963
+    - 0.015394472
+    - 0.8862372
     - 1
     clampUVs: 1
     clampUVY: 1
     clampUVYValue: 1
     terrainUVs: 0
     reverseUVs: 0
-    totalDistance: 9.296465
+    totalDistance: 9.186503
     snapList: 00000000y
     snapWeightList:
     - 0
@@ -22299,8 +22299,8 @@ MonoBehaviour:
     indentControl: 0
     nodeListMirrored:
     - {x: -8.1, y: -0.94508195}
-    - {x: -8.1, y: 0.1575135}
-    - {x: -0.1664439, y: 0.2}
+    - {x: -8.1, y: 0.1}
+    - {x: -0.1, y: 0.1}
     - {x: -0, y: 0}
     uvsMirrored:
     - 0
@@ -30167,9 +30167,9 @@ MonoBehaviour:
     noiseMapTiling: 0
     bakeLinePBR: 0
     shoulderOffset: 0
-  - roadTypeName: Wall Country Side
+  - roadTypeName: WallsCity
     id: 1565867305.2387204
-    timestamp: 1565867323.5342956
+    timestamp: 1795391029.453055
     roadWidth: 6
     advancedWidthSettings: 0
     faceDistance: 2
@@ -30182,10 +30182,8 @@ MonoBehaviour:
     outerIndent: 0.5
     roadShapeDataActive: 0
     roadShapeData:
-      nodes:
-      - {x: -3, y: 0}
-      - {x: 3, y: 0}
-      hardEdge: 0000y
+      nodes: []
+      hardEdge: 
       priorityNodeIndexLeft: 0
       priorityNodeIndexRight: 1
       nodesV3: []
@@ -30259,6 +30257,8 @@ MonoBehaviour:
     - id: 1439970267.5877771
       active: 0
     - id: 3
+      active: 0
+    - id: 1795221333.0858788
       active: 0
     - id: 1513626610.6119134
       active: 0
@@ -30404,6 +30404,12 @@ MonoBehaviour:
       active: 0
     - id: 1498378582.6466486
       active: 0
+    - id: 1795023959.728739
+      active: 0
+    - id: 1795221415.867486
+      active: 0
+    - id: 1795222734.0342538
+      active: 0
     - id: 1595964581.6688309
       active: 0
     - id: 1463296109.0005498
@@ -30468,7 +30474,7 @@ MonoBehaviour:
     cornerRadiusSecondaryCurvature: 0
     cornerSementsSecondaryRoad: 0
     mainRoadsOnly: 0
-    isRoadShape: 0
+    isRoadShape: 1
     controlType: 0
     vertexColor: {r: 0, g: 0, b: 0, a: 0}
     trafficPosts: []
@@ -33212,6 +33218,401 @@ MonoBehaviour:
     noiseBaseMapTiling: 1
     noiseMapTiling: 0
     bakeLinePBR: 0
+    shoulderOffset: 0
+  - roadTypeName: Road Type 27
+    id: 1795390946.7876968
+    timestamp: 1795390946.7876968
+    roadWidth: 6
+    advancedWidthSettings: 0
+    faceDistance: 2
+    angleTreshold: 45
+    uvTiling: 1
+    uv4Type: 0
+    type: 1
+    detailDistance: 50
+    planarUVs: 0
+    outerIndent: 0.5
+    roadShapeDataActive: 0
+    roadShapeData:
+      nodes:
+      - {x: -3, y: 0}
+      - {x: 3, y: 0}
+      hardEdge: 0000y
+      priorityNodeIndexLeft: 0
+      priorityNodeIndexRight: 1
+      nodesV3: []
+      lanes:
+      - position: -0.5
+        direction: 0
+        turnDirection: 0
+        TurnOptions: 6
+        laneIndex: 0
+      - position: 0.5
+        direction: 1
+        turnDirection: 0
+        TurnOptions: 6
+        laneIndex: 0
+      leftLanes: -1
+      rightLanes: -1
+      symmetrical: 1
+      leftSidewalkOffset: 0
+      rightSidewalkOffset: 0
+      outerLaneMarkingLeftIndex: -1
+      includeOuterlaneLeftInShape: 0
+      includeOuterlaneRightInShape: 0
+      outerLaneMarkingRightIndex: -1
+      outerOuterLaneMarkingLeftIndex: -1
+      outerOuterLaneMarkingRightIndex: -1
+      selectedNode: 0
+      selectedLaneNode: 0
+      isSymmetrical: 0
+      isset: 1
+    excludeFromTrafficAI: 0
+    minSpeed: 45
+    maxSpeed: 55
+    speedLimit: 50
+    speedLimitConnections: 50
+    roadShape:
+    - {x: -3, y: 0}
+    - {x: 3, y: 0}
+    roadShapeExt: []
+    roadShapeExt2: []
+    doConnectionTri: 
+    doConnectionTriExt: 
+    roadShapeUVs:
+    - 0
+    - 1
+    roadShapeExtUVs: []
+    roadShapeExtUVs2: []
+    roadShapeUVs2:
+    - 0
+    - 1
+    preserveUVs: 0
+    hardEdge: 
+    roadShapeVecsString: 
+    defaultSidewalk: 0
+    sidewalks: 0
+    sidewalkHeight: 0.2
+    sidewalkWidth: 2
+    crosswalks: 0
+    crosswalkIntervals: 100
+    crosswalksIntersections: 0
+    crosswalkPrefab: {fileID: 0}
+    crosswalkHeightOffset: 0.01
+    crosswalkType: 0
+    crosswalkDecal: {fileID: 0}
+    roadMaterial: {fileID: 2100000, guid: f2754e50828a21f4dbff00bfa1d9101c, type: 2}
+    roadMaterials: []
+    roadPhysicsMaterial: {fileID: 0}
+    roadPhysicsMaterials: []
+    connectionMaterial: {fileID: 0}
+    isSideObject: 0
+    isCustomRoad: 0
+    subSegments: 1
+    soData: []
+    soDataExt: []
+    soDataLog:
+    - id: 1464510904.3982377
+      active: 0
+    - id: 1482240682.273279
+      active: 0
+    - id: 1575640414.1523824
+      active: 0
+    - id: 1439970267.5877771
+      active: 0
+    - id: 3
+      active: 0
+    - id: 1795221333.0858788
+      active: 0
+    - id: 1513626610.6119134
+      active: 0
+    - id: 1492864192.677831
+      active: 0
+    - id: 1422205435.6632535
+      active: 0
+    - id: 1422205525.016364
+      active: 0
+    - id: 1587136571.1902595
+      active: 0
+    - id: 1422201194.1206512
+      active: 0
+    - id: 1456261907.8939893
+      active: 0
+    - id: 1501426670.841363
+      active: 0
+    - id: 1461096609.419792
+      active: 0
+    - id: 1
+      active: 0
+    - id: 1461163327.9873817
+      active: 0
+    - id: 1627383619.8935523
+      active: 0
+    - id: 2
+      active: 0
+    - id: 1475767569.9066167
+      active: 0
+    - id: 1575579583.384351
+      active: 0
+    - id: 1492274600.4877152
+      active: 0
+    - id: 1490533100.0728989
+      active: 0
+    - id: 1492351454.8959825
+      active: 0
+    - id: 1492886547.8844757
+      active: 0
+    - id: 1506755623.4085588
+      active: 0
+    - id: 1496597092.548931
+      active: 0
+    - id: 1496949275.520249
+      active: 0
+    - id: 1496950190.5545192
+      active: 0
+    - id: 1497771329.4354687
+      active: 0
+    - id: 1501401162.2714965
+      active: 0
+    - id: 1496592239.599358
+      active: 0
+    - id: 1497083851.7107809
+      active: 0
+    - id: 1496864307.0503993
+      active: 0
+    - id: 1496594489.694056
+      active: 0
+    - id: 1501083060.894909
+      active: 0
+    - id: 1492633790.5171874
+      active: 0
+    - id: 1477490107.45513
+      active: 0
+    - id: 1615567565.3400443
+      active: 0
+    - id: 1604836083.8996148
+      active: 0
+    - id: 1603743985.9864626
+      active: 0
+    - id: 1492273168.831829
+      active: 0
+    - id: 1501866791.6741104
+      active: 0
+    - id: 1501173983.5210633
+      active: 0
+    - id: 1462981249.4311268
+      active: 0
+    - id: 1422283787.149423
+      active: 0
+    - id: 1422280172.2846642
+      active: 0
+    - id: 1501519166.9649243
+      active: 0
+    - id: 1484762355.2292368
+      active: 0
+    - id: 1464957000.801562
+      active: 0
+    - id: 1466451290.7593656
+      active: 0
+    - id: 1501510160.2551785
+      active: 0
+    - id: 1456047967.1928487
+      active: 0
+    - id: 1455979697.5109153
+      active: 0
+    - id: 1497036892.9481807
+      active: 0
+    - id: 1501186258.0972695
+      active: 0
+    - id: 1501186335.3634262
+      active: 0
+    - id: 1455984277.9008987
+      active: 0
+    - id: 1603904449.5714228
+      active: 0
+    - id: 6
+      active: 0
+    - id: 5
+      active: 0
+    - id: 1455632234.3322053
+      active: 0
+    - id: 1455632482.996428
+      active: 0
+    - id: 1455632818.7536323
+      active: 0
+    - id: 1604522831.4235895
+      active: 0
+    - id: 1575646819.2434592
+      active: 0
+    - id: 1496500505.889294
+      active: 0
+    - id: 1575580284.127595
+      active: 0
+    - id: 1589389456.2844396
+      active: 0
+    - id: 1615554789.3625984
+      active: 0
+    - id: 1591210872.58933
+      active: 0
+    - id: 1591211277.2413483
+      active: 0
+    - id: 1455353139.0054991
+      active: 0
+    - id: 1492275297.1925645
+      active: 0
+    - id: 1505407226.4160588
+      active: 0
+    - id: 1438703293.2729063
+      active: 0
+    - id: 1499500677.1240554
+      active: 0
+    - id: 1498378582.6466486
+      active: 0
+    - id: 1795023959.728739
+      active: 0
+    - id: 1795221415.867486
+      active: 0
+    - id: 1795222734.0342538
+      active: 0
+    - id: 1595964581.6688309
+      active: 0
+    - id: 1463296109.0005498
+      active: 0
+    - id: 1492873209.4315598
+      active: 0
+    - id: 1477826774.0961607
+      active: 0
+    - id: 1461096279.6289291
+      active: 0
+    layer: 0
+    isStatic: 1
+    tag: Untagged
+    renderingLayerMask: 0
+    splatMapActive: 0
+    splatIndex: 0
+    expandLevel: 0
+    smoothLevel: 1
+    splatOpacity: 1
+    followTerrainContours: 0
+    terrainContoursOffset: 5
+    terrainDeformation: 1
+    defaultIndent: 2
+    defaultSurrounding: 2
+    maxRoadheight: 0
+    maxTerrainHeightOffset: 0
+    minTerrainHeightDistance: 5
+    maxTerrainHeightDistance: 15
+    castShadow: 0
+    randomnessFlag: 0
+    randomYPosition: 0
+    randomMinYPosition: -0.02
+    randomMaxYPosition: 0.02
+    minRandomYPositionDistance: 15
+    maxRandomYPositionDistance: 35
+    randomMinRotation: -1
+    randomMaxRotation: 1
+    minRandomRotationDistance: 15
+    maxRandomRotationDistance: 30
+    vegetationStudioMaskLineActive: 1
+    vegetationStudioGrassPerimeter: 2
+    vegetationStudioPlantPerimeter: 3
+    vegetationStudioTreePerimeter: 4
+    vegetationStudioObjectPerimeter: 3
+    vegetationStudioLargeObjectPerimeter: 4
+    vegetationStudioBiomeMaskActive: 0
+    vegetationStudioBiomeMaskDistance: 0
+    vegetationStudioBiomeMaskBlendDistance: 0
+    vegetationStudioBiomeMaskNoiseScale: 0
+    decalPresets: []
+    decalClassPresets: []
+    defaultRamp: 0
+    extrusionType: 0
+    extrusionDistance: 10
+    fixedDistance: 5
+    connectionAngle: 25
+    connectionRadius: 10
+    oneWay: 0
+    cornerRadiusMainRoad: 3
+    cornerSementsMainRoad: 6
+    cornerRadiusSecondaryRoad: 3
+    cornerRadiusSecondaryCurvature: 0.5
+    cornerSementsSecondaryRoad: 6
+    mainRoadsOnly: 0
+    isRoadShape: 1
+    controlType: 0
+    vertexColor: {r: 1, g: 1, b: 1, a: 1}
+    trafficPosts: []
+    activeTrafficPostIndex: -1
+    showTrafficPosts: 0
+    materialCreator: 0
+    synchRoadWidth: 1
+    totalLanes: 2
+    laneWidth: 3.5
+    shoulderWidthLeft: 1
+    shoulderWidthRight: 1
+    leftLineMarkingWidth: 0.15
+    rightLineMarkingWidth: 0.15
+    leftLineMarkingColor: {r: 1, g: 1, b: 1, a: 1}
+    rightLineMarkingColor: {r: 1, g: 1, b: 1, a: 1}
+    leftLineMarkingStyle: 0
+    rightLineMarkingStyle: 0
+    leftLineMarkingSize: 2
+    rightLineMarkingSize: 2
+    leftLineMarkingInterval: 2
+    rightLineMarkingInterval: 2
+    laneMarkingStyle: 1
+    LaneMarkingColor: {r: 1, g: 1, b: 1, a: 1}
+    laneMarkingWidth: 0.15
+    laneMarkingSize: 2
+    laneMarkingInterval: 2
+    medianIsland: 0
+    medianWidth: 0.5
+    medianLineMarkingStyle: 0
+    medianLineMarkingWidth: 0.15
+    medianLineMarkingSize: 2
+    medianLineMarkingInterval: 2
+    medianLineMarkingSpace: 0.15
+    medianLeftLineMarkingColor: {r: 1, g: 1, b: 1, a: 1}
+    medianRightLineMarkingColor: {r: 1, g: 1, b: 1, a: 1}
+    materialType: 0
+    baseTexture: {fileID: 0}
+    baseTextureMask: {fileID: 0}
+    baseTextureSize: 5
+    baseTexture2: {fileID: 0}
+    normalMap: {fileID: 0}
+    pbrTexture: {fileID: 0}
+    pbrLaneStrength: 0
+    pbrCurveStrength: 0
+    noiseTexture: {fileID: 0}
+    noiseTexture2: {fileID: 0}
+    linesTexture: {fileID: 0}
+    linesTextureSize: 5
+    linesNormalMapBlend: 0.5
+    normalMapScale: 1
+    metallicScale: 0
+    smoothnessScale: 1
+    aoScale: 1
+    lineMaskQuality: 2
+    dynMapsUpdated: 0
+    roadEdgeMapping: 0
+    baseUVs:
+    - 0
+    - 1
+    leftEdgeUVs:
+    - 0.5
+    - 0.75
+    leftEdgeWidth: 1
+    rightEdgeUVs:
+    - 0.75
+    - 1
+    rightEdgeWidth: 1
+    laneNoiseControl: 0
+    mirrorLaneNoiseOnShoulder: 0
+    noiseMaps: []
+    noiseMap: {fileID: 0}
+    noiseBaseMapTiling: 1
+    noiseMapTiling: 1
+    bakeLinePBR: 1
     shoulderOffset: 0
   crossingCornerPresets: []
   sidewalkPresets: []
