@@ -147,8 +147,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.4495392, y: 8.028095, z: 4.080209}
-  m_Center: {x: 0.036552593, y: 4.014047, z: -0.009066578}
+  m_Size: {x: 0.4495392, y: 8.028095, z: 0.5359826}
+  m_Center: {x: 0.036552593, y: 4.0140476, z: 0.0053376704}
 --- !u!54 &6244123519407678441
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -157,7 +157,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1446300997654874890}
   serializedVersion: 5
-  m_Mass: 15
+  m_Mass: 300
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -195,8 +195,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.5995393, y: 8.578095, z: 6.230209}
-  m_Center: {x: 0.036552593, y: 4.214047, z: -0.009066578}
+  m_Size: {x: 2.5995393, y: 8.578095, z: 4.241398}
+  m_Center: {x: 0.03655255, y: 4.214047, z: 0.16216558}
 --- !u!114 &5413637658330940386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,6 +207,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee3135382d9631848aca444059167728, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreakableStreetProp
   approachTrigger: {fileID: 9186566248597980715}
+  heaviness: 5
+  maxAngularVelocity: 15
+  spinMultiplier: 0.3

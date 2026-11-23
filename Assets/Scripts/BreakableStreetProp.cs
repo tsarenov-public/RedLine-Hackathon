@@ -12,6 +12,13 @@ public sealed class BreakableStreetProp : MonoBehaviour
     [Range(0.2f, 5f)]
     [SerializeField] private float heaviness = 1f;
 
+    [Header("Настройка вращения")]
+    [Tooltip("Максимальная угловая скорость (рад/с). Защита от бешеного вращения.")]
+    [SerializeField] private float maxAngularVelocity = 15f;
+    
+    [Tooltip("Насколько сильно объект кувыркается при ударе.")]
+    [SerializeField] private float spinMultiplier = 0.3f;
+
     private Rigidbody propBody;
     private Collider[] solidColliders;
     private bool launched;
@@ -21,6 +28,9 @@ public sealed class BreakableStreetProp : MonoBehaviour
         propBody = GetComponent<Rigidbody>();
         solidColliders = GetComponentsInChildren<Collider>();
         propBody.mass *= heaviness;
+        
+        // На всякий случай ограничиваем максимальную угловую скорость сразу при старте
+        propBody.maxAngularVelocity = maxAngularVelocity;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -58,7 +68,28 @@ public sealed class BreakableStreetProp : MonoBehaviour
         Vector3 launchVelocity = Vector3.ClampMagnitude(velocity * 1.05f, 24f) * lightness + lift;
 
         propBody.AddForce(launchVelocity * propBody.mass, ForceMode.Impulse);
-        propBody.AddTorque(Random.onUnitSphere * (propBody.mass * 1.6f * lightness), ForceMode.Impulse);
+
+        // --- ИСПРАВЛЕННОЕ ВРАЩЕНИЕ ---
+
+        // 1. Создаем ось вращения перпендикулярно направлению удара (эффект кувырка)
+        Vector3 hitDirection = velocity.normalized;
+        Vector3 spinAxis = Vector3.Cross(Vector3.up, hitDirection).normalized; 
+        
+        // Добавляем немного случайности, чтобы каждый раз было чуть по-разному
+        spinAxis += Random.insideUnitSphere * 0.3f; 
+        spinAxis.Normalize();
+
+        // 2. Вычисляем силу вращения БЕЗ учета массы (чтобы тяжелые не вертелись как юла)
+        float spinForce = Mathf.Clamp(velocity.magnitude * spinMultiplier, 2f, 10f) * lightness;
+
+        // 3. Применяем импульс вращения
+        propBody.AddTorque(spinAxis * spinForce, ForceMode.Impulse);
+
+        // 4. Ограничиваем максимальную угловую скорость (защита от "бешеного" вращения)
+        if (propBody.angularVelocity.magnitude > maxAngularVelocity)
+        {
+            propBody.angularVelocity = propBody.angularVelocity.normalized * maxAngularVelocity;
+        }
 
         Destroy(gameObject, 3.5f);
     }
