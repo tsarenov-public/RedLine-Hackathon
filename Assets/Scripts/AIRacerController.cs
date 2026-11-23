@@ -1,167 +1,164 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[DefaultExecutionOrder(-10)]
-[RequireComponent(typeof(Rigidbody))]
-public sealed class AIRacerController : MonoBehaviour
+public class AIRacerController : MonoBehaviour
 {
-    private const float CornerDeceleration = 4f;
-    private const float CornerPreviewDistance = 60f;
-    private const float LateralAcceleration = 5f;
-
     [Header("Маршрут")]
     public WaypointPath path;
-    [Min(0.5f)] public float reachDistance = 3f;
-    public bool loopTrack;
+    public float reachDistance = 6.5f;
+    public bool loopTrack = true;
+    [Range(0f, 1f)] public float lookAheadBlend = 0.4f;
 
     [Header("Настройки вождения")]
-    [Range(0f, 1f)] public float maxThrottle = 0.85f;
-    [Min(10f)] public float cruiseSpeedKmh = 72f;
-    [Min(0f)] public float steerSensitivity = 1.6f;
-    [Range(0f, 1f)] public float cornerBrakeStrength = 0.75f;
+    [Range(0.2f, 1.5f)] public float maxThrottle = 1f;
+    public float cruiseSpeedKmh = 270f;
+    public float steerSensitivity = 1.7f;
+    public float steerSmoothSpeed = 10f;
+    [Range(0f, 1f)] public float cornerBrakeStrength = 0.7f;
+
+    [Header("Физика торможения перед поворотами")]
+    [Tooltip("Чем меньше значение, тем раньше бот начинает тормозить перед поворотом (м/с²)")]
+    public float brakeDecel = 10.5f;
+    [Range(0.1f, 1f)] public float maxBrakeForce = 0.9f;
 
     public float CurrentThrottle { get; private set; }
     public float CurrentSteer { get; private set; }
     public float CurrentBrake { get; private set; }
 
-    private Rigidbody vehicleBody;
     private List<Transform> waypoints;
-    private Vector3 segmentStart;
-    private int currentIndex;
-    private bool finished;
+    private Rigidbody rb;
+    private int currentIndex = 0;
+    private bool finished = false;
 
-    private void Awake() => vehicleBody = GetComponent<Rigidbody>();
-
-    private void OnEnable()
+    private void Start()
     {
-        waypoints = path != null ? path.GetWaypoints() : null;
-        segmentStart = Flat(transform.position);
-        currentIndex = 0;
-        finished = false;
-        HoldBrake();
+        rb = GetComponent<Rigidbody>();
+        if (path != null)
+            waypoints = path.GetWaypoints();
     }
 
     private void FixedUpdate()
     {
-        Vector3 position = Flat(vehicleBody.position);
-        if (waypoints == null || waypoints.Count == 0 || finished || !AdvanceWaypoints(position))
+        if (waypoints == null || waypoints.Count == 0 || finished)
         {
-            HoldBrake();
+            CurrentThrottle = 0f;
+            CurrentSteer = Mathf.Lerp(CurrentSteer, 0f, Time.fixedDeltaTime * steerSmoothSpeed);
+            CurrentBrake = 1f;
             return;
         }
 
-        Vector3 target = Flat(waypoints[currentIndex].position);
-        Vector3 segment = target - segmentStart;
-        float along = Mathf.Clamp(Vector3.Dot(position - segmentStart, segment.normalized), 0f, segment.magnitude);
-        Vector3 projected = segmentStart + segment.normalized * along;
+        Transform currentWp = waypoints[currentIndex];
+        int nextIndex = (currentIndex + 1) % waypoints.Count;
+        Transform nextWp = (loopTrack || currentIndex + 1 < waypoints.Count) ? waypoints[nextIndex] : currentWp;
 
-        float speed = Flat(vehicleBody.linearVelocity).magnitude;
-        float lookAhead = Mathf.Clamp(3f + speed * 0.32f, 3f, 10f);
-        Vector3 aim = LookAlongRoute(projected, lookAhead);
-        Vector3 forward = Flat(transform.forward);
-        float angle = Vector3.SignedAngle(forward, aim - position, Vector3.up);
-        CurrentSteer = Mathf.Clamp(angle * steerSensitivity / 45f, -1f, 1f);
+        // 1. Руление с упреждением на следующую точку
+        Vector3 blendedTarget = Vector3.Lerp(currentWp.position, nextWp.position, lookAheadBlend);
+        Vector3 flatTarget = new Vector3(blendedTarget.x, transform.position.y, blendedTarget.z);
+        Vector3 direction = (flatTarget - transform.position).normalized;
 
-        float cruise = cruiseSpeedKmh / 3.6f;
-        float targetSpeed = GetTargetSpeed(projected, segment, cruise);
-        float steeringSlowdown = Mathf.Lerp(cruise, 4f, Mathf.InverseLerp(20f, 75f, Mathf.Abs(angle)));
-        float speedError = Mathf.Min(targetSpeed, steeringSlowdown) - speed;
-        CurrentThrottle = maxThrottle * Mathf.Clamp01(speedError / 3f);
-        CurrentBrake = cornerBrakeStrength * Mathf.Clamp01(-speedError / 2f);
-    }
+        float angle = Vector3.SignedAngle(transform.forward, direction, Vector3.up);
+        float targetSteer = Mathf.Clamp((angle / 45f) * steerSensitivity, -1f, 1f);
+        CurrentSteer = Mathf.Lerp(CurrentSteer, targetSteer, Time.fixedDeltaTime * steerSmoothSpeed);
 
-    private bool AdvanceWaypoints(Vector3 position)
-    {
-        for (int count = 0; count < waypoints.Count; count++)
+        // 2. Расчёт необходимой дистанции торможения до всех поворотов впереди
+        float speedMs = rb != null ? rb.linearVelocity.magnitude : 0f;
+        float speedKmh = speedMs * 3.6f;
+        float cruiseMs = cruiseSpeedKmh / 3.6f;
+        float minCornerMs = Mathf.Lerp(145f, 65f, cornerBrakeStrength) / 3.6f;
+
+        float targetAllowedMs = cruiseMs;
+
+        Vector3 flatWp = new Vector3(currentWp.position.x, transform.position.y, currentWp.position.z);
+        float scannedDist = Vector3.Distance(transform.position, flatWp);
+        Vector3 prevPos = currentWp.position;
+        Vector3 prevDir = (flatWp - transform.position).sqrMagnitude > 0.01f
+            ? (flatWp - transform.position).normalized
+            : transform.forward;
+
+        // Проверяем текущий угол входа
+        float immediateSeverity = Mathf.Clamp01(Mathf.Max(0f, Mathf.Abs(angle) - 12f) / 70f);
+        if (immediateSeverity > 0.05f)
+            targetAllowedMs = Mathf.Min(targetAllowedMs, Mathf.Lerp(cruiseMs, minCornerMs, immediateSeverity));
+
+        // Сканируем до 220 метров вперёд по точкам маршрута
+        for (int i = 1; i <= 12; i++)
         {
-            Vector3 target = Flat(waypoints[currentIndex].position);
-            Vector3 offset = position - target;
-            Vector3 segment = target - segmentStart;
-            bool passed = Vector3.Dot(offset, segment) > 0f &&
-                Vector3.ProjectOnPlane(offset, segment).sqrMagnitude <= reachDistance * reachDistance;
-            if (offset.sqrMagnitude > reachDistance * reachDistance && !passed) return true;
-
-            if (!TryGetNext(currentIndex, out int next))
+            int idx = currentIndex + i;
+            if (idx >= waypoints.Count)
             {
-                finished = true;
-                return false;
+                if (loopTrack) idx %= waypoints.Count;
+                else break;
             }
 
-            segmentStart = target;
-            currentIndex = next;
-        }
-
-        return true;
-    }
-
-    private Vector3 LookAlongRoute(Vector3 from, float distance)
-    {
-        int index = currentIndex;
-        for (int count = 0; count < waypoints.Count; count++)
-        {
-            Vector3 to = Flat(waypoints[index].position);
-            float length = Vector3.Distance(from, to);
-            if (length >= distance || !TryGetNext(index, out int next))
-                return Vector3.MoveTowards(from, to, distance);
-
-            distance -= length;
-            from = to;
-            index = next;
-        }
-
-        return from;
-    }
-
-    private float GetTargetSpeed(Vector3 from, Vector3 incoming, float cruise)
-    {
-        int index = currentIndex;
-        float speed = cruise;
-        float distance = Vector3.Distance(from, Flat(waypoints[index].position));
-        for (int count = 0; count < waypoints.Count && distance <= CornerPreviewDistance; count++)
-        {
-            if (!TryGetNext(index, out int next))
-                return Mathf.Min(speed, Mathf.Sqrt(2f * CornerDeceleration * distance));
-
-            Vector3 outgoing = Flat(waypoints[next].position - waypoints[index].position);
-            float angle = Vector3.Angle(incoming, outgoing);
-            if (angle > 4f)
+            Vector3 wpPos = waypoints[idx].position;
+            Vector3 segVec = new Vector3(wpPos.x - prevPos.x, 0f, wpPos.z - prevPos.z);
+            if (segVec.sqrMagnitude > 0.01f)
             {
-                float radius = Mathf.Min(incoming.magnitude, outgoing.magnitude) /
-                    (2f * Mathf.Tan(angle * Mathf.Deg2Rad * 0.5f));
-                float cornerSpeed = Mathf.Clamp(Mathf.Sqrt(Mathf.Max(0f, radius) * LateralAcceleration), 4f, cruise);
-                float approachSpeed = Mathf.Sqrt(cornerSpeed * cornerSpeed + 2f * CornerDeceleration * distance);
-                speed = Mathf.Min(speed, approachSpeed);
+                Vector3 segDir = segVec.normalized;
+                float angleFromCar = Vector3.Angle(transform.forward, segDir);
+                float angleFromPrev = Vector3.Angle(prevDir, segDir);
+                float bendAngle = Mathf.Max(angleFromCar, angleFromPrev);
+
+                float severity = Mathf.Clamp01(Mathf.Max(0f, bendAngle - 12f) / 70f);
+                if (severity > 0.05f)
+                {
+                    float cornerSpeedMs = Mathf.Lerp(cruiseMs, minCornerMs, severity);
+                    float decel = Mathf.Max(4f, brakeDecel);
+                    float requiredBrakeDist = Mathf.Max(0f, (speedMs * speedMs - cornerSpeedMs * cornerSpeedMs) / (2f * decel)) + 8f;
+
+                    if (scannedDist <= requiredBrakeDist)
+                        targetAllowedMs = Mathf.Min(targetAllowedMs, cornerSpeedMs);
+                }
+
+                prevDir = segDir;
             }
 
-            distance += outgoing.magnitude;
-            incoming = outgoing;
-            index = next;
+            scannedDist += Vector3.Distance(prevPos, wpPos);
+            prevPos = wpPos;
+            if (scannedDist >= 220f) break;
         }
 
-        return speed;
-    }
+        // 3. Управление газом и тормозом (с ослаблением тормоза при повороте руля, чтобы не терять зацеп)
+        float speedExcessMs = speedMs - targetAllowedMs;
+        if (speedExcessMs > 1.2f)
+        {
+            CurrentThrottle = 0f;
+            float brakeIntensity = Mathf.Clamp01(speedExcessMs / 7f) * maxBrakeForce;
+            float steerGripShare = 1f - Mathf.Abs(CurrentSteer) * 0.65f;
+            CurrentBrake = brakeIntensity * steerGripShare;
+        }
+        else
+        {
+            CurrentBrake = 0f;
+            float throttle = maxThrottle;
+            if (cruiseSpeedKmh > 0f && speedKmh > cruiseSpeedKmh)
+            {
+                float overSpeed = Mathf.Clamp01((speedKmh - cruiseSpeedKmh) / 15f);
+                throttle *= (1f - overSpeed);
+            }
+            CurrentThrottle = Mathf.Clamp01(throttle);
+        }
 
-    private bool TryGetNext(int index, out int next)
-    {
-        next = index + 1;
-        if (next < waypoints.Count) return true;
-        next = 0;
-        return loopTrack;
+        // 4. Переключение точек маршрута
+        if (Vector3.Distance(transform.position, flatWp) < reachDistance)
+        {
+            currentIndex++;
+            if (currentIndex >= waypoints.Count)
+            {
+                if (loopTrack)
+                    currentIndex = 0;
+                else
+                    finished = true;
+            }
+        }
     }
-
-    private void HoldBrake()
-    {
-        CurrentThrottle = 0f;
-        CurrentSteer = 0f;
-        CurrentBrake = 1f;
-    }
-
-    private static Vector3 Flat(Vector3 vector) => new Vector3(vector.x, 0f, vector.z);
 
     private void OnDrawGizmos()
     {
-        if (waypoints == null || currentIndex >= waypoints.Count || finished) return;
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(transform.position + Vector3.up, waypoints[currentIndex].position);
+        if (waypoints != null && currentIndex < waypoints.Count && !finished)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(transform.position + Vector3.up, waypoints[currentIndex].position);
+        }
     }
 }
