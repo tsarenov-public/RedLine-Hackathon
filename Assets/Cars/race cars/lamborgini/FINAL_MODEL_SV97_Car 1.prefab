@@ -3010,7 +3010,6 @@ Transform:
   - {fileID: 962722657924739282}
   - {fileID: 3622290973419318755}
   - {fileID: 4681710480252208784}
-  - {fileID: 4832987293538908780}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &108295077504935436
@@ -5047,72 +5046,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1001 &1363144928026510941
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 5926519408007574074}
-    m_Modifications:
-    - target: {fileID: 2482347099326388589, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-      propertyPath: m_Name
-      value: WindDebrisParticles
-      objectReference: {fileID: 0}
-    - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7823399685810695411, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-      propertyPath: vehicle
-      value:
-      objectReference: {fileID: 2339759787483416690}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
---- !u!4 &4832987293538908780 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5906722977276869681, guid: 783a9b2a254e2854ab89a433c6cb77ec, type: 3}
-  m_PrefabInstance: {fileID: 1363144928026510941}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4834780648537288961
 PrefabInstance:
   m_ObjectHideFlags: 0

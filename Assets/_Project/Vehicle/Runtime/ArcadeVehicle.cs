@@ -127,7 +127,11 @@ namespace Arcade.Vehicle
                     Quaternion.Euler(0f, w.steerAngle * visualSteerMultiplier, 0f) *
                     Quaternion.Euler(w.spinAngle, 0f, 0f) *
                     w.rig.modelOffset;
-                w.rig.visual.localPosition = new Vector3(w.visualRestLocal.x, -w.suspLength, w.visualRestLocal.z);
+                // Suspension travel is measured in world metres. The visual offset is local to its mount.
+                var parent = w.rig.visual.parent;
+                float mountScale = parent != null ? Mathf.Abs(parent.lossyScale.y) : 1f;
+                float visualTravel = w.suspLength / Mathf.Max(.001f, mountScale);
+                w.rig.visual.localPosition = new Vector3(w.visualRestLocal.x, -visualTravel, w.visualRestLocal.z);
             }
         }
 
