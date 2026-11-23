@@ -4,17 +4,22 @@ namespace Arcade.Vehicle
 {
     public sealed class VehicleEffects : MonoBehaviour
     {
+        const float SkidmarkSlipThreshold = 0.28f;
+
         [Header("Ссылки (можно оставить пустыми — найдётся само)")]
         public ArcadeVehicle vehicle;
         public ParticleSystem smokePrefab;
         public ParticleSystem sparksPrefab;
         public SkidmarkSystem skidmarks;
+        public Skidmarks skidmarksPrefab;
 
         [Header("Интенсивность")]
         public float smokeMaxRate = 70f;
         public float sparksMinImpulse = 4000f;
 
         ParticleSystem[] _smoke;
+        Skidmarks _wheelMarks;
+        int[] _lastWheelMark;
         bool _ready;
 
         void Start()
@@ -27,10 +32,20 @@ namespace Arcade.Vehicle
                 return;
             }
 
-            if (skidmarks == null) skidmarks = Object.FindFirstObjectByType<SkidmarkSystem>();
+            var wheels = vehicle.Ctx?.wheels;
+            if (wheels == null) return;
+            if (skidmarksPrefab != null)
+            {
+                _wheelMarks = Instantiate(skidmarksPrefab);
+                _lastWheelMark = new int[wheels.Length];
+                System.Array.Fill(_lastWheelMark, -1);
+            }
+            else if (skidmarks == null)
+            {
+                skidmarks = Object.FindFirstObjectByType<SkidmarkSystem>();
+            }
 
-            var wheels = vehicle.Wheels;
-            if (smokePrefab != null && wheels != null)
+            if (smokePrefab != null)
             {
                 _smoke = new ParticleSystem[wheels.Length];
                 for (int i = 0; i < wheels.Length; i++)
@@ -42,14 +57,20 @@ namespace Arcade.Vehicle
                 }
             }
 
-            if (skidmarks != null && wheels != null) skidmarks.Init(wheels.Length);
+            if (_wheelMarks == null && skidmarks != null) skidmarks.Init(wheels.Length);
             vehicle.WallHit += OnWallHit;
             _ready = true;
+        }
+
+        void OnDisable()
+        {
+            if (_lastWheelMark != null) System.Array.Fill(_lastWheelMark, -1);
         }
 
         void OnDestroy()
         {
             if (vehicle != null) vehicle.WallHit -= OnWallHit;
+            if (_wheelMarks != null) Destroy(_wheelMarks.gameObject);
         }
 
         void Update()
@@ -61,10 +82,10 @@ namespace Arcade.Vehicle
             for (int i = 0; i < wheels.Length; i++)
             {
                 var w = wheels[i];
+                float slip = w.grounded ? w.slipIntensity : 0f;
 
                 if (_smoke != null && i < _smoke.Length && _smoke[i] != null)
                 {
-                    float slip = w.grounded ? w.slipIntensity : 0f;
                     _smoke[i].transform.SetPositionAndRotation(
                         w.contactPoint + w.contactNormal * 0.06f,
                         Quaternion.LookRotation(Vector3.up));
@@ -72,7 +93,13 @@ namespace Arcade.Vehicle
                     em.rateOverTime = slip * smokeMaxRate;
                 }
 
-                if (skidmarks != null)
+                if (_wheelMarks != null)
+                {
+                    _lastWheelMark[i] = slip >= SkidmarkSlipThreshold
+                        ? _wheelMarks.AddSkidMark(w.contactPoint, w.contactNormal, slip, _lastWheelMark[i])
+                        : -1;
+                }
+                else if (skidmarks != null)
                 {
                     if (w.grounded) skidmarks.AddMark(i, w.contactPoint, w.contactNormal, w.right, w.slipIntensity);
                     else skidmarks.BreakStrip(i);

@@ -53,7 +53,7 @@ namespace Arcade.Vehicle
             var s = c.s;
             _sinceShift += dt;
 
-            if (!s.reversing && c.input.Brake > 0.2f && s.forwardSpeed < 0.6f && c.input.Throttle < 0.1f)
+            if (!c.input.BrakeOnly && !s.reversing && c.input.Brake > 0.2f && s.forwardSpeed < 0.6f && c.input.Throttle < 0.1f)
                 s.reversing = true;
             if (s.reversing && c.input.Throttle > 0.2f && s.forwardSpeed > -0.6f)
                 s.reversing = false;

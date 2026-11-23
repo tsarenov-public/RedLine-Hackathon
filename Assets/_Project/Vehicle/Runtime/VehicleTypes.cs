@@ -6,7 +6,7 @@ namespace Arcade.Vehicle
     public struct VehicleInputState
     {
         public float Throttle, Brake, Steer;
-        public bool Handbrake, Nos, Speedbreaker, Reset;
+        public bool Handbrake, Nos, Speedbreaker, Reset, BrakeOnly;
     }
 
     public interface IInputSource { VehicleInputState Sample(float dt); }
