@@ -112,11 +112,15 @@ namespace Arcade.Vehicle
         private bool HasDisplayPriority()
         {
             if (visibleHud.vehicle == vehicle) return false;
+            var camera = Camera.main;
+            if (camera != null && camera.TryGetComponent<NFSCameraController>(out var raceCamera) &&
+                raceCamera.isActiveAndEnabled && raceCamera.Target != null)
+                return raceCamera.Target == vehicle;
+
             if (vehicle == VehicleSpawner.Current) return true;
             if (visibleHud.vehicle == VehicleSpawner.Current) return false;
 
-            // Scene-authored cars can be selected by the chase camera without a spawner.
-            var camera = Camera.main;
+            // Preserve camera-based selection in older scenes.
             return camera != null && camera.TryGetComponent<VehicleChaseCamera>(out var chaseCamera) &&
                 chaseCamera.isActiveAndEnabled && chaseCamera.vehicle == vehicle;
         }
