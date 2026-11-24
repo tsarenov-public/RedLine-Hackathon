@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.9999999, z: 0.9999999}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2302221928749367251}
@@ -109,6 +109,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2302221928749367251}
   - component: {fileID: 1297591256282777399}
+  - component: {fileID: 1015516610376344614}
   - component: {fileID: 1559202488190882074}
   - component: {fileID: 6455183111426419030}
   - component: {fileID: 3653255974429979326}
@@ -156,6 +157,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.55, y: 4.5, z: 0.93}
   m_Center: {x: 0.045, y: 2.25, z: 0.04}
+--- !u!65 &1015516610376344614
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6956507660781351834}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.52, y: 0.92, z: 6.55}
+  m_Center: {x: 0.055, y: 4.6, z: -3.35}
 --- !u!54 &1559202488190882074
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -164,9 +186,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6956507660781351834}
   serializedVersion: 5
-  m_Mass: 300
+  m_Mass: 15
   m_LinearDamping: 0
-  m_AngularDamping: 2
+  m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -217,6 +239,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreakableStreetProp
   approachTrigger: {fileID: 6455183111426419030}
-  heaviness: 5
-  maxAngularVelocity: 15
-  spinMultiplier: 0.3
+  heaviness: 1
