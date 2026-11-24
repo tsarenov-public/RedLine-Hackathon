@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -47,21 +48,30 @@ public sealed class SceneTransition : MonoBehaviour
 
     private IEnumerator Load(int buildIndex, Action onFailure)
     {
-        // Present the loading screen before Unity starts replacing the outgoing scene.
         yield return null;
-        AsyncOperation operation = null;
-        try
+        var source = SceneManager.GetActiveScene();
+        int sourceIndex = source.buildIndex;
+        bool leavingMap = source.isLoaded && sourceIndex >= 0 && sourceIndex != buildIndex &&
+            source.name == GameProgressionManager.MainMenuScene;
+        if (leavingMap)
         {
-            operation = SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Single);
-        }
-        catch (Exception exception)
-        {
-            Debug.LogException(exception);
+            // Keep the loading camera alive while Unity releases the map before allocating race meshes.
+            var loadingScene = SceneManager.CreateScene("RedLine Loading");
+            SceneManager.SetActiveScene(loadingScene);
+            yield return SceneManager.UnloadSceneAsync(source);
+            yield return Resources.UnloadUnusedAssets();
         }
 
+        var operation = StartLoad(buildIndex);
         if (operation != null) yield return operation;
 
         bool loaded = operation != null && SceneManager.GetActiveScene().buildIndex == buildIndex;
+        if (!loaded && leavingMap && !source.isLoaded)
+        {
+            var recovery = StartLoad(sourceIndex);
+            if (recovery != null) yield return recovery;
+        }
+
         gameObject.SetActive(false);
         active = null;
         Destroy(gameObject);
@@ -69,6 +79,19 @@ public sealed class SceneTransition : MonoBehaviour
 
         Debug.LogError($"Не удалось загрузить сцену «{SceneUtility.GetScenePathByBuildIndex(buildIndex)}».");
         onFailure?.Invoke();
+    }
+
+    private static AsyncOperation StartLoad(int buildIndex)
+    {
+        try
+        {
+            return SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Single);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            return null;
+        }
     }
 
     private void ShowLoading(Font font)
@@ -83,6 +106,10 @@ public sealed class SceneTransition : MonoBehaviour
         camera.allowHDR = false;
         camera.allowMSAA = false;
         camera.useOcclusionCulling = false;
+        var cameraData = camera.GetUniversalAdditionalCameraData();
+        cameraData.renderShadows = false;
+        cameraData.requiresDepthOption = CameraOverrideOption.Off;
+        cameraData.requiresColorOption = CameraOverrideOption.Off;
 
         var canvas = GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
