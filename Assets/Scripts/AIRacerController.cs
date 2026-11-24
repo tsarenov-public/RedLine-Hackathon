@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(-20)]
 public class AIRacerController : MonoBehaviour
 {
     [Header("Маршрут")]
@@ -46,7 +47,7 @@ public class AIRacerController : MonoBehaviour
     [Range(0.5f, 2.5f)] public float routeRecoveryStrength = 1.45f;
 
     [InspectorName("Дистанция перезахвата точек (м)")]
-    [Tooltip("Если бота отбросило дальше этой дистанции, он найдёт ближайшую точку впереди")]
+    [Tooltip("Если бот оказался дальше этой дистанции от маршрута, он целится в текущую точку")]
     [Range(15f, 100f)] public float realignSearchRadius = 35f;
 
     [InspectorName("Стабилизация при развороте")]
@@ -64,289 +65,239 @@ public class AIRacerController : MonoBehaviour
     public float CurrentBrake { get; private set; }
 
     private List<Transform> waypoints;
+    private float[] speedLimits;
     private Rigidbody rb;
-    private int currentIndex = 0;
-    private bool finished = false;
+    private int currentIndex;
+    private bool finished;
+    private float stuckTimer;
+    private float reverseTimer;
+    private float impactRecoveryTimer;
 
-    private float stuckTimer = 0f;
-    private float reverseTimer = 0f;
-    private float impactRecoveryTimer = 0f;
+    private float PlanningDeceleration => Mathf.Max(1f, brakeDecel * .65f);
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        if (path != null)
-            waypoints = path.GetWaypoints();
+        if (path == null || rb == null) return;
+
+        waypoints = path.GetWaypoints();
+        speedLimits = BuildSpeedLimits();
     }
 
     private void FixedUpdate()
     {
         float dt = Time.fixedDeltaTime;
-
         if (waypoints == null || waypoints.Count == 0 || finished)
         {
             CurrentThrottle = 0f;
-            CurrentSteer = Mathf.Lerp(CurrentSteer, 0f, dt * steerSmoothSpeed);
-            CurrentBrake = 1f;
+            CurrentSteer = Mathf.MoveTowards(CurrentSteer, 0f, dt * steerSmoothSpeed);
+            CurrentBrake = Mathf.MoveTowards(CurrentBrake, 1f, dt * 4f);
             return;
         }
 
-        if (impactRecoveryTimer > 0f)
-            impactRecoveryTimer -= dt;
+        var position = rb.position;
+        var forward = Flatten(rb.rotation * Vector3.forward).normalized;
+        float speed = Flatten(rb.linearVelocity).magnitude;
+        AdvanceIfReached(position, speed);
+        if (finished)
+        {
+            CurrentThrottle = 0f;
+            return;
+        }
 
-        // 1. Проверка: не проскочил ли бот текущую точку после удара
-        UpdateWaypointProgress();
+        var target = waypoints[currentIndex].position;
+        var onPath = ProjectOntoApproach(position, target);
+        float offset = FlatDistance(position, onPath);
+        impactRecoveryTimer = Mathf.Max(0f, impactRecoveryTimer - dt);
+        bool recovering = offset > 4.5f || impactRecoveryTimer > 0f;
 
-        Transform currentWp = waypoints[currentIndex];
-        int nextIndex = (currentIndex + 1) % waypoints.Count;
-        Transform nextWp = (loopTrack || currentIndex + 1 < waypoints.Count) ? waypoints[nextIndex] : currentWp;
+        float fast = Mathf.InverseLerp(160f, 255f, speed * 3.6f);
+        float lookAhead = Mathf.Lerp(5f, 24f, Mathf.InverseLerp(0f, 68f, speed)) *
+            Mathf.Lerp(.80f, 1.30f, lookAheadBlend);
+        if (recovering) lookAhead *= .6f;
+        var aim = offset < realignSearchRadius ? LookAhead(onPath, lookAhead) : target;
+        var direction = Flatten(aim - position);
+        float headingError = Vector3.SignedAngle(forward, direction, Vector3.up);
+        float steering = Mathf.Clamp(headingError / 34f * steerSensitivity *
+            (recovering ? routeRecoveryStrength : 1f) * Mathf.Lerp(1f, .76f, fast), -1f, 1f);
+        float steerBlend = 1f - Mathf.Exp(-dt * steerSmoothSpeed);
 
-        Vector3 flatWp = new Vector3(currentWp.position.x, transform.position.y, currentWp.position.z);
-        Vector3 flatNextWp = new Vector3(nextWp.position.x, transform.position.y, nextWp.position.z);
-
-        // Определяем, насколько сильно бота выбили с траектории
-        float lateralOffset = CalculateLateralOffset(flatWp, flatNextWp);
-        bool offCourse = lateralOffset > 4.5f || impactRecoveryTimer > 0f;
-
-        // Если бота выбили с трассы — уменьшаем упреждение, чтобы он сначала вернулся на полосу
-        float effectiveBlend = offCourse ? Mathf.Min(lookAheadBlend, 0.15f) : lookAheadBlend;
-        Vector3 blendedTarget = Vector3.Lerp(flatWp, flatNextWp, effectiveBlend);
-        Vector3 direction = (blendedTarget - transform.position).normalized;
-        if (direction.sqrMagnitude < 0.001f) direction = transform.forward;
-
-        float angle = Vector3.SignedAngle(transform.forward, direction, Vector3.up);
-        float absAngle = Mathf.Abs(angle);
-
-        // 2. Режим выезда задним ходом при застревании у стены
         if (reverseTimer > 0f)
         {
             reverseTimer -= dt;
             CurrentThrottle = 0f;
             CurrentBrake = 1f;
-            // Выворачиваем руль в обратную сторону, чтобы корма увела нос к маршруту
-            float reverseSteer = -Mathf.Sign(angle) * Mathf.Clamp01(absAngle / 30f);
-            CurrentSteer = Mathf.Lerp(CurrentSteer, reverseSteer, dt * steerSmoothSpeed);
+            CurrentSteer = Mathf.Lerp(CurrentSteer, -steering, steerBlend);
             return;
         }
 
-        // 3. Руление с усиленным возвратом на маршрут после столкновения
-        float recoveryMult = offCourse ? routeRecoveryStrength : 1f;
-        float targetSteer = Mathf.Clamp((angle / 45f) * steerSensitivity * recoveryMult, -1f, 1f);
-        CurrentSteer = Mathf.Lerp(CurrentSteer, targetSteer, dt * steerSmoothSpeed);
+        CurrentSteer = Mathf.Lerp(CurrentSteer, steering, steerBlend);
+        float speedLimit = ScanSpeedLimit(onPath, speed);
+        float steeringDemand = Mathf.Max(Mathf.Abs(steering), Mathf.Abs(CurrentSteer));
 
-        // 4. Расчёт безопасной скорости и торможения перед поворотами
-        float speedMs = rb != null ? rb.linearVelocity.magnitude : 0f;
-        float speedKmh = speedMs * 3.6f;
-        float cruiseMs = cruiseSpeedKmh / 3.6f;
-        float minCornerMs = Mathf.Lerp(145f, 65f, cornerBrakeStrength) / 3.6f;
+        if (recovering)
+            speedLimit = Mathf.Min(speedLimit, Mathf.Lerp(14f, 7f, Mathf.InverseLerp(4.5f, 12f, offset)));
 
-        float targetAllowedMs = cruiseMs;
-        float scannedDist = Vector3.Distance(transform.position, flatWp);
-        Vector3 prevPos = currentWp.position;
-        Vector3 prevDir = (flatWp - transform.position).sqrMagnitude > 0.01f
-            ? (flatWp - transform.position).normalized
-            : transform.forward;
+        float spin = Mathf.InverseLerp(52f, 115f, Mathf.Abs(headingError)) * spinRecoveryBrake;
+        float brake = Mathf.Clamp01((speed - speedLimit + .25f) / 3.5f) * maxBrakeForce;
+        if (speed > 5f) brake = Mathf.Max(brake, spin * .75f);
+        float throttle = Mathf.Clamp01(maxThrottle * Mathf.Clamp01((speedLimit - speed) / 3f) *
+            (1f - .80f * steeringDemand * steeringDemand) * (1f - spin));
+        CurrentBrake = Mathf.MoveTowards(CurrentBrake, brake, dt * (brake > CurrentBrake ? 7f : 3.5f));
+        CurrentThrottle = CurrentBrake > .04f ? 0f :
+            Mathf.MoveTowards(CurrentThrottle, throttle, dt * (throttle > CurrentThrottle ? 3f : 9f));
 
-        float immediateSeverity = Mathf.Clamp01(Mathf.Max(0f, absAngle - 12f) / 70f);
-        if (immediateSeverity > 0.05f)
-            targetAllowedMs = Mathf.Min(targetAllowedMs, Mathf.Lerp(cruiseMs, minCornerMs, immediateSeverity));
-
-        for (int i = 1; i <= 12; i++)
-        {
-            int idx = currentIndex + i;
-            if (idx >= waypoints.Count)
-            {
-                if (loopTrack) idx %= waypoints.Count;
-                else break;
-            }
-
-            Vector3 wpPos = waypoints[idx].position;
-            Vector3 segVec = new Vector3(wpPos.x - prevPos.x, 0f, wpPos.z - prevPos.z);
-            if (segVec.sqrMagnitude > 0.01f)
-            {
-                Vector3 segDir = segVec.normalized;
-                float angleFromCar = Vector3.Angle(transform.forward, segDir);
-                float angleFromPrev = Vector3.Angle(prevDir, segDir);
-                float bendAngle = Mathf.Max(angleFromCar, angleFromPrev);
-
-                float severity = Mathf.Clamp01(Mathf.Max(0f, bendAngle - 12f) / 70f);
-                if (severity > 0.05f)
-                {
-                    float cornerSpeedMs = Mathf.Lerp(cruiseMs, minCornerMs, severity);
-                    float decel = Mathf.Max(4f, brakeDecel);
-                    float requiredBrakeDist = Mathf.Max(0f, (speedMs * speedMs - cornerSpeedMs * cornerSpeedMs) / (2f * decel)) + 8f;
-
-                    if (scannedDist <= requiredBrakeDist)
-                        targetAllowedMs = Mathf.Min(targetAllowedMs, cornerSpeedMs);
-                }
-
-                prevDir = segDir;
-            }
-
-            scannedDist += Vector3.Distance(prevPos, wpPos);
-            prevPos = wpPos;
-            if (scannedDist >= 220f) break;
-        }
-
-        // 5. Управление газом и тормозом + стабилизация при развороте боком
-        float speedExcessMs = speedMs - targetAllowedMs;
-        if (absAngle > 55f && speedKmh > 18f && spinRecoveryBrake > 0.05f)
-        {
-            // Бота развернуло после удара — сбрасываем газ и стабилизируем курс
-            float spinFactor = Mathf.Clamp01((absAngle - 55f) / 75f) * spinRecoveryBrake;
-            CurrentThrottle = Mathf.Clamp01(maxThrottle * (1f - spinFactor));
-            CurrentBrake = spinFactor * 0.65f;
-        }
-        else if (speedExcessMs > 1.2f)
-        {
-            CurrentThrottle = 0f;
-            float brakeIntensity = Mathf.Clamp01(speedExcessMs / 7f) * maxBrakeForce;
-            float steerGripShare = 1f - Mathf.Abs(CurrentSteer) * 0.65f;
-            CurrentBrake = brakeIntensity * steerGripShare;
-        }
+        if (!loopTrack && currentIndex == waypoints.Count - 1 && speedLimit < 1f)
+            stuckTimer = 0f;
         else
+            UpdateStuckRecovery(speed, dt);
+    }
+
+    private void AdvanceIfReached(Vector3 position, float speed)
+    {
+        var target = waypoints[currentIndex].position;
+        var delta = position - target;
+        if (Mathf.Abs(delta.y) > 3f) return;
+
+        if (!loopTrack && currentIndex == waypoints.Count - 1)
         {
-            CurrentBrake = 0f;
-            float throttle = maxThrottle;
-            if (cruiseSpeedKmh > 0f && speedKmh > cruiseSpeedKmh)
+            if (Flatten(delta).sqrMagnitude < reachDistance * reachDistance && speed < .45f)
             {
-                float overSpeed = Mathf.Clamp01((speedKmh - cruiseSpeedKmh) / 15f);
-                throttle *= (1f - overSpeed);
+                finished = true;
+                currentIndex++;
             }
-            CurrentThrottle = Mathf.Clamp01(throttle);
+            return;
         }
 
-        // 6. Детектор застревания (если упёрся в стену после столкновения)
-        if (CurrentThrottle > 0.25f && speedKmh < 5f)
+        // Keep the next target in sequence, including when nearby lanes cross at different elevations.
+        if (Flatten(delta).sqrMagnitude < reachDistance * reachDistance)
+            currentIndex = (currentIndex + 1) % waypoints.Count;
+    }
+
+    private Vector3 ProjectOntoApproach(Vector3 position, Vector3 target)
+    {
+        if (currentIndex == 0 && !loopTrack) return position;
+
+        int previous = (currentIndex + waypoints.Count - 1) % waypoints.Count;
+        var start = waypoints[previous].position;
+        var segment = Flatten(target - start);
+        float progress = Vector3.Dot(Flatten(position - start), segment) / Mathf.Max(.001f, segment.sqrMagnitude);
+        return Vector3.Lerp(start, target, progress);
+    }
+
+    private Vector3 LookAhead(Vector3 start, float distance)
+    {
+        for (int step = 0; step < waypoints.Count; step++)
         {
-            stuckTimer += dt;
-            if (stuckTimer >= stuckTimeout)
-            {
-                reverseTimer = reverseDuration;
-                stuckTimer = 0f;
-            }
+            int index = currentIndex + step;
+            if (!loopTrack && index == waypoints.Count) break;
+            var end = waypoints[index % waypoints.Count].position;
+            float length = FlatDistance(start, end);
+            if (length >= distance) return Vector3.Lerp(start, end, distance / length);
+            distance -= length;
+            start = end;
         }
-        else
+        return start;
+    }
+
+    private float ScanSpeedLimit(Vector3 start, float speed)
+    {
+        float scanDistance = Mathf.Lerp(90f, 100f, Mathf.InverseLerp(0f, 70f, speed));
+        float reactionDistance = Mathf.Lerp(2f, 7f, Mathf.InverseLerp(0f, 70f, speed));
+        float distance = 0f;
+        float limit = Mathf.Max(0f, cruiseSpeedKmh / 3.6f);
+        for (int step = 0; step < waypoints.Count; step++)
+        {
+            int index = currentIndex + step;
+            if (!loopTrack && index == waypoints.Count) break;
+            index %= waypoints.Count;
+            var end = waypoints[index].position;
+            distance += FlatDistance(start, end);
+            if (step > 0 && distance > scanDistance) break;
+            float brakingDistance = Mathf.Max(0f, distance - reactionDistance);
+            limit = Mathf.Min(limit, ApproachSpeed(speedLimits[index], brakingDistance));
+            start = end;
+        }
+        return limit;
+    }
+
+    private float[] BuildSpeedLimits()
+    {
+        int count = waypoints.Count;
+        var limits = new float[count];
+        float cruise = Mathf.Max(0f, cruiseSpeedKmh / 3.6f);
+        float lateralAcceleration = Mathf.Lerp(13f, 4.8f, cornerBrakeStrength);
+        for (int i = 0; i < count; i++)
+        {
+            limits[i] = cruise;
+            if (!loopTrack && (i == 0 || i == count - 1)) continue;
+
+            var point = waypoints[i].position;
+            var incoming = point - waypoints[(i + count - 1) % count].position;
+            var outgoing = waypoints[(i + 1) % count].position - point;
+            float a = Flatten(incoming).magnitude;
+            float b = Flatten(outgoing).magnitude;
+            if (a < .1f || b < .1f) continue;
+
+            float twiceArea = Vector3.Cross(Flatten(incoming), Flatten(outgoing)).magnitude;
+            if (twiceArea > .01f)
+            {
+                float radius = a * b * Flatten(incoming + outgoing).magnitude / (2f * twiceArea);
+                limits[i] = Mathf.Min(limits[i], Mathf.Sqrt(lateralAcceleration * radius));
+            }
+
+            float crest = (incoming.y / a - outgoing.y / b) / ((a + b) * .5f);
+            if (crest > .001f)
+                limits[i] = Mathf.Min(limits[i], Mathf.Sqrt(4.5f / crest));
+        }
+
+        if (count == 0) return limits;
+        if (!loopTrack) limits[count - 1] = 0f;
+
+        // Propagate limits farther than the live scan when a straight needs more braking room.
+        int first = loopTrack ? count * 2 - 1 : count - 2;
+        for (int i = first; i >= 0; i--)
+        {
+            int index = i % count;
+            int next = (index + 1) % count;
+            float length = FlatDistance(waypoints[index].position, waypoints[next].position);
+            limits[index] = Mathf.Min(limits[index], ApproachSpeed(limits[next], length));
+        }
+
+        return limits;
+    }
+
+    private float ApproachSpeed(float speed, float distance) =>
+        Mathf.Sqrt(speed * speed + 2f * PlanningDeceleration * distance);
+
+    private void UpdateStuckRecovery(float speed, float dt)
+    {
+        if (CurrentThrottle <= .25f || speed >= 5f / 3.6f)
         {
             stuckTimer = Mathf.Max(0f, stuckTimer - dt * 2f);
-        }
-    }
-
-    private void UpdateWaypointProgress()
-    {
-        Transform currentWp = waypoints[currentIndex];
-        Vector3 flatWp = new Vector3(currentWp.position.x, transform.position.y, currentWp.position.z);
-        float distToCurrent = Vector3.Distance(transform.position, flatWp);
-
-        // Обычный захват точки
-        if (distToCurrent < reachDistance)
-        {
-            AdvanceWaypoint();
             return;
         }
 
-        // Если после тарана бот оказался далеко от текущей точки — ищем ближайшую впереди
-        if (distToCurrent > realignSearchRadius)
-        {
-            int bestIdx = FindBestRecoveryWaypoint();
-            if (bestIdx != -1)
-            {
-                currentIndex = bestIdx;
-                return;
-            }
-        }
+        stuckTimer += dt;
+        if (stuckTimer < stuckTimeout) return;
 
-        // Если бота протащили мимо текущей точки по ходу трассы — не разворачиваемся назад
-        int nextIdx = (currentIndex + 1) % waypoints.Count;
-        if (loopTrack || currentIndex + 1 < waypoints.Count)
-        {
-            Vector3 flatNext = new Vector3(waypoints[nextIdx].position.x, transform.position.y, waypoints[nextIdx].position.z);
-            Vector3 seg = flatNext - flatWp;
-            float segLen = seg.magnitude;
-            if (segLen > 0.5f)
-            {
-                Vector3 segDir = seg / segLen;
-                float along = Vector3.Dot(transform.position - flatWp, segDir);
-                float distToNext = Vector3.Distance(transform.position, flatNext);
-                if (along > 0f && distToNext < segLen && distToNext < distToCurrent)
-                {
-                    AdvanceWaypoint();
-                }
-            }
-        }
+        reverseTimer = reverseDuration;
+        stuckTimer = 0f;
     }
 
-    private int FindBestRecoveryWaypoint()
-    {
-        int bestIndex = -1;
-        float bestScore = float.MaxValue;
-
-        for (int i = 0; i < waypoints.Count; i++)
-        {
-            Vector3 wp = new Vector3(waypoints[i].position.x, transform.position.y, waypoints[i].position.z);
-            Vector3 toWp = wp - transform.position;
-            float dist = toWp.magnitude;
-            if (dist < 1f) continue;
-
-            // Предпочитаем точки впереди машины, чтобы не разворачивать бота против движения
-            float forwardDot = Vector3.Dot(transform.forward, toWp / dist);
-            float penalty = forwardDot < 0f ? 45f : 0f;
-            float score = dist + penalty;
-
-            if (score < bestScore)
-            {
-                bestScore = score;
-                bestIndex = i;
-            }
-        }
-
-        return bestIndex;
-    }
-
-    private float CalculateLateralOffset(Vector3 flatWp, Vector3 flatNextWp)
-    {
-        int prevIdx = (currentIndex - 1 + waypoints.Count) % waypoints.Count;
-        Vector3 flatPrev = (loopTrack || currentIndex > 0)
-            ? new Vector3(waypoints[prevIdx].position.x, transform.position.y, waypoints[prevIdx].position.z)
-            : flatWp;
-
-        Vector3 lineDir = (flatWp - flatPrev).sqrMagnitude > 0.1f
-            ? (flatWp - flatPrev).normalized
-            : (flatNextWp - flatWp).normalized;
-
-        if (lineDir.sqrMagnitude < 0.01f) return 0f;
-        Vector3 toCar = transform.position - flatPrev;
-        Vector3 projected = Vector3.Project(toCar, lineDir);
-        return (toCar - projected).magnitude;
-    }
-
-    private void AdvanceWaypoint()
-    {
-        currentIndex++;
-        if (currentIndex >= waypoints.Count)
-        {
-            if (loopTrack)
-                currentIndex = 0;
-            else
-                finished = true;
-        }
-    }
+    private static Vector3 Flatten(Vector3 value) => new(value.x, 0f, value.z);
+    private static float FlatDistance(Vector3 a, Vector3 b) => Flatten(a - b).magnitude;
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Реагируем на сильный удар (например, таран игроком)
-        if (collision.impulse.magnitude > 1500f)
-        {
-            impactRecoveryTimer = 1.5f;
-        }
+        if (collision.impulse.magnitude > 1500f) impactRecoveryTimer = 1.5f;
     }
 
     private void OnDrawGizmos()
     {
-        if (waypoints != null && currentIndex < waypoints.Count && !finished)
-        {
-            Gizmos.color = reverseTimer > 0f ? Color.red : (impactRecoveryTimer > 0f ? Color.yellow : Color.green);
-            Gizmos.DrawLine(transform.position + Vector3.up, waypoints[currentIndex].position);
-        }
+        if (waypoints == null || currentIndex >= waypoints.Count || finished) return;
+
+        Gizmos.color = reverseTimer > 0f ? Color.red : impactRecoveryTimer > 0f ? Color.yellow : Color.green;
+        Gizmos.DrawLine(transform.position + Vector3.up, waypoints[currentIndex].position);
     }
 }
