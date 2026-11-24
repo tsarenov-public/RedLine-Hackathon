@@ -15,10 +15,10 @@ MonoBehaviour:
   autoCalculate: 0
   character:
     archetypeName: Hypercar Grip GT1
-    rideFrequencyHz: 3.2
+    rideFrequencyHz: 3
     bumpDampingRatio: 0.5
     reboundDampingRatio: 0.7
-    antiRollRatio: 0.85
+    antiRollRatio: 0.8
     cgHeightPerRadius: 0.55
     brakeDecelG: 2.3
     downforcePerKg: 0.003
@@ -107,8 +107,8 @@ MonoBehaviour:
     frontGripBias: 1.28
     rearGripBias: 1.3
     driftScrubRetention: 0.35
-    driftEllipseBoost: 3.5
-    driftThrottleBoost: 2
+    driftEllipseBoost: 3
+    driftThrottleBoost: 1
     handbrakeLateralGrip: 0.15
     handbrakeLock: 1
     handbrakeFadeTime: 0.1
@@ -116,12 +116,12 @@ MonoBehaviour:
     brakeBias: 0.6
     rollingResistance: 0.012
     engineBrake: 280
-    tractionLimit: 4
-    ellipsePower: 1.02
+    tractionLimit: 1
+    ellipsePower: 1.5
     slipEpsilon: 0.5
     relaxLateral: 0.005
     relaxLongitudinal: 0.005
-    impulseClamp: 10
+    impulseClamp: 1
     slipFxStartDeg: 14
     slipFxFullDeg: 35
     wheelSpinExtra: 0
@@ -302,21 +302,26 @@ MonoBehaviour:
     airAlignSmooth: 0.15
     airYawControl: 1.6
     airPitchControl: 1.4
-    airRollControl: 1.4
+    flipDot: 0.15
+    flipResetTime: 1.5
+    frontalArea: 3.1
+    dragCoeff: 0.78
+    downforceCoeff: 0.96
+    staticDownforce: 320
   nos:
-    enabled: 1
-    capacity: 100
-    burnRate: 25
-    regenRate: 12
-    regenDelay: 1.5
-    powerMult: 1.35
-    forceBoost: 1500
-    topSpeedBonusKmh: 35
+    duration: 3
+    minToActivate: 0.15
+    torqueMult: 1.7
+    dragMult: 0.85
+    driftFill: 0.1
+    airFill: 0.12
+    passiveFill: 0.1
+    requireHold: 1
+    rampTime: 0.15
   speedbreaker:
-    enabled: 1
-    capacity: 100
-    burnRate: 20
-    regenRate: 10
     timeScale: 0.45
-    gripMult: 1.4
+    duration: 4
+    refillRate: 0.06
+    blend: 0.08
     steerMult: 1.35
+    gripMult: 1.4
