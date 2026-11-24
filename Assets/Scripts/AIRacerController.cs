@@ -63,6 +63,7 @@ public class AIRacerController : MonoBehaviour
     public float CurrentThrottle { get; private set; }
     public float CurrentSteer { get; private set; }
     public float CurrentBrake { get; private set; }
+    public bool HoldPosition { get; set; }
 
     private List<Transform> waypoints;
     private float[] speedLimits;
@@ -73,12 +74,17 @@ public class AIRacerController : MonoBehaviour
     private float reverseTimer;
     private float impactRecoveryTimer;
     private bool useFinishGate;
+    private bool keepPaceThroughFinish;
 
     private bool Loops => loopTrack && !useFinishGate;
     public bool IsApproachingFinish => waypoints != null && waypoints.Count > 0 && currentIndex == waypoints.Count - 1;
 
-    // FinishLineTrigger arms this before Start builds the speed profile.
-    public void UseFinishGate() => useFinishGate = true;
+    // RaceDirector arms this before Start builds the speed profile.
+    public void UseFinishGate(bool keepRacePace = false)
+    {
+        useFinishGate = true;
+        keepPaceThroughFinish = keepRacePace;
+    }
 
     private float PlanningDeceleration => Mathf.Max(1f, brakeDecel * .65f);
 
@@ -89,12 +95,32 @@ public class AIRacerController : MonoBehaviour
 
         waypoints = path.GetWaypoints();
         speedLimits = BuildSpeedLimits();
+        currentIndex = FindStartIndex();
+    }
+
+    private int FindStartIndex()
+    {
+        if (waypoints.Count == 0) return 0;
+        var position = rb.position;
+        int best = 0;
+        float bestDistance = float.PositiveInfinity;
+        for (int i = 0; i < Mathf.Min(waypoints.Count, 12); i++)
+        {
+            float distance = FlatDistance(position, waypoints[i].position);
+            if (distance >= bestDistance) continue;
+            bestDistance = distance;
+            best = i;
+        }
+
+        var forward = Flatten(rb.rotation * Vector3.forward);
+        bool behind = Vector3.Dot(forward, Flatten(waypoints[best].position - position)) < 1f;
+        return behind && best < waypoints.Count - 1 ? best + 1 : best;
     }
 
     private void FixedUpdate()
     {
         float dt = Time.fixedDeltaTime;
-        if (waypoints == null || waypoints.Count == 0 || finished)
+        if (waypoints == null || waypoints.Count == 0 || finished || HoldPosition)
         {
             CurrentThrottle = 0f;
             CurrentSteer = Mathf.MoveTowards(CurrentSteer, 0f, dt * steerSmoothSpeed);
@@ -259,7 +285,7 @@ public class AIRacerController : MonoBehaviour
         }
 
         if (count == 0) return limits;
-        if (!Loops) limits[count - 1] = useFinishGate ? 4f : 0f;
+        if (!Loops) limits[count - 1] = useFinishGate ? (keepPaceThroughFinish ? cruise : 4f) : 0f;
 
         // Propagate limits farther than the live scan when a straight needs more braking room.
         int first = Loops ? count * 2 - 1 : count - 2;

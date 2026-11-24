@@ -31,7 +31,7 @@ namespace Arcade.Vehicle
     public sealed class SpeedbreakerModule : IVehicleModule, IRealtimeModule
     {
         VehicleContext c;
-        bool _active;
+        bool _active, _ownsTime;
         float _scale = 1f, _baseFixed;
 
         public void Init(VehicleContext ctx) { c = ctx; _baseFixed = VehiclePhysicsBootstrap.BaseFixedDelta; }
@@ -39,6 +39,7 @@ namespace Arcade.Vehicle
 
         public void RealtimeTick(float udt)
         {
+            if (GamePause.IsPaused) return;
             var sb = c.cfg.speedbreaker;
             var s = c.s;
 
@@ -53,14 +54,25 @@ namespace Arcade.Vehicle
             _scale = Mathf.Lerp(_scale, _active ? sb.timeScale : 1f, 1f - Mathf.Exp(-udt / sb.blend));
             if (!_active && Mathf.Abs(_scale - 1f) < 0.002f) _scale = 1f;
 
-            Time.timeScale = _scale;
-            Time.fixedDeltaTime = _baseFixed * _scale;
+            if (_active || _scale < 1f || _ownsTime)
+            {
+                Time.timeScale = _scale;
+                Time.fixedDeltaTime = _baseFixed * _scale;
+                _ownsTime = _scale < 1f;
+            }
 
             float k = Mathf.InverseLerp(1f, sb.timeScale, _scale);
             s.steerMult = Mathf.Lerp(1f, sb.steerMult, k);
             s.gripMult = Mathf.Lerp(1f, sb.gripMult, k);
         }
 
-        public void Restore() { Time.timeScale = 1f; Time.fixedDeltaTime = _baseFixed; }
+        public void Restore()
+        {
+            if (!_ownsTime) return;
+            _ownsTime = false;
+            _scale = 1f;
+            Time.timeScale = GamePause.IsPaused ? 0f : 1f;
+            Time.fixedDeltaTime = _baseFixed;
+        }
     }
 }

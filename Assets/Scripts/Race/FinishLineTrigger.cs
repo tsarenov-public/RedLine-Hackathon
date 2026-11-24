@@ -1,20 +1,15 @@
-using Arcade.Vehicle;
 using UnityEngine;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(BoxCollider))]
 public sealed class FinishLineTrigger : MonoBehaviour
 {
-    [SerializeField] private ArcadeVehicle raceCar;
-    [SerializeField] private AIRacerController driver;
-    [SerializeField] private RaceFinishUI finishScreen;
-
-    private bool crossed;
+    [SerializeField] private RaceDirector race;
 
     private void Awake()
     {
         GetComponent<BoxCollider>().isTrigger = true;
-        if (driver != null) driver.UseFinishGate();
+        if (race == null) race = FindAnyObjectByType<RaceDirector>();
     }
 
     private void OnTriggerEnter(Collider other) => TryFinish(other);
@@ -22,17 +17,14 @@ public sealed class FinishLineTrigger : MonoBehaviour
 
     private void TryFinish(Collider other)
     {
-        if (crossed || raceCar == null || finishScreen == null || other.attachedRigidbody != raceCar.Rb) return;
-        if (driver != null && !driver.IsApproachingFinish) return;
+        var body = other.attachedRigidbody;
+        if (race == null || body == null) return;
 
-        var offset = raceCar.Rb.worldCenterOfMass - transform.position;
+        var offset = body.worldCenterOfMass - transform.position;
         if (Vector3.Dot(offset, transform.forward) < -.8f ||
-            Vector3.Dot(raceCar.Rb.linearVelocity, transform.forward) <= .1f) return;
+            Vector3.Dot(body.linearVelocity, transform.forward) <= .1f) return;
 
-        crossed = true;
-        raceCar.BeginFinishBraking();
-        if (driver != null) driver.enabled = false;
-        finishScreen.Present(raceCar);
+        race.NotifyFinishCrossed(body);
     }
 
     private void Reset()

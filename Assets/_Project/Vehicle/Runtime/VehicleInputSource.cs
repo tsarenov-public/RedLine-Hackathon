@@ -10,6 +10,8 @@ namespace Arcade.Vehicle
         [Range(0f, 0.4f)] public float stickDeadzone = 0.12f;
         public bool debugInput;
 
+        public bool HoldPosition { get; set; }
+
         private AIRacerController _aiController;
         private float _nextLogTime;
 
@@ -92,6 +94,8 @@ namespace Arcade.Vehicle
                 LogState("AI", aiInput);
                 return aiInput;
             }
+
+            if (HoldPosition) return new VehicleInputState { Brake = 1f, BrakeOnly = true };
 
 #if ENABLE_INPUT_SYSTEM
             float steer = _steer.ReadValue<float>();
