@@ -107,7 +107,8 @@ public sealed class RaceFinishUI : MonoBehaviour
             return;
         }
 
-        leaving = SceneTransition.TryLoad(next, chapterTitleText != null ? chapterTitleText.font : null);
+        leaving = SceneTransition.TryLoad(next, chapterTitleText != null ? chapterTitleText.font : null,
+            () => leaving = false);
         if (!leaving) return;
         GamePause.SetPaused(false);
     }

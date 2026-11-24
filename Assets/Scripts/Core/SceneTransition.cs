@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public sealed class SceneTransition : MonoBehaviour
 {
+    private static readonly Color LoadingBackground = new(.04f, .045f, .05f);
     private static SceneTransition active;
 
     public static bool IsLoading => active != null;
@@ -31,45 +32,58 @@ public sealed class SceneTransition : MonoBehaviour
         return found;
     }
 
-    public static bool TryLoad(int buildIndex, Font font = null)
+    public static bool TryLoad(int buildIndex, Font font = null, Action onFailure = null)
     {
         if (IsLoading || buildIndex < 0 || buildIndex >= SceneManager.sceneCountInBuildSettings) return false;
 
-        var source = SceneManager.GetActiveScene();
         var root = new GameObject("Scene Transition", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
         root.GetComponent<Canvas>().sortingOrder = short.MaxValue;
         DontDestroyOnLoad(root);
         active = root.AddComponent<SceneTransition>();
         active.ShowLoading(font);
-        active.StartCoroutine(active.Load(source, buildIndex));
+        active.StartCoroutine(active.Load(buildIndex, onFailure));
         return true;
     }
 
-    private IEnumerator Load(Scene source, int buildIndex)
+    private IEnumerator Load(int buildIndex, Action onFailure)
     {
-        // Let the UI complete its click before destroying its scene or starting another render pipeline.
+        // Present the loading screen before Unity starts replacing the outgoing scene.
         yield return null;
-        if (source.IsValid() && source.isLoaded)
+        AsyncOperation operation = null;
+        try
         {
-            foreach (var root in source.GetRootGameObjects())
-                foreach (var camera in root.GetComponentsInChildren<Camera>())
-                    camera.gameObject.SetActive(false);
-
-            yield return null;
-            var handoff = SceneManager.CreateScene("RedLine Loading");
-            SceneManager.SetActiveScene(handoff);
-            yield return SceneManager.UnloadSceneAsync(source);
+            operation = SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Single);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
         }
 
-        // Release the old world's render objects and textures before loading the next world.
-        yield return Resources.UnloadUnusedAssets();
-        yield return null;
-        yield return SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Single);
+        if (operation != null) yield return operation;
+
+        bool loaded = operation != null && SceneManager.GetActiveScene().buildIndex == buildIndex;
+        gameObject.SetActive(false);
+        active = null;
         Destroy(gameObject);
+        if (loaded) yield break;
+
+        Debug.LogError($"Не удалось загрузить сцену «{SceneUtility.GetScenePathByBuildIndex(buildIndex)}».");
+        onFailure?.Invoke();
     }
 
     private void ShowLoading(Font font)
     {
+        // Overlay UI alone does not render a display while the scene cameras are being swapped.
+        var camera = new GameObject("Loading Camera", typeof(Camera)).GetComponent<Camera>();
+        camera.transform.SetParent(transform, false);
+        camera.clearFlags = CameraClearFlags.SolidColor;
+        camera.backgroundColor = LoadingBackground;
+        camera.cullingMask = 0;
+        camera.depth = -100f;
+        camera.allowHDR = false;
+        camera.allowMSAA = false;
+        camera.useOcclusionCulling = false;
+
         var canvas = GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         var scaler = GetComponent<CanvasScaler>();
@@ -80,7 +94,7 @@ public sealed class SceneTransition : MonoBehaviour
         var background = new GameObject("Background", typeof(RectTransform), typeof(Image));
         Stretch(background, transform);
         var image = background.GetComponent<Image>();
-        image.color = new Color(.04f, .045f, .05f);
+        image.color = LoadingBackground;
         image.raycastTarget = false;
 
         var message = new GameObject("Loading Label", typeof(RectTransform), typeof(Text));

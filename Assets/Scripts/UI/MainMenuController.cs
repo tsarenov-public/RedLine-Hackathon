@@ -140,10 +140,19 @@ public sealed class MainMenuController : MonoBehaviour
             return;
         }
 
-        if (!SceneTransition.TryLoad(next, playLabel.font)) return;
+        if (!SceneTransition.TryLoad(next, playLabel.font, OnLoadFailed)) return;
         loading = true;
         playButton.interactable = false;
         playLabel.text = "ЗАГРУЗКА...";
+    }
+
+    private void OnLoadFailed()
+    {
+        if (this == null) return;
+        loading = false;
+        playButton.interactable = true;
+        playLabel.text = "PLAY";
+        ShowToast("Не удалось загрузить гонку. Попробуйте ещё раз.");
     }
 
     private void ShowIntroIfNeeded()
