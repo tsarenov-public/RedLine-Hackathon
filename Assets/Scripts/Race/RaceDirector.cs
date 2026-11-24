@@ -47,6 +47,8 @@ public sealed class RaceDirector : MonoBehaviour
     public bool RaceStarted { get; private set; }
     public ArcadeVehicle Player => player;
     public ArcadeVehicle Rival => rival;
+    public int PlayerNextWaypoint => playerRacer?.Next ?? -1;
+    public int RivalNextWaypoint => rivalRacer?.Next ?? -1;
 
     private void Awake()
     {

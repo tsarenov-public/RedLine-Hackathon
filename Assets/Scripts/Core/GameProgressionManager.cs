@@ -13,11 +13,15 @@ public sealed class GameProgressionManager : ScriptableObject
 
     private const string UnlockedKey = "RedLine.UnlockedStage";
     private const string CompletedKey = "RedLine.CompletedStages";
+    private const string IntroSeenKey = "RedLine.CityIntroSeen";
+
+    private const string DefaultIntroduction = "Твой отец — начальник крупнейшей портовой компании города — отказался подписывать грязный контракт на провоз контрабанды через свои терминалы. В ту же ночь его похитила уличная банда гонщиков, крышующая нелегальные грузы. Полиция бездействует, а все следы ведут на ночные трассы. Из всего, что у тебя осталось, — только машина отца в пустом гараже. Чтобы люди банды согласились выйти с тобой на старт и заговорили, ты ставишь на кон свою тачку, шаг за шагом пробиваясь к главарю банды, чтобы освободить отца и узнать имя заказчика.";
 
     [Serializable]
     public sealed class StageConfig
     {
         [InspectorName("Сцена")] public string sceneName;
+        [InspectorName("Название миссии")] public string missionName;
         [InspectorName("Название главы")] public string chapterTitle;
         [InspectorName("Соперник")] public string rivalName;
         [InspectorName("Машина (ключ)")] public string carName;
@@ -28,12 +32,22 @@ public sealed class GameProgressionManager : ScriptableObject
         public Vector2 mapPosition;
     }
 
+    [SerializeField, TextArea(8, 15)] private string introduction = DefaultIntroduction;
     [SerializeField] private StageConfig[] stages = CreateDefaultStages();
 
     public StageConfig[] Stages
     {
         get => stages;
         set => stages = value;
+    }
+
+    public string Introduction => introduction;
+    public static bool HasSeenIntroduction => PlayerPrefs.GetInt(IntroSeenKey, 0) != 0;
+
+    public static void AcknowledgeIntroduction()
+    {
+        PlayerPrefs.SetInt(IntroSeenKey, 1);
+        PlayerPrefs.Save();
     }
 
     public static event Action ProgressChanged;
@@ -69,6 +83,7 @@ public sealed class GameProgressionManager : ScriptableObject
     {
         PlayerPrefs.SetInt(UnlockedKey, 1);
         PlayerPrefs.DeleteKey(CompletedKey);
+        PlayerPrefs.DeleteKey(IntroSeenKey);
         PlayerPrefs.Save();
         ProgressChanged?.Invoke();
     }
@@ -111,41 +126,45 @@ public sealed class GameProgressionManager : ScriptableObject
         new StageConfig
         {
             sceneName = "1",
-            chapterTitle = "ГЛАВА I: ВОЗВРАЩЕНИЕ НА УЛИЦЫ",
+            missionName = "Погоня",
+            chapterTitle = "ГЛАВА I. СЛЕДЫ",
             rivalName = "Кай",
             carName = "HONDA NSX",
-            briefing = "Город не забывает тех, кто ушёл без боя. Чтобы вернуться в ночную лигу, придётся начать с самых низов. Первый соперник — Кай на Honda NSX. Обойди его на трассе, чтобы забрать ключи и заявить о себе.",
-            victoryStory = "Кай: «Думал, ты просто залётный... Ладно, уговор есть уговор. Держи ключи от NSX. Но дальше начинаются районы Синдиката — там за ошибки платят не машинами, а свободой».",
+            briefing = "У ворот порта замечен Кай. Начни погоню на полицейской машине, забери ключи от Honda NSX и выясни, куда увезли твоего отца.",
+            victoryStory = "Я только стоял на шухере у ворот порта, а твоего отца увезли в промзону. Ищи Маркуса.",
             mapPosition = new Vector2(.9f, .525f)
         },
         new StageConfig
         {
             sceneName = "2",
-            chapterTitle = "ГЛАВА II: СЛЕД СИНДИКАТА",
-            rivalName = "Гонщик Синдиката",
+            missionName = "Кольцевая гонка",
+            chapterTitle = "ГЛАВА II. Первый заезд",
+            rivalName = "Маркус",
             carName = "NISSAN GT-R",
-            briefing = "Кай предупреждал о районах Синдиката — ставки взлетели вдвое. Теперь против тебя выставили заряженный Nissan GT-R. Победи в этом заезде, чтобы забрать GT-R и выйти на след того, кто подставил тебя в прошлом.",
-            victoryStory = "Рэй (механик): «Красиво прошёл! С этим GT-R ты теперь в высшей лиге. Я пробил старые записи — твой прошлый провал подстроил Рейвен, и он уже ждёт тебя на верхнем ярусе».",
+            briefing = "Ниточка от Кая приводит тебя  к Маркусу — гонщику. На старой машине отца против его заряженного зверя, Одержи победу, забери ключи от Nissan GT-R и заставь Маркуса раскрыть, где держат начальника порта.",
+            victoryStory = "Маркус глушит мотор и протягивает ключи от GT-R:\n«Держи ключи, ты честно забрал эту тачку. Мы всего лишь перевозчики. Твоего отца держат на закрытой базе в центре города — он до сих пор отказывается подписывать бумаги. Прорвёшься через Викторию на развязках — выйдешь прямо на нашего главаря».",
             mapPosition = new Vector2(.68f, .529f)
         },
         new StageConfig
         {
             sceneName = "3",
-            chapterTitle = "ГЛАВА III: ПОСЛЕДНИЙ РУБЕЖ",
+            missionName = "Скоростные развязки",
+            chapterTitle = "ГЛАВА III. Шпильки",
             rivalName = "Виктория",
-            carName = "LAMBORGHINI",
-            briefing = "Теперь ты знаешь правду: за твоим прошлым провалом стоит лидер Синдиката — Рейвен. На пути к нему стоит его правая рука — Виктория на Lamborghini. Выиграй гонку на скоростных развязках, чтобы забрать ключи и открыть дорогу в финал.",
-            victoryStory = "Виктория: «Забирай ключи от Lamborghini, ты их заслужил. Рейвен уже перекрыл центр города для финального заезда. Если выиграешь там — весь город будет знать, кто здесь номер один».",
+            carName = "MCLAREN",
+            briefing = "До базы в деловом квартале остался один шаг, но все подъезды туда перекрыла Виктория — правая рука главаря банды. Она отвечает за безопасность верхушки и не собирается пускать тебя в центр. Чтобы принять её вызов на скоростных развязках, ты садишься за руль отвоёванного у Маркуса Nissan GT-R и ставишь его против её суперкара. Обойди Викторию",
+            victoryStory = "Виктория смотрит на финишное табло и молча отдаёт ключи от McLaren:\n«Этот McLaren теперь твой, и проезд в центр открыт. Рейвен сам ждёт тебя на главной прямой — выиграешь у него, и он отпустит твоего отца».",
             mapPosition = new Vector2(.875f, .39f)
         },
         new StageConfig
         {
             sceneName = "4",
-            chapterTitle = "ГЛАВА IV: КОРОЛЬ УЛИЦ",
+            missionName = "Центр города",
+            chapterTitle = "ГЛАВА IV. ИМЯ ЗАКАЗЧИКА",
             rivalName = "Рейвен",
-            carName = "MCLAREN",
-            briefing = "Финал. Рейвен перекрыл центр города и вывел на старт свой главный McLaren. Весь город следит за этой дуэлью — выиграй заезд, чтобы забрать его ключи и вернуть себе корону ночных улиц.",
-            victoryStory = "Рейвен: «Невероятно... Ты действительно прошёл весь путь до конца. Вот ключи от McLaren. С этой ночи улицы города принадлежат тебе».",
+            carName = "LAMBORGHINI",
+            briefing = "Финальная дуэль. Главарь банды гонщиков Рейвен перекрыл центральный проспект и вывел на старт свой флагманский Lamborghini. Ты выходишь против него на выигранном у Виктории McLaren — на кону обе машины, свобода твоего отца и правда о том, кому понадобились портовые терминалы для контрабанды. Приди к финишу первым, забери ключи и заставь Рейвена назвать имя настоящего заказчика.",
+            victoryStory = "Рейвен сдержал слово: твоего отца отпустили. Перед тем как уйти, Рейвен назвал имя заказчика и передал тебе ключи от Lamborghini.",
             mapPosition = new Vector2(.962f, .659f)
         }
     };

@@ -1,12 +1,9 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public sealed class MainMenuController : MonoBehaviour
 {
-    private static readonly string[] Roman = { "I", "II", "III", "IV", "V", "VI" };
-
     [SerializeField] private RaceMapMarker[] markers;
 
     [Header("Прогресс")]
@@ -32,6 +29,11 @@ public sealed class MainMenuController : MonoBehaviour
     [SerializeField] private Button playButton;
     [SerializeField] private Text playLabel;
 
+    [Header("Пролог")]
+    [SerializeField] private GameObject intro;
+    [SerializeField] private Text introStoryText;
+    [SerializeField] private Button introContinueButton;
+
     private int selectedStage;
     private float toastHideAt = float.NegativeInfinity;
     private bool loading;
@@ -45,6 +47,8 @@ public sealed class MainMenuController : MonoBehaviour
         playButton.onClick.AddListener(Play);
         briefing.SetActive(false);
         toast.alpha = 0f;
+        if (introContinueButton != null) introContinueButton.onClick.AddListener(CloseIntro);
+        ShowIntroIfNeeded();
     }
 
     private void OnEnable()
@@ -85,6 +89,7 @@ public sealed class MainMenuController : MonoBehaviour
 
     private void OnMarkerClicked(int stage)
     {
+        if (loading || (intro != null && intro.activeSelf)) return;
         if (!GameProgressionManager.IsStageUnlocked(stage))
         {
             ShowToast("Сначала пройдите предыдущую гонку");
@@ -104,7 +109,8 @@ public sealed class MainMenuController : MonoBehaviour
 
         selectedStage = stage;
         bool done = GameProgressionManager.IsStageCompleted(stage) || stage < GameProgressionManager.UnlockedStage;
-        stageText.text = $"ГОНКА {stage}  ·  ГЛАВА {Roman[Mathf.Clamp(stage - 1, 0, Roman.Length - 1)]}";
+        stageText.text = string.IsNullOrEmpty(data.missionName) ? $"МИССИЯ {stage}" :
+            $"{stage:D2}  ·  {data.missionName.ToUpperInvariant()}";
         chapterTitleText.text = data.chapterTitle;
         storyText.text = data.briefing;
         rivalText.text = data.rivalName;
@@ -126,21 +132,39 @@ public sealed class MainMenuController : MonoBehaviour
     private void Play()
     {
         var data = GameProgressionManager.GetStage(selectedStage);
-        if (loading || data == null) return;
-        if (!Application.CanStreamedLevelBeLoaded(data.sceneName))
+        if (loading || data == null || !GameProgressionManager.IsStageUnlocked(selectedStage)) return;
+        int next = SceneTransition.BuildIndexOf(data.sceneName);
+        if (next < 0)
         {
             ShowToast($"Сцена «{data.sceneName}» не добавлена в Build Settings");
             return;
         }
 
+        if (!SceneTransition.TryLoad(next, playLabel.font)) return;
         loading = true;
         playButton.interactable = false;
         playLabel.text = "ЗАГРУЗКА...";
-        SceneManager.LoadSceneAsync(data.sceneName, LoadSceneMode.Single);
+    }
+
+    private void ShowIntroIfNeeded()
+    {
+        if (intro == null) return;
+        var progression = GameProgressionManager.Instance;
+        bool show = progression != null && !GameProgressionManager.HasSeenIntroduction &&
+            !string.IsNullOrWhiteSpace(progression.Introduction);
+        if (show) introStoryText.text = progression.Introduction;
+        intro.SetActive(show);
+    }
+
+    private void CloseIntro()
+    {
+        GameProgressionManager.AcknowledgeIntroduction();
+        intro.SetActive(false);
     }
 
     private void ShowToast(string message)
     {
+        toast.transform.SetAsLastSibling();
         toastText.text = message;
         toastHideAt = Time.unscaledTime + toastDuration;
     }

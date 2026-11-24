@@ -66,16 +66,16 @@ public static class RedLineGameSetup
         {
             Scene = "Assets/Scenes/3.unity",
             Player = "Assets/Cars/race cars/gtr/FINAL_MODEL_RF_Car 1 1.prefab",
-            Rival = "Assets/Cars/race cars/lamborgini/FINAL_MODEL_SV97_Car 1.prefab",
-            Key = "Assets/Cars/race cars/lamborgini/FinishKey.png",
+            Rival = "Assets/Cars/race cars/mclaren/Final_Model_Car 1.prefab",
+            Key = "Assets/Cars/race cars/mclaren/FinishKey.png",
             Mode = RaceMode.Race
         },
         new()
         {
             Scene = "Assets/Scenes/4.unity",
-            Player = "Assets/Cars/race cars/lamborgini/FINAL_MODEL_SV97_Car 1.prefab",
-            Rival = "Assets/Cars/race cars/mclaren/Final_Model_Car 1.prefab",
-            Key = "Assets/Cars/race cars/mclaren/FinishKey.png",
+            Player = "Assets/Cars/race cars/mclaren/Final_Model_Car 1.prefab",
+            Rival = "Assets/Cars/race cars/lamborgini/FINAL_MODEL_SV97_Car 1.prefab",
+            Key = "Assets/Cars/race cars/lamborgini/FinishKey.png",
             Mode = RaceMode.Race
         }
     };
@@ -194,6 +194,7 @@ public static class RedLineGameSetup
             var stage = stages[i] ??= defaults[i];
             var fallback = defaults[i];
             if (string.IsNullOrEmpty(stage.sceneName)) stage.sceneName = fallback.sceneName;
+            if (string.IsNullOrEmpty(stage.missionName)) stage.missionName = fallback.missionName;
             if (string.IsNullOrEmpty(stage.chapterTitle)) stage.chapterTitle = fallback.chapterTitle;
             if (string.IsNullOrEmpty(stage.rivalName)) stage.rivalName = fallback.rivalName;
             if (string.IsNullOrEmpty(stage.carName)) stage.carName = fallback.carName;
@@ -621,7 +622,17 @@ public static class RedLineGameSetup
 
     private static void BuildMainMenu()
     {
-        if (AssetDatabase.LoadAssetAtPath<SceneAsset>(MenuScenePath) != null) return;
+        if (AssetDatabase.LoadAssetAtPath<SceneAsset>(MenuScenePath) != null)
+        {
+            var existing = EditorSceneManager.OpenScene(MenuScenePath);
+            var menu = All<MainMenuController>(existing.GetRootGameObjects()).Single();
+            if (new SerializedObject(menu).FindProperty("intro").objectReferenceValue == null)
+            {
+                BuildIntroduction(menu);
+                EditorSceneManager.SaveScene(existing);
+            }
+            return;
+        }
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         var data = Load<GameProgressionManager>(ProgressionPath);
         var settingsPrefab = Load<GameObject>(SettingsPrefabPath);
@@ -671,10 +682,34 @@ public static class RedLineGameSetup
         for (int i = 0; i < markers.Count; i++) list.GetArrayElementAtIndex(i).objectReferenceValue = markers[i];
         binding.ApplyModifiedPropertiesWithoutUndo();
         Bind(controller, ("progressText", progress), ("toast", toast), ("toastText", toastText), ("briefing", briefing));
+        BuildIntroduction(controller);
 
         PrefabUtility.InstantiatePrefab(settingsPrefab, scene);
         EditorSceneManager.SaveScene(scene, MenuScenePath);
         Debug.Log("[RedLine] Создана сцена " + MenuScenePath);
+    }
+
+    private static void BuildIntroduction(MainMenuController controller)
+    {
+        font ??= Load<Font>(FontPath);
+        var intro = Stretch("City Introduction", controller.transform);
+        Picture(Stretch("Backdrop", intro), null, new Color(0f, 0f, 0f, .72f), true);
+
+        var paper = Node("Introduction Paper", intro, Half, Half, Vector2.zero, new Vector2(940f, 680f));
+        paper.localRotation = Quaternion.Euler(0f, 0f, 1.2f);
+        Picture(paper, Load<Sprite>(FinishSpriteAuthoring.Paper), Color.white, true);
+        var top = new Vector2(.5f, 1f);
+        var bottom = new Vector2(.5f, 0f);
+        Label(Node("Title", paper, top, top, new Vector2(0f, -66f), new Vector2(776f, 54f)),
+            "ПРОЛОГ", 42, PaperInk, TextAnchor.MiddleLeft, FontStyle.Bold);
+        Picture(Node("Rule", paper, top, top, new Vector2(0f, -134f), new Vector2(776f, 3f)), null, PaperAccent);
+        var story = Label(Node("Story", paper, top, top, new Vector2(0f, -162f), new Vector2(776f, 362f)),
+            "", 27, PaperInk, TextAnchor.UpperLeft, FontStyle.Normal, 18);
+        story.lineSpacing = 1.16f;
+        var next = FilledButton(Node("Continue", paper, bottom, bottom, new Vector2(0f, 70f), new Vector2(286f, 62f)),
+            "К КАРТЕ", PaperInk, Color.white, 25, out _);
+        Bind(controller, ("intro", intro.gameObject), ("introStoryText", story), ("introContinueButton", next));
+        intro.gameObject.SetActive(false);
     }
 
     private static RaceMapMarker BuildMarker(RectTransform layer, int stage, Vector2 position)

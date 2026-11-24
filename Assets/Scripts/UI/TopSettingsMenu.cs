@@ -70,14 +70,14 @@ public sealed class TopSettingsMenu : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (!window.activeSelf) return;
+        if (window == null || !window.activeSelf) return;
         IsOpen = false;
         if (!inMainMenu) GamePause.SetPaused(false);
     }
 
     public void SetOpen(bool open)
     {
-        if (window.activeSelf == open) return;
+        if (SceneTransition.IsLoading || window.activeSelf == open) return;
         window.SetActive(open);
         IsOpen = open;
         resetArmed = false;
@@ -110,15 +110,14 @@ public sealed class TopSettingsMenu : MonoBehaviour
 
     private void Exit()
     {
+        if (!inMainMenu && !SceneTransition.TryLoad(SceneTransition.BuildIndexOf(GameProgressionManager.MainMenuScene), exitLabel.font))
+            return;
+
         PlayerPrefs.Save();
         window.SetActive(false);
         IsOpen = false;
         GamePause.SetPaused(false);
-        if (!inMainMenu)
-        {
-            SceneManager.LoadScene(GameProgressionManager.MainMenuScene);
-            return;
-        }
+        if (!inMainMenu) return;
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

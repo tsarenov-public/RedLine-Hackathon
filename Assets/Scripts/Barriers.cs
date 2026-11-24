@@ -33,6 +33,7 @@ public class Barriers : MonoBehaviour
     private RectTransform _canvasRect;
     private RawImage _rawImage;
     private Texture2D _arrowTexture;
+    private PhysicsMaterial _slickMaterial;
     private float _uvOffset;
     private bool _dirty = true;
     private TurnDirection _lastDirection;
@@ -90,7 +91,7 @@ public class Barriers : MonoBehaviour
 
         if (Application.isPlaying && _boxCollider.sharedMaterial == null)
         {
-            PhysicsMaterial slickMat = new PhysicsMaterial("BarrierSlick")
+            _slickMaterial = new PhysicsMaterial("BarrierSlick")
             {
                 dynamicFriction = 0.05f,
                 staticFriction = 0.05f,
@@ -98,7 +99,7 @@ public class Barriers : MonoBehaviour
                 frictionCombine = PhysicsMaterialCombine.Minimum,
                 bounceCombine = PhysicsMaterialCombine.Average
             };
-            _boxCollider.sharedMaterial = slickMat;
+            _boxCollider.sharedMaterial = _slickMaterial;
         }
 
         Transform canvasTr = transform.Find(CanvasChildName);
@@ -215,6 +216,11 @@ public class Barriers : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (_slickMaterial != null)
+        {
+            if (Application.isPlaying) Destroy(_slickMaterial);
+            else DestroyImmediate(_slickMaterial);
+        }
         if (_arrowTexture != null)
         {
             if (Application.isPlaying) Destroy(_arrowTexture);

@@ -1,4 +1,3 @@
-using System.Collections;
 using Arcade.Vehicle;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -41,7 +40,7 @@ public sealed class RaceFinishUI : MonoBehaviour
         canvas.enabled = raycaster.enabled = false;
         if (defeatPanel != null) defeatPanel.SetActive(false);
         Listen(continueButton, () => Leave(GameProgressionManager.MainMenuScene));
-        Listen(retryButton, () => Leave(SceneManager.GetActiveScene().name));
+        Listen(retryButton, () => Leave(SceneManager.GetActiveScene().path));
         Listen(menuButton, () => Leave(GameProgressionManager.MainMenuScene));
     }
 
@@ -101,16 +100,16 @@ public sealed class RaceFinishUI : MonoBehaviour
     private void Leave(string sceneName)
     {
         if (!presented || leaving) return;
-        leaving = true;
-        GamePause.SetPaused(false);
-        StartCoroutine(LoadScene(sceneName));
-    }
+        int next = SceneTransition.BuildIndexOf(sceneName);
+        if (next < 0)
+        {
+            Debug.LogError($"Сцена «{sceneName}» недоступна в Build Settings.", this);
+            return;
+        }
 
-    private IEnumerator LoadScene(string sceneName)
-    {
-        if (showcaseCamera != null) showcaseCamera.gameObject.SetActive(false);
-        yield return null;
-        SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+        leaving = SceneTransition.TryLoad(next, chapterTitleText != null ? chapterTitleText.font : null);
+        if (!leaving) return;
+        GamePause.SetPaused(false);
     }
 
     private static void Listen(Button button, UnityEngine.Events.UnityAction action)
