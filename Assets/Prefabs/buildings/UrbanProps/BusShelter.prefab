@@ -614,9 +614,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7313807931124143897}
   serializedVersion: 5
-  m_Mass: 15
+  m_Mass: 300
   m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_AngularDamping: 2
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -664,9 +664,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee3135382d9631848aca444059167728, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreakableStreetProp
   approachTrigger: {fileID: 8813779148688033562}
+  heaviness: 5
+  maxAngularVelocity: 15
+  spinMultiplier: 0.3
 --- !u!1 &8672296819189164441
 GameObject:
   m_ObjectHideFlags: 0

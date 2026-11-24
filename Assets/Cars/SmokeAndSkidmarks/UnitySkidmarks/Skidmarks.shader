@@ -4,6 +4,7 @@ Shader "Skidmarks"
     {
         _Color("Main Color", Color) = (1, 1, 1, 1)
         _MainTex("Base (RGB) Trans (A)", 2D) = "white" {}
+        _OpacityGain("Opacity gain", Range(.2,3)) = 1
     }
 
     SubShader
@@ -29,6 +30,7 @@ Shader "Skidmarks"
             CBUFFER_START(UnityPerMaterial)
                 float4 _MainTex_ST;
                 half4 _Color;
+                half _OpacityGain;
             CBUFFER_END
 
             struct Attributes
@@ -56,7 +58,9 @@ Shader "Skidmarks"
 
             half4 Frag(Varyings input) : SV_Target
             {
-                return SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv) * input.color;
+                half4 mark = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv) * input.color;
+                mark.a = 1 - pow(1 - saturate(mark.a), _OpacityGain);
+                return mark;
             }
             ENDHLSL
         }

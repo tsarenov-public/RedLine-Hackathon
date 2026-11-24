@@ -156,7 +156,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7897319605263312487}
   serializedVersion: 5
-  m_Mass: 8
+  m_Mass: 300
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -206,6 +206,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee3135382d9631848aca444059167728, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreakableStreetProp
   approachTrigger: {fileID: 4637669660526205817}
+  heaviness: 4.07
+  maxAngularVelocity: 15
+  spinMultiplier: 0.3

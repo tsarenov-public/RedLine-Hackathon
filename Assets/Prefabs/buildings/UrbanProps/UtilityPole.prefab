@@ -55,8 +55,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.28956604, y: 6.8065248, z: 2.1822722}
-  m_Center: {x: 0.0029993728, y: 3.4032621, z: 0.0008291485}
+  m_Size: {x: 0.28956604, y: 6.8065243, z: 0.23809344}
+  m_Center: {x: 0.0029993653, y: 3.4032621, z: -0.018235419}
 --- !u!54 &456526062521334110
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -103,8 +103,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.4395661, y: 7.356525, z: 4.3322725}
-  m_Center: {x: 0.0029993728, y: 3.6032622, z: 0.0008291485}
+  m_Size: {x: 2.4395661, y: 7.356525, z: 2.7112093}
+  m_Center: {x: 0.002999425, y: 3.6032622, z: 0.017552376}
 --- !u!114 &8182895023929535629
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,9 +115,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee3135382d9631848aca444059167728, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreakableStreetProp
   approachTrigger: {fileID: 7459603059932650781}
+  heaviness: 5
+  maxAngularVelocity: 15
+  spinMultiplier: 0.3
 --- !u!1 &3138355537578007009
 GameObject:
   m_ObjectHideFlags: 0
