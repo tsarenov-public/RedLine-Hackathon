@@ -22954,7 +22954,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.63678753
+    x: 0.8015964
     y: 0
     width: 6.1875
     height: 1
@@ -26890,7 +26890,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.36321235
+    x: 0.19840352
     y: 0
     width: 6.4625
     height: 1
@@ -72183,7 +72183,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.36321235
+    x: 0.19840352
     y: 0
     width: 6.4625
     height: 1
@@ -162978,7 +162978,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.36321235
+    x: 0.19840352
     y: 0
     width: 5.9125
     height: 1
@@ -228281,7 +228281,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.36321235
+    x: 0.19840352
     y: 0
     width: 6.05
     height: 1
@@ -240222,7 +240222,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.36321235
+    x: 0.19840352
     y: 0
     width: 6.4625
     height: 1
@@ -312764,7 +312764,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.36321235
+    x: 0.19840352
     y: 0
     width: 6.325
     height: 1
@@ -364429,6 +364429,9 @@ GameObject:
   - component: {fileID: 1072201846}
   - component: {fileID: 1072201845}
   - component: {fileID: 1072201847}
+  - component: {fileID: 1072201850}
+  - component: {fileID: 1072201849}
+  - component: {fileID: 1072201848}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -364517,7 +364520,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1072201841}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27e74f434f10649eab21ea4fc3a6f10d, type: 3}
   m_Name: 
@@ -364613,6 +364616,88 @@ MonoBehaviour:
   customReactiveMaskLayer:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &1072201848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1072201841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2021b5d06f9d9a746a3cf088f438b12f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Arcade.Vehicle.NFSCameraController
+  manualTarget: {fileID: 0}
+  baseDistance: 3
+  heightOffset: 1.86
+  lookAtOffset: {x: 0, y: 0.54, z: 1.3}
+  pitchAngleOffset: 14.4
+  positionDamping: 0.16
+  rotationDamping: 0.115
+  cornerOffset: 0.29
+  driftFollow: 0.34
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 201
+  collisionRadius: 0.27
+  highSpeedPullback: 1.1
+  nitroPullback: 0.9
+  pullbackDamping: 0.22
+  shakeFrequency: 24
+  maximumShake: {x: 0.052, y: 0.037}
+  maximumRoll: 0.85
+--- !u!114 &1072201849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1072201841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4644b337d4073fe40bb77472e0c24d4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Arcade.Vehicle.CameraSpeedEffects
+  speedVolume: {fileID: 0}
+  baseFov: 60
+  highSpeedFov: 72
+  nitroFovKick: 7
+  response: 0.18
+  motionBlurStartKmh: 100
+  maxMotionBlurIntensity: 0.75
+  nitroMotionBlurIntensity: 0.95
+--- !u!114 &1072201850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1072201841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2021b5d06f9d9a746a3cf088f438b12f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Arcade.Vehicle.NFSCameraController
+  manualTarget: {fileID: 0}
+  baseDistance: 3
+  heightOffset: 1.86
+  lookAtOffset: {x: 0, y: 0.54, z: 1.3}
+  pitchAngleOffset: 14.4
+  positionDamping: 0.16
+  rotationDamping: 0.115
+  cornerOffset: 0.29
+  driftFollow: 0.34
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 201
+  collisionRadius: 0.27
+  highSpeedPullback: 1.1
+  nitroPullback: 0.9
+  pullbackDamping: 0.22
+  shakeFrequency: 24
+  maximumShake: {x: 0.052, y: 0.037}
+  maximumRoll: 0.85
 --- !u!1 &1072485134
 GameObject:
   m_ObjectHideFlags: 0
@@ -452551,7 +452636,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.63678753
+    x: 0.8015964
     y: 0
     width: 6.4625
     height: 1
@@ -473939,7 +474024,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.36321235
+    x: 0.19840352
     y: 0
     width: 6.4625
     height: 1
@@ -522973,7 +523058,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.63678753
+    x: 0.8015964
     y: 0
     width: 6.1875
     height: 1
@@ -534396,7 +534481,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.36321235
+    x: 0.19840352
     y: 0
     width: 6.39375
     height: 1
@@ -591832,7 +591917,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.63678753
+    x: 0.8015964
     y: 0
     width: 6.4625
     height: 1
