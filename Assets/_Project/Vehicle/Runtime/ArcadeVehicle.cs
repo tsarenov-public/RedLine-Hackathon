@@ -18,6 +18,11 @@ namespace Arcade.Vehicle
         public VehicleState State => Ctx.s;
         public Wheel[] Wheels => Ctx.wheels;
         public Rigidbody Rb { get; private set; }
+        public bool IsFinishing { get; private set; }
+
+        private float finishBrake;
+
+        public void BeginFinishBraking() => IsFinishing = true;
 
         public event Action<Vector3, Vector3, float> WallHit;
         public event Action<bool> NosChanged;
@@ -84,7 +89,12 @@ namespace Arcade.Vehicle
         {
             float dt = Time.fixedDeltaTime;
             Ctx.dt = dt;
-            Ctx.input = _input != null ? _input.Sample(dt) : default;
+            if (IsFinishing)
+            {
+                finishBrake = Mathf.MoveTowards(finishBrake, 1f, dt * 2.5f);
+                Ctx.input = new VehicleInputState { Brake = finishBrake, BrakeOnly = true };
+            }
+            else Ctx.input = _input != null ? _input.Sample(dt) : default;
             UpdateKinematics();
             for (int i = 0; i < _modules.Length; i++) _modules[i].FixedTick(dt);
         }

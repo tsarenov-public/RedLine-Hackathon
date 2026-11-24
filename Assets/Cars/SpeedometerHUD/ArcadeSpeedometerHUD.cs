@@ -21,6 +21,7 @@ namespace Arcade.Vehicle
         [SerializeField] private LcdDisplay gearLabel;
         [SerializeField] private Image upshift;
         [SerializeField] private ArcadeMinimapHUD minimap;
+        [SerializeField] private bool showForAI;
 
         private VehicleInputSource inputSource;
         private AIRacerController aiController;
@@ -29,9 +30,9 @@ namespace Arcade.Vehicle
         private int lastGear = int.MinValue;
 
         private bool IsPlayerControlled => isActiveAndEnabled && display != null &&
-            vehicle != null && vehicle.isActiveAndEnabled && vehicle.Ctx != null &&
+            vehicle != null && vehicle.isActiveAndEnabled && vehicle.Ctx != null && !vehicle.IsFinishing &&
             inputSource != null && inputSource.isActiveAndEnabled &&
-            (aiController == null || !aiController.isActiveAndEnabled);
+            (showForAI || aiController == null || !aiController.isActiveAndEnabled);
 
         private void Awake()
         {

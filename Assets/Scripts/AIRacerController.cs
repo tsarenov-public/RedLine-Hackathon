@@ -72,6 +72,13 @@ public class AIRacerController : MonoBehaviour
     private float stuckTimer;
     private float reverseTimer;
     private float impactRecoveryTimer;
+    private bool useFinishGate;
+
+    private bool Loops => loopTrack && !useFinishGate;
+    public bool IsApproachingFinish => waypoints != null && waypoints.Count > 0 && currentIndex == waypoints.Count - 1;
+
+    // FinishLineTrigger arms this before Start builds the speed profile.
+    public void UseFinishGate() => useFinishGate = true;
 
     private float PlanningDeceleration => Mathf.Max(1f, brakeDecel * .65f);
 
@@ -147,7 +154,7 @@ public class AIRacerController : MonoBehaviour
         CurrentThrottle = CurrentBrake > .04f ? 0f :
             Mathf.MoveTowards(CurrentThrottle, throttle, dt * (throttle > CurrentThrottle ? 3f : 9f));
 
-        if (!loopTrack && currentIndex == waypoints.Count - 1 && speedLimit < 1f)
+        if (!Loops && currentIndex == waypoints.Count - 1 && speedLimit < 1f)
             stuckTimer = 0f;
         else
             UpdateStuckRecovery(speed, dt);
@@ -159,9 +166,9 @@ public class AIRacerController : MonoBehaviour
         var delta = position - target;
         if (Mathf.Abs(delta.y) > 3f) return;
 
-        if (!loopTrack && currentIndex == waypoints.Count - 1)
+        if (!Loops && currentIndex == waypoints.Count - 1)
         {
-            if (Flatten(delta).sqrMagnitude < reachDistance * reachDistance && speed < .45f)
+            if (!useFinishGate && Flatten(delta).sqrMagnitude < reachDistance * reachDistance && speed < .45f)
             {
                 finished = true;
                 currentIndex++;
@@ -176,7 +183,7 @@ public class AIRacerController : MonoBehaviour
 
     private Vector3 ProjectOntoApproach(Vector3 position, Vector3 target)
     {
-        if (currentIndex == 0 && !loopTrack) return position;
+        if (currentIndex == 0 && !Loops) return position;
 
         int previous = (currentIndex + waypoints.Count - 1) % waypoints.Count;
         var start = waypoints[previous].position;
@@ -190,7 +197,7 @@ public class AIRacerController : MonoBehaviour
         for (int step = 0; step < waypoints.Count; step++)
         {
             int index = currentIndex + step;
-            if (!loopTrack && index == waypoints.Count) break;
+            if (!Loops && index == waypoints.Count) break;
             var end = waypoints[index % waypoints.Count].position;
             float length = FlatDistance(start, end);
             if (length >= distance) return Vector3.Lerp(start, end, distance / length);
@@ -209,7 +216,7 @@ public class AIRacerController : MonoBehaviour
         for (int step = 0; step < waypoints.Count; step++)
         {
             int index = currentIndex + step;
-            if (!loopTrack && index == waypoints.Count) break;
+            if (!Loops && index == waypoints.Count) break;
             index %= waypoints.Count;
             var end = waypoints[index].position;
             distance += FlatDistance(start, end);
@@ -230,7 +237,7 @@ public class AIRacerController : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             limits[i] = cruise;
-            if (!loopTrack && (i == 0 || i == count - 1)) continue;
+            if (!Loops && (i == 0 || i == count - 1)) continue;
 
             var point = waypoints[i].position;
             var incoming = point - waypoints[(i + count - 1) % count].position;
@@ -252,10 +259,10 @@ public class AIRacerController : MonoBehaviour
         }
 
         if (count == 0) return limits;
-        if (!loopTrack) limits[count - 1] = 0f;
+        if (!Loops) limits[count - 1] = useFinishGate ? 4f : 0f;
 
         // Propagate limits farther than the live scan when a straight needs more braking room.
-        int first = loopTrack ? count * 2 - 1 : count - 2;
+        int first = Loops ? count * 2 - 1 : count - 2;
         for (int i = first; i >= 0; i--)
         {
             int index = i % count;
