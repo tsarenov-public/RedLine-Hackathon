@@ -189312,7 +189312,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.6591946
+    x: 0.17759924
     y: 0
     width: 6.325
     height: 1
@@ -203493,6 +203493,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8791882113131193722, guid: 3eb8f08ea2a486649b720bb3cfc94faf, type: 3}
   m_PrefabInstance: {fileID: 647920460}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &648588088
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1967707348568356, guid: 4124462f0a91d3e47b6f1095667d5dc5, type: 3}
+      propertyPath: m_Name
+      value: Prefab_Wind
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921507568758886, guid: 4124462f0a91d3e47b6f1095667d5dc5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 382.7335
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921507568758886, guid: 4124462f0a91d3e47b6f1095667d5dc5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 204.58138
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921507568758886, guid: 4124462f0a91d3e47b6f1095667d5dc5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -243.56357
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921507568758886, guid: 4124462f0a91d3e47b6f1095667d5dc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921507568758886, guid: 4124462f0a91d3e47b6f1095667d5dc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921507568758886, guid: 4124462f0a91d3e47b6f1095667d5dc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921507568758886, guid: 4124462f0a91d3e47b6f1095667d5dc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921507568758886, guid: 4124462f0a91d3e47b6f1095667d5dc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921507568758886, guid: 4124462f0a91d3e47b6f1095667d5dc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921507568758886, guid: 4124462f0a91d3e47b6f1095667d5dc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4124462f0a91d3e47b6f1095667d5dc5, type: 3}
 --- !u!1 &648898362
 GameObject:
   m_ObjectHideFlags: 0
@@ -228953,7 +229010,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.6591946
+    x: 0.17759924
     y: 0
     width: 6.325
     height: 1
@@ -250491,7 +250548,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.6591946
+    x: 0.17759924
     y: 0
     width: 5.9125
     height: 1
@@ -287486,7 +287543,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.34080532
+    x: 0.8224007
     y: 0
     width: 6.325
     height: 1
@@ -411958,7 +412015,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.34080532
+    x: 0.8224007
     y: 0
     width: 6.1875
     height: 1
@@ -453372,7 +453429,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.6591946
+    x: 0.17759924
     y: 0
     width: 6.1875
     height: 1
@@ -652296,7 +652353,7 @@ MonoBehaviour:
   m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
-    x: 0.6591946
+    x: 0.17759924
     y: 0
     width: 6.1875
     height: 1
@@ -704105,3 +704162,4 @@ SceneRoots:
   - {fileID: 1182621496}
   - {fileID: 439181345}
   - {fileID: 373680254}
+  - {fileID: 648588088}
